@@ -1,0 +1,23 @@
+@tailwind base;
+
+@tailwind components;
+
+@tailwind utilities;
+
+
+/* Global layout styles */
+
+.layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    padding: 20px;
+
+}
+
+/*Button styles*/
+
+
+
+
+

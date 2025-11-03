@@ -1,0 +1,16 @@
+{
+  "tailwindCSS.includeLanguages": {
+    "javascript": "javascript",
+    "javascriptreact": "javascript"
+  },
+  "tailwindCSS.classAttributes": ["class", "className"],
+  "tailwindCSS.experimental.configFile": "tailwind.config.js",
+  "editor.quickSuggestions": {
+    "strings": true
+  },
+  "editor.suggest.showKeywords": false,
+  "editor.suggest.showSnippets": true,
+  "css.validate": false,
+  "scss.validate": false,
+  "less.validate": false
+}
