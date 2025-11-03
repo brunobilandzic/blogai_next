@@ -2,6 +2,8 @@ import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
 import { MongoDBAdapter } from "@auth/mongodb-adapter";
 import clientPromise from "@/lib/mongoDb";
+import  getOrSaveUser from "@/lib/getOrSaveUser";
+import { AppUser } from "./models/User";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: MongoDBAdapter(clientPromise),
@@ -11,6 +13,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       clientSecret: process.env.GOOGLE_SECRET,
     }),
   ],
+  callbacks:  {
+    async signIn({ user }) {
+      const result = await getOrSaveUser(user.email);
+      console.log("User sign-in result:", !!result);
+      return !!result;
+    },
+    
+  },
   session: { strategy: "jwt" },
   secret: process.env.AUTH_SECRET,
 });

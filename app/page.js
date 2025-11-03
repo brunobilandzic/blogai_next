@@ -4,6 +4,12 @@ import { Button, ButtonGroup } from "@mui/material";
 import Link from "next/link";
 
 import { useSession, signIn, signOut } from "next-auth/react";
+import axios from "axios";
+
+const deleteDb = async () => {
+  const res = await axios.delete("/api/admin/deleteDb");
+  console.log(res.data);
+};
 
 export default function Home() {
   const { data: session } = useSession();
@@ -16,23 +22,14 @@ export default function Home() {
         Protect your website from threats with our comprehensive security
         solutions.
       </p>
-      {(user && (
+      <button className="btn mb-3" onClick={() => deleteDb()}>Delete Database</button>
+      {user && (
         <div>
           <span className="font-bold mr-4">{user.name}</span>
-          <span className="cursor-pointer" onClick={() => signOut()}>sign out</span>
+          <Link href="/dashboard" className="ml-4">
+            <button className="btn">Go to Dashboard</button>
+          </Link>
         </div>
-      )) || (
-        <ButtonGroup
-          variant="contained"
-          aria-label="outlined primary button group"
-        >
-          <Button onClick={() => signIn()} className="">
-            Login
-          </Button>
-          <Button onClick={() => signOut()} className="">
-            Subscribe
-          </Button>
-        </ButtonGroup>
       )}
     </div>
   );
