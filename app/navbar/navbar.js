@@ -1,7 +1,7 @@
 import { AppBar, Button } from "@mui/material";
 import { auth } from "@/auth";
 import { AppUser } from "@/models/User";
-import { AuthNav, UnauthNav } from "./navauth";
+import { AuthNav, UnauthNav } from "../dashboard/navauth";
 
 export const Navbar = async () => {
   const session = await auth();
@@ -12,7 +12,7 @@ export const Navbar = async () => {
 
   return (
     <>
-      <navbar
+      <div
         className="navbar bg-blue-500 text-white p-4 flex justify-between items-center"
         color="info"
         position="static"
@@ -21,7 +21,7 @@ export const Navbar = async () => {
         <div className="flex justify-end">
           {appUser ? <AuthNav username={appUser.username} /> : <UnauthNav />}
         </div>
-      </navbar>
+      </div>
     </>
   );
 };

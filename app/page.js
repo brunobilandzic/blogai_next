@@ -1,8 +1,6 @@
 "use client";
 
-import { Button, ButtonGroup } from "@mui/material";
 import Link from "next/link";
-
 import { useSession, signIn, signOut } from "next-auth/react";
 import axios from "axios";
 
@@ -13,7 +11,10 @@ const deleteDb = async () => {
 
 export default function Home() {
   const { data: session } = useSession();
+  console.log("Session data:", session);
   const user = session?.user;
+  console.log(`user: ${user}`);
+
   return (
     <div style={{}}>
       <h1 className="text-4xl font-bold mb-4">Secure your website</h1>
@@ -22,10 +23,15 @@ export default function Home() {
         Protect your website from threats with our comprehensive security
         solutions.
       </p>
-      <button className="btn mb-3" onClick={() => deleteDb()}>Delete Database</button>
+      <button className="btn mb-3" onClick={() => deleteDb()}>
+        Delete Database
+      </button>
       {user && (
         <div>
           <span className="font-bold mr-4">{user.name}</span>
+          <button onClick={() => signOut()} className="btn">
+            Sign Out
+          </button>
           <Link href="/dashboard" className="ml-4">
             <button className="btn">Go to Dashboard</button>
           </Link>

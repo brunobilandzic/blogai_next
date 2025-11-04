@@ -1,7 +1,8 @@
-// app/providers.js
-"use client";
+
+import dbConnect from "@/lib/mongooseConnect";
 import { SessionProvider } from "next-auth/react";
 
-export default function Providers({ children }) {
+export default async function Providers({ children }) {
+  await dbConnect();
   return <SessionProvider>{children}</SessionProvider>;
 }
