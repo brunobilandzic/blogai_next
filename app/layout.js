@@ -1,7 +1,7 @@
 // app/layout.js
 import "./globals.css";
 import { Suspense } from "react";
-import Providers from "./providers";
+import Providers from "../lib/providers";
 import { Navbar } from "./navbar/navbar";
 
 export default function RootLayout({ children }) {

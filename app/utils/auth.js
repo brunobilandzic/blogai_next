@@ -1,4 +1,8 @@
+"use client";
+
 import { useSession } from "next-auth/react";
+import { useDispatch, useSelector } from "react-redux";
+import { setAppUser, deleteAppUser } from "@/lib/store/features/appUserSlice";
 
 export const sessionAppUserClient = async () => {
   const session = useSession();
@@ -12,4 +16,28 @@ export const sessionAppUserClient = async () => {
   } else {
     return null;
   }
+};
+
+export const setAppUserFromApi = () => {
+  const user = useSelector((state) => state.appUser.appUserInfo);
+  const dispatch = useDispatch();
+
+  if (!user) {
+    fetch("/api/auth/user")
+      .then((res) =>{
+        console.log("API response status redux:", res.status);
+        return res.json()})
+      .then((data) => {
+        dispatch(setAppUser(data?.appUser));
+      })
+      .catch((err) => {
+        console.error("Failed to fetch app user:", err);
+        dispatch(deleteAppUser());
+      });
+  }
+};
+
+export const AppUserProvider = ({ children }) => {
+  setAppUserFromApi();
+  return children;
 };
