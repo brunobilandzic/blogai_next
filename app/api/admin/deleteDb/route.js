@@ -4,7 +4,6 @@ import mongoose from 'mongoose';
 export async function DELETE(req) {
   console.log("Received request to /api/admin/deletedb");
 
-  const session = getServer
   try {
     const conn = await dbConnect();
     const collections = await mongoose.connection.db

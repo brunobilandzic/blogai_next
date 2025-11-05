@@ -1,43 +1,40 @@
 "use client";
 
-import { useSession } from "next-auth/react";
 import { useDispatch, useSelector } from "react-redux";
 import { setAppUser, deleteAppUser } from "@/lib/store/features/appUserSlice";
+import { useEffect } from "react";
 
-export const sessionAppUserClient = async () => {
-  const session = useSession();
+export const setAppUserFromApi = async (dispatch) => {
+  console.log("Fetching app user from API...");
   const res = await fetch("/api/auth/user");
   if (res.ok) {
-    const appUser = await res.json();
-    return {
-      appUser,
-      session,
-    };
-  } else {
-    return null;
-  }
-};
+    
+    const resData = await res.json();
+    console.log("Fetched app user data:", resData);
 
-export const setAppUserFromApi = () => {
-  const user = useSelector((state) => state.appUser.appUserInfo);
-  const dispatch = useDispatch();
+    const rolesInfo = resData?.appUser?.roles || [];
+    console.log("Roles info fetched:", rolesInfo);
 
-  if (!user) {
-    fetch("/api/auth/user")
-      .then((res) =>{
-        console.log("API response status redux:", res.status);
-        return res.json()})
-      .then((data) => {
-        dispatch(setAppUser(data?.appUser));
+    delete resData.appUser.roles;
+    console.log("AppUser data without roles:", resData.appUser);
+
+    dispatch(
+      setAppUser({
+        appUser: resData.appUser,
+        roles: rolesInfo,
       })
-      .catch((err) => {
-        console.error("Failed to fetch app user:", err);
-        dispatch(deleteAppUser());
-      });
+    );
+  } else {
+    dispatch(deleteAppUser());
   }
 };
 
 export const AppUserProvider = ({ children }) => {
-  setAppUserFromApi();
+  const user = useSelector((state) => state.appUserInfo?.appUser);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    if (!user) setAppUserFromApi(dispatch);
+  }, []);
+
   return children;
 };

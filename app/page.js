@@ -3,19 +3,20 @@
 import Link from "next/link";
 import { signIn, signOut } from "next-auth/react";
 import axios from "axios";
-import { sessionAppUserClient } from "./utils/auth";
 import { useDispatch, useSelector } from "react-redux";
 import { increment, decrement } from "@/lib/store/features/counterSlice";
+import { deleteAppUser } from "@/lib/store/features/appUserSlice";
 
-const deleteDb = async () => {
+const deleteDb = async (dispatch) => {
   const res = await axios.delete("/api/admin/deleteDb");
+  dispatch(deleteAppUser());
   console.log(res.data);
 };
 
 export default function Home() {
-  const { user } = sessionAppUserClient();
   const count = useSelector((state) => state.counter.value);
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.appUserInfo?.appUser);
 
   return (
     <div style={{}}>
@@ -24,7 +25,7 @@ export default function Home() {
         Protect your website from threats with our comprehensive security
         solutions.
       </p>
-      <button className="btn mb-3" onClick={() => deleteDb()}>
+      <button className="btn mb-3" onClick={() => deleteDb(dispatch)}>
         Delete Database
       </button>
       <div>

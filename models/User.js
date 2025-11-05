@@ -1,21 +1,30 @@
 import mongoose from "mongoose";
 
-const customerObject = {
+const userSchema = new mongoose.Schema({
+  appUser: { type: mongoose.Schema.Types.ObjectId, ref: "AppUser" },
   credits: { type: Number, default: 0 },
-};
+});
 
-const appUserObject = {
+const adminSchema = new mongoose.Schema({
+  appUser: { type: mongoose.Schema.Types.ObjectId, ref: "AppUser" },
+  deleteDbCalls: { type: Number, default: 0 },
+});
+
+const rolesSchema = new mongoose.Schema({
+  roleName: { type: String, enum: ["User", "Admin"], default: "User" },
+  role: { type: mongoose.Schema.Types.ObjectId, refPath: "roles.roleName", required: true },
+});
+
+const appUserSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   username: { type: String, required: true, unique: true },
-  
-};
+  roles: [rolesSchema],
+});
 
-export const Customer =
-  mongoose.models.Customer ||
-  mongoose.model("Customer", new mongoose.Schema(customerObject));
+export const User = mongoose.models.User || mongoose.model("User", userSchema);
 
-export const Account = mongoose.connection.collection("accounts");
+export const Admin =
+  mongoose.models.Admin || mongoose.model("Admin", adminSchema);
 
 export const AppUser =
-  mongoose.models.AppUser ||
-  mongoose.model("AppUser", new mongoose.Schema(appUserObject));
+  mongoose.models.AppUser || mongoose.model("AppUser", appUserSchema);

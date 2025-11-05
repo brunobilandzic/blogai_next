@@ -1,10 +1,10 @@
 import { sessionAppUserServer } from "@/lib/actions/user";
 
 export async function GET(request) {
-  const { session, appUser } = await sessionAppUserServer();
+  const { _, appUser } = await sessionAppUserServer();
   if (appUser) {
-    console.log("Authenticated user:", appUser);
-    return Response.json({session, appUser}, {
+    console.log()
+    return Response.json({ appUser}, {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });

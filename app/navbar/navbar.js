@@ -1,9 +1,12 @@
+"use client";
+
 import { AuthNav, UnauthNav } from "./navauth";
 import Link from "next/link";
-import { sessionAppUserServer } from "@/lib/actions/user";
+import { useSelector } from "react-redux";
 
-export const Navbar = async () => {
-  const {  appUser } = await sessionAppUserServer();
+export const Navbar = () => {
+  const appUser = useSelector((state) => state.appUserInfo?.appUser);
+
   return (
     <>
       <div
