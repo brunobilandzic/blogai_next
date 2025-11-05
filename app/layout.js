@@ -1,6 +1,6 @@
 // app/layout.js
 import "./globals.css";
-import { Suspense } from 'react'
+import { Suspense } from "react";
 import Providers from "./providers";
 import { Navbar } from "./navbar/navbar";
 

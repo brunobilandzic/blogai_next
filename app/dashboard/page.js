@@ -1,7 +1,5 @@
 import { DashboardComponent } from "@/components/user/dashboard";
 import { NotLoggedInComponent } from "@/components/UI";
-import axios from "axios";
-import { getSession, useSession } from "next-auth/react";
 import { auth } from "@/auth";
 import {Customer} from "@/models/User";
 

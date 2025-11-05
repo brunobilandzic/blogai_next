@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useSession, signIn, signOut } from "next-auth/react";
+import { signIn, signOut } from "next-auth/react";
 import axios from "axios";
+import { sessionAppUserClient } from "./utils/auth";
 
 const deleteDb = async () => {
   const res = await axios.delete("/api/admin/deleteDb");
@@ -10,10 +11,7 @@ const deleteDb = async () => {
 };
 
 export default function Home() {
-  const { data: session } = useSession();
-  console.log("Session data:", session);
-  const user = session?.user;
-  console.log(`user: ${user}`);
+  const { user } = sessionAppUserClient();
 
   return (
     <div style={{}}>
@@ -26,7 +24,7 @@ export default function Home() {
       <button className="btn mb-3" onClick={() => deleteDb()}>
         Delete Database
       </button>
-      {user && (
+      {user ? (
         <div>
           <span className="font-bold mr-4">{user.name}</span>
           <button onClick={() => signOut()} className="btn">
@@ -35,6 +33,12 @@ export default function Home() {
           <Link href="/dashboard" className="ml-4">
             <button className="btn">Go to Dashboard</button>
           </Link>
+        </div>
+      ) : (
+        <div>
+          <button onClick={() => signIn()} className="btn">
+            Sign In
+          </button>
         </div>
       )}
     </div>
