@@ -1,8 +1,10 @@
 // app/layout.js
+// Root layout component that wraps the entire application
+
 import "./globals.css";
 import { Suspense } from "react";
 import Providers from "../lib/providers";
-import { Navbar } from "../components/navbar";
+import { Navbar } from "../components/navbar/main";
 
 export default function RootLayout({ children }) {
   return (

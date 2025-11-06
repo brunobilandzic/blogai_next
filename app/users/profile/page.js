@@ -1,3 +1,5 @@
+// app/users/profile/page.js
+
 import { sessionAppUserServer } from "@/lib/actions/user";
 
 import React from "react";

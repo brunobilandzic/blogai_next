@@ -1,5 +1,8 @@
 "use client";
 
+// app/page.js
+// Home page, put all in /components/home later
+
 import Link from "next/link";
 import { signIn, signOut } from "next-auth/react";
 import axios from "axios";

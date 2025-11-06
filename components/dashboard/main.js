@@ -1,3 +1,7 @@
+// components/dashboard/main.js
+// Dashboard component that displays user and customer information and actions
+
+
 export const DashboardComponent = ({ user, customer }) => {
   return (
     <div>

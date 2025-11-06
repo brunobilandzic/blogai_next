@@ -1,3 +1,8 @@
+// app/api/auth/user/route.js
+// API route to get the authenticated user's AppUser data
+// Called from a appUser provider in lib/providers.js
+// which populates the Redux store with the AppUser data
+
 import { sessionAppUserServer } from "@/lib/actions/user";
 
 export async function GET(request) {

@@ -12,7 +12,11 @@ const adminSchema = new mongoose.Schema({
 
 const rolesSchema = new mongoose.Schema({
   roleName: { type: String, enum: ["User", "Admin"], default: "User" },
-  role: { type: mongoose.Schema.Types.ObjectId, refPath: "roles.roleName", required: true },
+  role: {
+    type: mongoose.Schema.Types.ObjectId,
+    refPath: "roles.roleName",
+    required: true,
+  },
 });
 
 const appUserSchema = new mongoose.Schema({
