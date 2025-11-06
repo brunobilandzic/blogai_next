@@ -1,7 +1,7 @@
-import { DashboardComponent } from "@/components/user/dashboard";
-import { NotLoggedInComponent } from "@/components/UI";
-import { auth } from "@/auth";
-import {Customer} from "@/models/User";
+import { DashboardComponent } from "@/components/dashboard/dashboard";
+import { NotLoggedInComponent } from "@/components/UI/errors/auth";
+import { auth } from "@/lib/auth";
+import { Customer } from "@/models/User";
 
 export default async function DashboardPage() {
   const session = await auth();

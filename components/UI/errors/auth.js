@@ -4,4 +4,3 @@ export const NotLoggedInComponent = () => (
     <p className="text-xl mb-4">You must be logged in to view this page.</p>
   </div>
 );
-

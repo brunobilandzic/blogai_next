@@ -2,7 +2,7 @@
 import "./globals.css";
 import { Suspense } from "react";
 import Providers from "../lib/providers";
-import { Navbar } from "./navbar/navbar";
+import { Navbar } from "../components/navbar";
 
 export default function RootLayout({ children }) {
   return (
