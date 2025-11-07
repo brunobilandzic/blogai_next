@@ -4,11 +4,11 @@
 import "./globals.css";
 import { Suspense } from "react";
 import Providers from "../lib/providers";
-import { Navbar } from "../components/navbar/main";
+import { Navbar } from "../components/navbar"
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className="bg-gray-100 h-screen">
         <Suspense>
           <Providers>

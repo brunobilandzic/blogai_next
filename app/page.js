@@ -22,7 +22,7 @@ export default function Home() {
   const user = useSelector((state) => state.appUserInfo?.appUser);
 
   return (
-    <div style={{}}>
+    <div>
       <h1 className="text-4xl font-bold mb-4">Secure your website</h1>
       <p className="text-xl mb-4">
         Protect your website from threats with our comprehensive security
@@ -32,8 +32,8 @@ export default function Home() {
         Delete Database
       </button>
       <br />
-      <Link href="/openai/test">
-        <button className="btn mb-6">Go to OpenAI Test Page</button>
+      <Link href="/agent">
+        <button className="btn mb-6">Go to Agent</button>
       </Link>
       <div>
         <div className="mb-4">

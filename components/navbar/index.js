@@ -2,13 +2,13 @@
 
 // components/navbar/main.js
 // Navbar component that displays navigation links based on authentication status
-
-import Link from "next/link";
 import { useSelector } from "react-redux";
 import { AuthNav, UnauthNav } from "./auth";
+import { useEffect } from "react";
+import NavItems, { CommonNavItems, NavItem } from "./navItemsMap";
 
 export const Navbar = () => {
-  const appUser = useSelector((state) => state.appUserInfo?.appUser);
+  const { appUser, roles } = useSelector((state) => state.appUserInfo);
 
   return (
     <>
@@ -17,13 +17,19 @@ export const Navbar = () => {
         color="info"
         position="static"
       >
-        <Link href="/" className="font-bold text-xl">
-          My App
-        </Link>
+        <div className="flex gap-4">
+          <div className="text-xl">
+            <NavItem href="/" label="My App" className="font-bold" />
+          </div>
+          <div className="flex items-center gap-2 ">
+            {roles ? <NavItems roles={roles} /> : <CommonNavItems />}
+          </div>
+        </div>
         <div className="flex justify-end">
           {appUser ? <AuthNav username={appUser.username} /> : <UnauthNav />}
         </div>
       </div>
+      <div>{JSON.stringify({ appUser, roles })}</div>
     </>
   );
 };
