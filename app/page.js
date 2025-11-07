@@ -31,6 +31,10 @@ export default function Home() {
       <button className="btn mb-3" onClick={() => deleteDb(dispatch)}>
         Delete Database
       </button>
+      <br />
+      <Link href="/openai/test">
+        <button className="btn mb-6">Go to OpenAI Test Page</button>
+      </Link>
       <div>
         <div className="mb-4">
           <div className="text-5xl">Counter value: {count}</div>
