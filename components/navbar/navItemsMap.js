@@ -1,10 +1,18 @@
 import Link from "next/link";
 
-export function NavItem({ href, label, className = "" }) {
+export function NavItem({ href, label, className = "", onClick }) {
   return (
-    <div className={`nav-item ${className}`}>
-      <Link href={href}>{label}</Link>
-    </div>
+    <>
+      {href ? (
+        <div className={`nav-item ${className}`}>
+          <Link href={href}>{label}</Link>
+        </div>
+      ) : (
+        <div onClick={onClick} className={`nav-item ${className}`}>
+          {label}
+        </div>
+      )}
+    </>
   );
 }
 
@@ -57,7 +65,7 @@ const transformNavItems = (navItemsArray) => {
 };
 
 export const CommonNavItems = () => {
-  return <div>{transformNavItems(commonNavItems)}</div>;
+  return <>{transformNavItems(commonNavItems)}</>;
 };
 
 export default function NavItems({ roles }) {

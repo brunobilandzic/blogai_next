@@ -9,7 +9,7 @@ import { Navbar } from "../components/navbar"
 export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="bg-gray-100 h-screen">
+      <body className="bg-gray-100 h-screen w-full">
         <Suspense>
           <Providers>
             <Navbar />
