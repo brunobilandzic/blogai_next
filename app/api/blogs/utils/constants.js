@@ -93,3 +93,6 @@ export const sampleParams = {
 };
 
 export const imageExample = `<img class="slika" src="https://www.kuhinja.net/sk/{generiraj_neki_opis}.jpg" alt="Alt generiranog opisa slike" />`;
+
+export const defaultAudiences =
+  "Osobe koje vole kuhanje, kuhinjsku opremu, recepte i zdravlje.";
