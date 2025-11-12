@@ -7,7 +7,12 @@ const blogParametersSchema = new mongoose.Schema({
   theme: { type: String, required: true },
   description: { type: String, required: true },
   audience: { type: String, required: true },
-  tone: { type: String, required: true },
+  tone: {
+    type: String,
+    required: true,
+    enum: ["formal", "informal", "neutral"],
+    default: "neutral",
+  },
   length: {
     type: String,
     required: true,
