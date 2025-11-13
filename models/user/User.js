@@ -3,6 +3,9 @@ import mongoose from "mongoose";
 const userSchema = new mongoose.Schema({
   appUser: { type: mongoose.Schema.Types.ObjectId, ref: "AppUser" },
   credits: { type: Number, default: 0 },
+  blogParametersCreated: [
+    { type: mongoose.Schema.Types.ObjectId, ref: "BlogParameters" },
+  ],
 });
 
 const adminSchema = new mongoose.Schema({
@@ -32,3 +35,5 @@ export const Admin =
 
 export const AppUser =
   mongoose.models.AppUser || mongoose.model("AppUser", appUserSchema);
+
+export const Role = mongoose.models.Role || mongoose.model("Role", rolesSchema);

@@ -4,6 +4,8 @@ import mongoose from "mongoose";
 // Schema for blog parameters
 // it includes theme, description, tone, length and chapters.
 const blogParametersSchema = new mongoose.Schema({
+  userRole: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  role: { type: mongoose.Schema.Types.ObjectId, ref: "Role" },
   theme: { type: String, required: true },
   description: { type: String, required: true },
   audience: { type: String, required: true },
@@ -19,7 +21,7 @@ const blogParametersSchema = new mongoose.Schema({
     enum: ["short", "medium", "long"],
     default: "medium",
   },
-  chapters: [
+  chapterParameters: [
     { type: mongoose.Schema.Types.ObjectId, ref: "ChapterParameters" },
   ],
   promptText: { type: String },
@@ -45,7 +47,7 @@ const chapterParametersSchema = new mongoose.Schema({
 blogParametersSchema.methods.chaptersString = function () {
   let chaptersString = "";
 
-  for (let chapter of this.chapters) {
+  for (let chapter of this.chapterParameters) {
     chaptersString += chapter.chapterString() + "; ";
   }
 

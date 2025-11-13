@@ -1,7 +1,9 @@
+import { sessionAppUserServer } from "@/lib/actions/user";
+import { auth } from "@/lib/auth";
 import dbConnect from "@/lib/db/mongooseConnect";
-import { saveModel } from "@/lib/utils/db";
+import { getRoleObject } from "@/lib/roles";
+import { promiseSaveModel } from "@/lib/utils/db";
 import { validateBlogParams } from "@/lib/validators/blog";
-import { Subchapter } from "@/models/openai/blog";
 import { BlogParameters, ChapterParameters } from "@/models/openai/params";
 
 export async function GET(req) {
@@ -14,12 +16,26 @@ export async function GET(req) {
 
 export async function POST(req) {
   await dbConnect();
-  console.log("POST blog parameters route");
+  const { appUser } = await sessionAppUserServer();
+
+  if (!appUser) {
+    return Response.json(
+      { message: "Unauthorized: No app user found in session" },
+      { status: 401 }
+    );
+  }
+
+  const userRole = getRoleObject(appUser, "User");
+  if (!userRole) {
+    return Response.json(
+      { message: "Unauthorized: No user role found for app user" },
+      { status: 401 }
+    );
+  }
 
   const body = await req.json();
-  console.log("Received body:", body);
-
   const validation = validateBlogParams(body);
+
   if (validation.error) {
     console.error("Validation error:", validation.error);
     return Response.json(
@@ -32,10 +48,11 @@ export async function POST(req) {
   }
 
   const blogParameters = new BlogParameters(body);
-  console.log("Created BlogParameters instance:", blogParameters);
+  blogParameters.userRole = userRole;
+  userRole.blogParametersCreated.push(blogParameters._id);
   const chapters = [];
 
-  let saveChapter = (chapterParam) => {
+   let saveChapter = (chapterParam) => {
     return new Promise(async (resolve, reject) => {
       try {
         await chapterParam.save();
@@ -50,7 +67,7 @@ export async function POST(req) {
 
   for (let chapter of body.chapters) {
     chapter["blogParameters"] = blogParameters._id;
-    blogParameters.chapters.push(chapter._id);
+    blogParameters.chapterParameters.push(chapter._id);
     const chapterParam = new ChapterParameters(chapter);
     console.log("Created ChapterParameters instance:", chapterParam);
     let promise = saveChapter(chapterParam);
@@ -60,9 +77,10 @@ export async function POST(req) {
 
   console.log("All chapters saved:", savedChapters);
 
-  blogParameters.chapters = savedChapters;
+  blogParameters.chapterParameters = savedChapters;
 
   await blogParameters.save();
+  await userRole.save();
 
   console.log("Saved blog parameters with chapters:", {
     blogParameters,
@@ -72,7 +90,6 @@ export async function POST(req) {
     {
       message: "Blog parameters saved successfully",
       blogParameters,
-      savedChapters,
     },
     { status: 201 }
   );
