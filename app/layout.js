@@ -4,7 +4,7 @@
 import "./globals.css";
 import { Suspense } from "react";
 import Providers from "../lib/providers";
-import { Navbar } from "../components/navbar"
+import { Navbar } from "../components/UI/navbar"
 
 export default function RootLayout({ children }) {
   return (
