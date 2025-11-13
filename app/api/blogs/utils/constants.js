@@ -1,3 +1,5 @@
+import { BlogParameters } from "@/models/openai/params";
+
 export const getParamExample = () => {
   let example = "";
   Object.keys(BlogParameters.schema.obj).forEach((key) => {
@@ -96,3 +98,13 @@ export const imageExample = `<img class="slika" src="https://www.kuhinja.net/sk/
 
 export const defaultAudiences =
   "Osobe koje vole kuhanje, kuhinjsku opremu, recepte i zdravlje.";
+
+export const paramPromt = `
+  Ignoriraj sve prethodne upute. Ti si stručnjak za generiranje parametara za blog postove.
+        tvoj zadatak je generirati JSON objekt koji sadrži parametre za generiranje {bp_num} blog postova.
+        Ovo je primjer JSON objekta koji trebaš generirati:${getParamExample()}
+        Teme i publiku za svaki blog parametre nsu u formatu: tema / publika i imaju sljedeće vrijednosti:
+        {gen_themes}
+        Moraš vratiti samo JSON objekt, bez dodatnog teksta ili objašnjenja, tako da se moze spremiti u .json datoteku. 
+        Objekt mora sadržavati točno {bp_num} blog postova.
+  `;
