@@ -5,7 +5,7 @@
 
 import { sessionAppUserServer } from "@/lib/actions/user";
 
-export async function GET(request) {
+export async function GET(req) {
   const { _, appUser } = await sessionAppUserServer();
   if (appUser) {
     console.log()

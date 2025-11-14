@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const userSchema = new mongoose.Schema({
+const userRoleSchema = new mongoose.Schema({
   appUser: { type: mongoose.Schema.Types.ObjectId, ref: "AppUser" },
   credits: { type: Number, default: 0 },
   blogParameters: [
@@ -8,13 +8,13 @@ const userSchema = new mongoose.Schema({
   ],
 });
 
-const adminSchema = new mongoose.Schema({
+const adminRoleSchema = new mongoose.Schema({
   appUser: { type: mongoose.Schema.Types.ObjectId, ref: "AppUser" },
   deleteDbCalls: { type: Number, default: 0 },
 });
 
 const rolesSchema = new mongoose.Schema({
-  roleName: { type: String, enum: ["User", "Admin"], default: "User" },
+  roleName: { type: String, enum: ["UserRole", "AdminRole"], default: "UserRole" },
   role: {
     type: mongoose.Schema.Types.ObjectId,
     refPath: "roles.roleName",
@@ -28,10 +28,11 @@ const appUserSchema = new mongoose.Schema({
   roles: [rolesSchema],
 });
 
-export const User = mongoose.models.User || mongoose.model("User", userSchema);
+export const UserRole =
+  mongoose.models.UserRole || mongoose.model("UserRole", userRoleSchema);
 
-export const Admin =
-  mongoose.models.Admin || mongoose.model("Admin", adminSchema);
+export const AdminRole =
+  mongoose.models.AdminRole || mongoose.model("AdminRole", adminRoleSchema);
 
 export const AppUser =
   mongoose.models.AppUser || mongoose.model("AppUser", appUserSchema);

@@ -12,7 +12,7 @@ export async function GET(req) {
     );
   }
 
-  const userRole = getRoleObject(appUser, "User");
+  const userRole = getRoleObject(appUser, "UserRole");
   if (!userRole) {
     return Response.json(
       { message: "Unauthorized: No user role found for app user" },
@@ -40,7 +40,7 @@ export async function POST(req) {
     );
   }
 
-  const userRole = getRoleObject(appUser, "User");
+  const userRole = getRoleObject(appUser, "UserRole");
   if (!userRole) {
     return Response.json(
       { message: "Unauthorized: No user role found for app user" },

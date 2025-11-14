@@ -37,10 +37,10 @@ const commonNavItems = [
 function getRolesNavItemsArray(roleNames) {
   const navItems = [];
 
-  if (roleNames.includes("User") && !roleNames.includes("Admin")) {
+  if (roleNames.includes("UserRole") && !roleNames.includes("AdminRole")) {
     navItems.push(...loggedInNavItems);
   }
-  if (roleNames.includes("Admin")) {
+  if (roleNames.includes("AdminRole")) {
     navItems.push(...loggedInNavItems);
     navItems.push(...adminNavItems);
   }

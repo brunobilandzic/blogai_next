@@ -54,7 +54,7 @@ export const Navbar = () => {
           <div className="flex flex-col mt-2 gap-2">
             {roles ? (
               <>
-                <NavItems className="text-yellow-600" roles={roles} />
+                <NavItems preferredRole={preferredRole}  roles={roles} />
                 <ChoosePreferedRole
                   roleNames
                 />
