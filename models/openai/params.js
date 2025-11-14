@@ -20,7 +20,7 @@ const blogParametersSchema = new mongoose.Schema({
     enum: ["short", "medium", "long"],
     default: "medium",
   },
-  chapterParameters: [
+  chaptersParameters: [
     { type: mongoose.Schema.Types.ObjectId, ref: "ChapterParameters" },
   ],
   promptText: { type: String },
@@ -46,7 +46,7 @@ const chapterParametersSchema = new mongoose.Schema({
 blogParametersSchema.methods.chaptersString = function () {
   let chaptersString = "";
 
-  for (let chapter of this.chapterParameters) {
+  for (let chapter of this.chaptersParameters) {
     chaptersString += chapter.chapterString() + "; ";
   }
 

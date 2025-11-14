@@ -68,10 +68,10 @@ export async function POST(req) {
 
   const promises = [];
 
-  for (let chapter of body.chapters) {
-    chapter["blogParameters"] = blogParameters._id;
-    blogParameters.chapterParameters.push(chapter._id);
-    const chapterParam = new ChapterParameters(chapter);
+  for (let chapterParams of body.chaptersParameters) {
+    chapterParams["blogParameters"] = blogParameters._id;
+    blogParameters.chaptersParameters.push(chapterParams._id);
+    const chapterParam = new ChapterParameters(chapterParams);
     console.log("Created ChapterParameters instance:", chapterParam);
     let promise = saveChapter(chapterParam);
     promises.push(promise);
@@ -80,7 +80,7 @@ export async function POST(req) {
 
   console.log("All chapters saved:", savedChapters);
 
-  blogParameters.chapterParameters = savedChapters;
+  blogParameters.chaptersParameters = savedChapters;
 
   await blogParameters.save();
   await userRole.save();

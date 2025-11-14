@@ -4,11 +4,21 @@ import { useState } from "react";
 import {
   defaultBlogParams,
   defaultChapterParams,
+  testBlogParams,
 } from "@/components/UI/forms/constants";
 import { BlogParametersForm } from "@/components/UI/forms";
 
 export default function NewParameters() {
   const [blogParams, setBlogParams] = useState(defaultBlogParams);
+
+  const testPost = async () => {
+    const response = await fetch("/api/blogs/parameters", {
+        method: "POST",
+        body: JSON.stringify(testBlogParams),
+      });
+
+      console.log("Response:", await response.json());
+  };
 
   const onChange = (e) => {
     console.log(e.target);
@@ -20,27 +30,33 @@ export default function NewParameters() {
   };
 
   const onChangeChapter = (index, e) => {
+    const testPost = () => {
+      fetch("/api/blogs/parameters", {
+        method: "POST",
+        body: JSON.stringify(blogParams),
+      });
+    };
     const { name, value } = e.target;
-    const updatedChapters = blogParams.chapterParameters.map((chapter, i) =>
+    const updatedChapters = blogParams.chaptersParameters.map((chapter, i) =>
       i === index ? { ...chapter, [name]: value } : chapter
     );
     setBlogParams((prev) => ({
       ...prev,
-      chapterParameters: updatedChapters,
+      chaptersParameters: updatedChapters,
     }));
   };
 
   const addNewChapter = () => {
     setBlogParams((prev) => ({
       ...prev,
-      chapterParameters: [...prev.chapterParameters, defaultChapterParams],
+      chaptersParameters: [...prev.chaptersParameters, defaultChapterParams],
     }));
   };
 
   const onChangeSubChapter = (chapterIndex, subChapterIndex, e) => {
     const { value } = e.target;
 
-    const updatedChapters = blogParams.chapterParameters.map((chapter, i) => {
+    const updatedChapters = blogParams.chaptersParameters.map((chapter, i) => {
       if (i === chapterIndex) {
         const updatedSubChapters = chapter.subChapters.map((subChapter, j) =>
           j === subChapterIndex ? value : subChapter
@@ -51,12 +67,12 @@ export default function NewParameters() {
     });
     setBlogParams((prev) => ({
       ...prev,
-      chapterParameters: updatedChapters,
+      chaptersParameters: updatedChapters,
     }));
   };
 
   const onAddSubChapter = (chapterIndex) => {
-    const updatedChapters = blogParams.chapterParameters.map((chapter, i) => {
+    const updatedChapters = blogParams.chaptersParameters.map((chapter, i) => {
       if (i === chapterIndex) {
         return {
           ...chapter,
@@ -67,12 +83,13 @@ export default function NewParameters() {
     });
     setBlogParams((prev) => ({
       ...prev,
-      chapterParameters: updatedChapters,
+      chaptersParameters: updatedChapters,
     }));
   };
 
   return (
     <>
+    <button onClick={testPost}>Test Post</button>
       <BlogParametersForm
         blogParams={blogParams}
         onChange={onChange}

@@ -98,8 +98,8 @@ export const BlogParametersForm = ({
         <div>
           <h3>Chapter Parameters</h3>
           {/* Chapter parameters form will go here */}
-          {blogParams.chapterParameters.map((chapter, i) => (
-            <div>
+          {blogParams.chaptersParameters.map((chapter, i) => (
+            <div key={i} className="chapter-form">
               <div>{chapter.subChapters.length} subchapters</div>
               <div>
                 {chapter.subChapters.map((subChapter, j) => (
@@ -117,7 +117,7 @@ export const BlogParametersForm = ({
                 </button>
               </div>
 
-              <ChapterParametersForm
+              <chaptersParametersForm
                 i={i + 1}
                 key={i}
                 chapterParams={chapter}
@@ -134,7 +134,7 @@ export const BlogParametersForm = ({
   );
 };
 
-export const ChapterParametersForm = ({ chapterParams, onChange, i }) => {
+export const chaptersParametersForm = ({ chapterParams, onChange, i }) => {
   return (
     <div className="form">
       {/* Form for chapter parameters */}
