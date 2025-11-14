@@ -6,18 +6,19 @@ import {
   defaultChapterParams,
   testBlogParams,
 } from "@/components/UI/forms/constants";
-import { BlogParametersForm } from "@/components/UI/forms";
+import { BlogParametersForm } from "@/components/UI/forms/params";
 
 export default function NewParameters() {
-  const [blogParams, setBlogParams] = useState(defaultBlogParams);
+  const [blogParams, setBlogParams] = useState(testBlogParams);
 
-  const testPost = async () => {
+  const onSubmit = async (e) => {
+    e.preventDefault();
     const response = await fetch("/api/blogs/parameters", {
-        method: "POST",
-        body: JSON.stringify(testBlogParams),
-      });
+      method: "POST",
+      body: JSON.stringify(blogParams),
+    });
 
-      console.log("Response:", await response.json());
+    console.log("Response:", response.status);    
   };
 
   const onChange = (e) => {
@@ -30,12 +31,6 @@ export default function NewParameters() {
   };
 
   const onChangeChapter = (index, e) => {
-    const testPost = () => {
-      fetch("/api/blogs/parameters", {
-        method: "POST",
-        body: JSON.stringify(blogParams),
-      });
-    };
     const { name, value } = e.target;
     const updatedChapters = blogParams.chaptersParameters.map((chapter, i) =>
       i === index ? { ...chapter, [name]: value } : chapter
@@ -89,7 +84,6 @@ export default function NewParameters() {
 
   return (
     <>
-    <button onClick={testPost}>Test Post</button>
       <BlogParametersForm
         blogParams={blogParams}
         onChange={onChange}
@@ -98,6 +92,7 @@ export default function NewParameters() {
         onChangeSubChapter={onChangeSubChapter}
         onAddSubChapter={onAddSubChapter}
       />
+      <button onClick={onSubmit}>Submit</button>
     </>
   );
 }

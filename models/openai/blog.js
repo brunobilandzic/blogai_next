@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 // Schema for blog post
 const blogSchema = new mongoose.Schema({
-  BlogParameters: {
+  blogParameters: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "BlogParameters",
   },

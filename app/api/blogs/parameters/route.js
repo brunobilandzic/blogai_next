@@ -15,11 +15,9 @@ export async function GET(req) {
 }
 
 export async function POST(req) {
-  console.log("Received POST request to /api/blogs/parameters");
+  console.log("Creating new blog parameters...");
 
-  await dbConnect();
   const { appUser } = await sessionAppUserServer();
-
   if (!appUser) {
     return Response.json(
       { message: "Unauthorized: No app user found in session" },
@@ -36,7 +34,6 @@ export async function POST(req) {
   }
 
   const body = await req.json();
-  console.log("Received body:", body);
   const validation = validateBlogParams(body);
 
   if (validation.error) {
@@ -51,11 +48,11 @@ export async function POST(req) {
   }
 
   const blogParameters = new BlogParameters(body);
-  blogParameters.userRole = userRole;
+  blogParameters.role = userRole;
   userRole.blogParametersCreated.push(blogParameters._id);
   const chapters = [];
 
-   let saveChapter = (chapterParam) => {
+  let saveChapter = (chapterParam) => {
     return new Promise(async (resolve, reject) => {
       try {
         await chapterParam.save();
@@ -70,25 +67,30 @@ export async function POST(req) {
 
   for (let chapterParams of body.chaptersParameters) {
     chapterParams["blogParameters"] = blogParameters._id;
-    blogParameters.chaptersParameters.push(chapterParams._id);
     const chapterParam = new ChapterParameters(chapterParams);
-    console.log("Created ChapterParameters instance:", chapterParam);
     let promise = saveChapter(chapterParam);
     promises.push(promise);
   }
+
   const savedChapters = await Promise.all(promises);
-
-  console.log("All chapters saved:", savedChapters);
-
+  if (!savedChapters) {
+    return Response.json(
+      {
+        message: "Error saving chapter parameters",
+      },
+      { status: 500 }
+    );
+  }
+  console.log("Saved", savedChapters.length, "chapters.");
   blogParameters.chaptersParameters = savedChapters;
 
   await blogParameters.save();
   await userRole.save();
 
-  console.log("Saved blog parameters with chapters:", {
-    blogParameters,
-    chapters,
-  });
+  console.log(
+    `Blog parameters "${blogParameters.theme}" with ${blogParameters.chaptersParameters.length} chapters saved.`
+  );
+
   return Response.json(
     {
       message: "Blog parameters saved successfully",

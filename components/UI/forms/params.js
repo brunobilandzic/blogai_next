@@ -1,51 +1,5 @@
-import { defaultBlogParams, lengthOptions, toneOptions } from "./constants";
-
-export const Input = ({ label, type = "text", name, value, onChange }) => {
-  return (
-    <div className="form-group">
-      <label className="label" htmlFor={name}>
-        {label}
-      </label>
-      <input
-        type={type}
-        id={name}
-        name={name}
-        value={value}
-        onChange={onChange}
-      />
-    </div>
-  );
-};
-export const TextArea = ({ label, name, value, onChange }) => {
-  return (
-    <div className="form-group">
-      <label className="label" htmlFor={name}>
-        {label}
-      </label>
-      <textarea id={name} name={name} value={value} onChange={onChange} />
-    </div>
-  );
-};
-
-export const Select = ({ label, name, value, onChange, options }) => {
-  return (
-    <div className="form-group">
-      <label className="label" htmlFor={name}>
-        {label}
-      </label>
-      <select id={name} name={name} value={value} onChange={onChange}>
-        <option key="zero" value="">
-          Select an option
-        </option>
-        {options.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
-    </div>
-  );
-};
+import { Input, TextArea, Select } from "./elements";
+import { toneOptions, lengthOptions } from "./constants";
 
 export const BlogParametersForm = ({
   blogParams,
@@ -100,7 +54,12 @@ export const BlogParametersForm = ({
           {/* Chapter parameters form will go here */}
           {blogParams.chaptersParameters.map((chapter, i) => (
             <div key={i} className="chapter-form">
-              <div>{chapter.subChapters.length} subchapters</div>
+              <ChaptersParametersForm
+                i={i + 1}
+                key={i}
+                chapterParams={chapter}
+                onChange={(e) => onChangeChapter(i, e)}
+              />
               <div>
                 {chapter.subChapters.map((subChapter, j) => (
                   <Input
@@ -116,13 +75,6 @@ export const BlogParametersForm = ({
                   Add Subchapter
                 </button>
               </div>
-
-              <chaptersParametersForm
-                i={i + 1}
-                key={i}
-                chapterParams={chapter}
-                onChange={(e) => onChangeChapter(i, e)}
-              />
             </div>
           ))}
           <button type="button" onClick={addNewChapter}>
@@ -134,10 +86,17 @@ export const BlogParametersForm = ({
   );
 };
 
-export const chaptersParametersForm = ({ chapterParams, onChange, i }) => {
+export const ChaptersParametersForm = ({ chapterParams, onChange, i }) => {
   return (
     <div className="form">
       {/* Form for chapter parameters */}
+      <Select
+        label={`Length - Chapter ${i}`}
+        name="length"
+        value={chapterParams.length}
+        onChange={onChange}
+        options={lengthOptions}
+      />
       <Input
         type="text"
         label={`Title - Chapter ${i}`}
