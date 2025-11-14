@@ -1,10 +1,10 @@
 // app/dashboard/page.js
-import DashboardComponent from "@/components/dashboard";
+import Dashboard from "@/components/dashboard";
 
-export default async function DashboardPage() {
+export default function Page() {
   return (
     <div>
-      <DashboardComponent />
+      <Dashboard />
     </div>
   );
 }
