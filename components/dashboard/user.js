@@ -2,8 +2,8 @@ import Link from "next/link";
 
 export default function UserDashboard({ appUser }) {
   return (
-    <div className="mb-10">
-      <div className="mb-2">
+    <div className="flex flex-col gap-3">
+      <div >
         <Link href={"/blogs/parameters/new"}>
           <div className="">
             <div className="text-lg font-semibold">Create blog parameters</div>

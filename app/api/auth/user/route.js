@@ -8,7 +8,6 @@ import { sessionAppUserServer } from "@/lib/actions/user";
 export async function GET(req) {
   const { _, appUser } = await sessionAppUserServer();
   if (appUser) {
-    console.log()
     return Response.json({ appUser}, {
       status: 200,
       headers: { "Content-Type": "application/json" },

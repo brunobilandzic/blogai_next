@@ -24,6 +24,7 @@ const blogParametersSchema = new mongoose.Schema({
     { type: mongoose.Schema.Types.ObjectId, ref: "ChapterParameters" },
   ],
   promptText: { type: String },
+  createdAt: { type: Date, default: Date.now },
 });
 
 // Schema for chapter parameters
@@ -41,6 +42,7 @@ const chapterParametersSchema = new mongoose.Schema({
     enum: ["short", "medium", "long"],
     default: "medium",
   },
+  createdAt: { type: Date, default: Date.now },
 });
 
 blogParametersSchema.methods.chaptersString = function () {
