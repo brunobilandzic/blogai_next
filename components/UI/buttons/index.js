@@ -11,11 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 export const ChoosePreferedRole = ({ roleNames }) => {
   const dispatch = useDispatch();
   const preferredRole = useSelector((state) => state.appUserInfo.preferredRole);
-  console.log("Preferred role from store:", preferredRole);
-  console.log("setPreferredRole typeof:", typeof setPreferredRole);
-  console.log("deletePreferredRole typeof:", typeof deletePreferredRole);
-  console.log("setPreferredRole.type:", setPreferredRole?.type);
-  console.log("deletePreferredRole.type:", deletePreferredRole?.type);
+
   return (
     <div className="nav-item flex flex-col md:flex-row gap-2">
       {roleNames.map((roleName) => (

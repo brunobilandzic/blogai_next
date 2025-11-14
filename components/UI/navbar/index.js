@@ -17,7 +17,7 @@ export const Navbar = () => {
   );
   const [isExpanded, setIsExpanded] = useState(false);
   const user = useSession().data?.user;
-
+  const roleNames = roles?.map((role) => role.roleName);
   return (
     <div
       className={`navbar bg-slate-300 p-4 flex justify-between  w-full ${
@@ -40,11 +40,10 @@ export const Navbar = () => {
           </div>
         </div>
         <div className="items-center gap-2 hidden md:flex">
-          {roles ? (
-            <>
-              <NavItems preferredRole={preferredRole} roles={roles} />
+          {roles ? (            <>
+              <NavItems preferredRole={preferredRole} roleNames={roleNames} />
               <ChoosePreferedRole
-                roleNames={roles.map((role) => role.roleName)}
+                roleNames={roleNames}
               />
             </>
           ) : (
@@ -57,7 +56,7 @@ export const Navbar = () => {
               <>
                 <NavItems className="text-yellow-600" roles={roles} />
                 <ChoosePreferedRole
-                  roleNames={roles.map((role) => role.roleName)}
+                  roleNames
                 />
               </>
             ) : (

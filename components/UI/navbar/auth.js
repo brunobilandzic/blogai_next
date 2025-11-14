@@ -4,7 +4,6 @@ import Link from "next/link";
 import { signIn, signOut } from "next-auth/react";
 
 export const AuthNav = ({ image }) => {
-  console.log("AuthNav image prop:", image);
   return (
     <div className="flex items-center">
       <div className="mr-4">

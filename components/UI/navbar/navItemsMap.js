@@ -34,27 +34,18 @@ const commonNavItems = [
   { href: "/help", label: "Help" },
 ];
 
-function getRolesNavItemsArray(roles) {
-  console.log("Roles received for nav items:", roles);
+function getRolesNavItemsArray(roleNames) {
   const navItems = [];
-  const roleNames = roles?.map((role) => role.roleName);
-
-  console.log("User roles for nav items:", roleNames);
 
   if (roleNames.includes("User") && !roleNames.includes("Admin")) {
-    console.log("Adding logged-in nav items for User role");
     navItems.push(...loggedInNavItems);
   }
   if (roleNames.includes("Admin")) {
     navItems.push(...loggedInNavItems);
     navItems.push(...adminNavItems);
-    console.log(`navitems after admin ${JSON.stringify(navItems)}`);
   }
 
-  console.log("Adding common nav items");
-
   navItems.push(...commonNavItems);
-  console.log("Final nav items array:", navItems);
   return navItems;
 }
 
@@ -68,6 +59,13 @@ export const CommonNavItems = () => {
   return <>{transformNavItems(commonNavItems)}</>;
 };
 
-export default function NavItems({ roles }) {
-  return <> {transformNavItems(getRolesNavItemsArray(roles))} </>;
+export default function NavItems({ roleNames, preferredRole }){
+  return (
+    <>
+      {" "}
+      {transformNavItems(
+        getRolesNavItemsArray(preferredRole ? [preferredRole] : roleNames)
+      )}{" "}
+    </>
+  );
 }
