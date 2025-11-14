@@ -1,6 +1,6 @@
 export const defaultChapterParams = {
   title: "",
-  subChapters: [],
+  subChapters: [""],
   length: "",
 };
 

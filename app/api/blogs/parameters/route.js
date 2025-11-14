@@ -15,6 +15,8 @@ export async function GET(req) {
 }
 
 export async function POST(req) {
+  console.log("Received POST request to /api/blogs/parameters");
+
   await dbConnect();
   const { appUser } = await sessionAppUserServer();
 
@@ -34,6 +36,7 @@ export async function POST(req) {
   }
 
   const body = await req.json();
+  console.log("Received body:", body);
   const validation = validateBlogParams(body);
 
   if (validation.error) {

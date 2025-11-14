@@ -37,12 +37,50 @@ export default function NewParameters() {
     }));
   };
 
+  const onChangeSubChapter = (chapterIndex, subChapterIndex, e) => {
+    const { value } = e.target;
+
+    const updatedChapters = blogParams.chapterParameters.map((chapter, i) => {
+      if (i === chapterIndex) {
+        const updatedSubChapters = chapter.subChapters.map((subChapter, j) =>
+          j === subChapterIndex ? value : subChapter
+        );
+        return { ...chapter, subChapters: updatedSubChapters };
+      }
+      return chapter;
+    });
+    setBlogParams((prev) => ({
+      ...prev,
+      chapterParameters: updatedChapters,
+    }));
+  };
+
+  const onAddSubChapter = (chapterIndex) => {
+    const updatedChapters = blogParams.chapterParameters.map((chapter, i) => {
+      if (i === chapterIndex) {
+        return {
+          ...chapter,
+          subChapters: [...chapter.subChapters, ""],
+        };
+      }
+      return chapter;
+    });
+    setBlogParams((prev) => ({
+      ...prev,
+      chapterParameters: updatedChapters,
+    }));
+  };
+
   return (
-    <BlogParametersForm
-      blogParams={blogParams}
-      onChange={onChange}
-      onChangeChapter={onChangeChapter}
+    <>
+      <BlogParametersForm
+        blogParams={blogParams}
+        onChange={onChange}
+        onChangeChapter={onChangeChapter}
         addNewChapter={addNewChapter}
-    />
+        onChangeSubChapter={onChangeSubChapter}
+        onAddSubChapter={onAddSubChapter}
+      />
+    </>
   );
 }

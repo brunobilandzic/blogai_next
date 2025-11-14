@@ -52,6 +52,8 @@ export const BlogParametersForm = ({
   onChange,
   onChangeChapter,
   addNewChapter,
+  onChangeSubChapter,
+  onAddSubChapter,
 }) => {
   return (
     <div>
@@ -97,11 +99,31 @@ export const BlogParametersForm = ({
           <h3>Chapter Parameters</h3>
           {/* Chapter parameters form will go here */}
           {blogParams.chapterParameters.map((chapter, i) => (
-            <ChapterParametersForm
-              key={i}
-              chapterParams={chapter}
-              onChange={(e) => onChangeChapter(i, e)}
-            />
+            <div>
+              <div>{chapter.subChapters.length} subchapters</div>
+              <div>
+                {chapter.subChapters.map((subChapter, j) => (
+                  <Input
+                    key={j}
+                    type="text"
+                    label={`Subchapter ${j + 1}`}
+                    name={`subChapter-${j}`}
+                    value={subChapter}
+                    onChange={(e) => onChangeSubChapter(i, j, e)}
+                  />
+                ))}
+                <button type="button" onClick={() => onAddSubChapter(i)}>
+                  Add Subchapter
+                </button>
+              </div>
+
+              <ChapterParametersForm
+                i={i + 1}
+                key={i}
+                chapterParams={chapter}
+                onChange={(e) => onChangeChapter(i, e)}
+              />
+            </div>
           ))}
           <button type="button" onClick={addNewChapter}>
             Add New Chapter
@@ -112,13 +134,13 @@ export const BlogParametersForm = ({
   );
 };
 
-export const ChapterParametersForm = ({ chapterParams, onChange }) => {
+export const ChapterParametersForm = ({ chapterParams, onChange, i }) => {
   return (
     <div className="form">
       {/* Form for chapter parameters */}
       <Input
         type="text"
-        label="Title"
+        label={`Title - Chapter ${i}`}
         name="title"
         value={chapterParams.title}
         onChange={onChange}
