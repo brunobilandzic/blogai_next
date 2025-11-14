@@ -4,7 +4,6 @@ import mongoose from "mongoose";
 // Schema for blog parameters
 // it includes theme, description, tone, length and chapters.
 const blogParametersSchema = new mongoose.Schema({
-  userRole: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   role: { type: mongoose.Schema.Types.ObjectId, ref: "Role" },
   theme: { type: String, required: true },
   description: { type: String, required: true },
