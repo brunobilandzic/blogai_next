@@ -1,13 +1,28 @@
 import { sessionAppUserServer } from "@/lib/actions/user";
-import { auth } from "@/lib/auth";
-import dbConnect from "@/lib/db/mongooseConnect";
 import { getRoleObject } from "@/lib/roles";
-import { promiseSaveModel } from "@/lib/utils/db";
 import { validateBlogParams } from "@/lib/validators/blog";
 import { BlogParameters, ChapterParameters } from "@/models/openai/params";
 
 export async function GET(req) {
-  const blogParams = await BlogParameters.find({});
+  const { appUser } = await sessionAppUserServer();
+  if (!appUser) {
+    return Response.json(
+      { message: "Unauthorized: No app user found in session" },
+      { status: 401 }
+    );
+  }
+
+  const userRole = getRoleObject(appUser, "User");
+  if (!userRole) {
+    return Response.json(
+      { message: "Unauthorized: No user role found for app user" },
+      { status: 401 }
+    );
+  }
+  const blogParams = await userRole.populate("blogParameters");
+
+  console.log(blogParams);
+
   return Response.json({
     message: "Blog parameters fetched successfully",
     blogParams: blogParams,
@@ -49,7 +64,7 @@ export async function POST(req) {
 
   const blogParameters = new BlogParameters(body);
   blogParameters.role = userRole;
-  userRole.blogParametersCreated.push(blogParameters._id);
+  userRole.blogParameters.push(blogParameters._id);
   const chapters = [];
 
   let saveChapter = (chapterParam) => {

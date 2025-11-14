@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const userSchema = new mongoose.Schema({
   appUser: { type: mongoose.Schema.Types.ObjectId, ref: "AppUser" },
   credits: { type: Number, default: 0 },
-  blogParametersCreated: [
+  blogParameters: [
     { type: mongoose.Schema.Types.ObjectId, ref: "BlogParameters" },
   ],
 });

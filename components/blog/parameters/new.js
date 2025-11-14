@@ -22,7 +22,6 @@ export default function NewParameters() {
   };
 
   const onChange = (e) => {
-    console.log(e.target);
     const { name, value } = e.target;
     setBlogParams((prev) => ({
       ...prev,
