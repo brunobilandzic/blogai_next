@@ -1,15 +1,19 @@
 import { PageItem } from "@/components/UI/page/elements";
+import Link from "next/link";
 
-export function BlogParametersList({ blogParametersList }) {
+export default function BlogParametersList({ blogParametersList }) {
   console.log(`Fetched ${blogParametersList.length} blog parameters:`);
+
   return (
     <>
       <div className="flex flex-col md:flex-row gap-2 md:gap-4">
         {blogParametersList.map((params, i) => (
           <div key={i}>
-            <PageItem>
-              <BlogParameters blogParameters={params} />
-            </PageItem>
+            <Link href={`/blogs/parameters/${params._id}`}>
+              <PageItem>
+                <BlogParametersTile blogParameters={params} />
+              </PageItem>
+            </Link>
           </div>
         ))}
       </div>{" "}
@@ -17,7 +21,7 @@ export function BlogParametersList({ blogParametersList }) {
   );
 }
 
-export function BlogParameters({ blogParameters }) {
+export function BlogParametersTile({ blogParameters }) {
   return (
     <>
       <div className="border p-4 rounded-lg shadow-sm">

@@ -1,4 +1,4 @@
-import { imageExample } from "@/app/api/blogs/utils/constants";
+import { imageExample } from "@/lib/utils/prompt";
 import mongoose from "mongoose";
 
 // Schema for blog parameters

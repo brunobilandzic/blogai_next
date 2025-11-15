@@ -1,20 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import fetchResponse from "@/lib/openai/responses/fetchResponse";
+import { handleGenerateClick } from "@/lib/openai/responses/fetchResponse";
 
 export default function OAITest() {
   const [prompt, setPrompt] = useState("");
   const [response, setResponse] = useState(null);
 
-  const handleTestClick = async () => {
-    console.log("Testing OpenAI API with prompt:", prompt);
-    if (!prompt || prompt.trim() === "") {
-      alert("Please enter a prompt.");
-      return;
-    }
-    const res = await fetchResponse({ prompt });
-    setResponse(JSON.stringify(res, null, 2));
+  const handleClick = async () => {
+    const res = await handleGenerateClick(prompt);
+    setResponse(res);
   };
 
   return (
@@ -36,7 +31,12 @@ export default function OAITest() {
         </div>
       </div>
       <div className="mt-2">
-        <button onClick={handleTestClick}>Test OpenAI API</button>
+        <button
+          className="btn btn-action"
+          onClick={() => handleClick(prompt)}
+        >
+          Test OpenAI API
+        </button>
       </div>
     </div>
   );

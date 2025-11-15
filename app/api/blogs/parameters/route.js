@@ -1,7 +1,7 @@
 import { sessionAppUserServer } from "@/lib/actions/user";
 import { getRoleObject } from "@/lib/roles";
 import { validateBlogParams } from "@/lib/validators/blog";
-import { BlogParameters, ChapterParameters } from "@/models/openai/params";
+import { BlogParameters, ChapterParameters } from "@/models/openai/parameters";
 
 export async function GET(req) {
   const { appUser } = await sessionAppUserServer();

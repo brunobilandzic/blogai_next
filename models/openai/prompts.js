@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-import { getDefaultThemes, getParamExample } from "../utils";
-import { BlogParameters } from "./params";
+import { getDefaultThemes, getParamExample } from "@/lib/utils/prompt";
+import { BlogParameters } from "./parameters";
 
 // Schema for prompts associated with blog
 // it has blog parameters and the prompt text
