@@ -65,7 +65,7 @@ export async function POST(req) {
   const blogParameters = new BlogParameters(body);
   blogParameters.role = userRole;
   userRole.blogParameters.push(blogParameters._id);
-  const chapters = [];
+
 
   let saveChapter = (chapterParam) => {
     return new Promise(async (resolve, reject) => {

@@ -4,6 +4,10 @@ import mongoose from "mongoose";
 // Schema for blog parameters
 // it includes theme, description, tone, length and chapters.
 const blogParametersSchema = new mongoose.Schema({
+  blogPost: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "BlogPost",
+  },
   role: { type: mongoose.Schema.Types.ObjectId, ref: "Role" },
   theme: { type: String, required: true },
   description: { type: String, required: true },
@@ -56,7 +60,8 @@ blogParametersSchema.methods.chaptersString = function () {
 };
 
 blogParametersSchema.pre("save", async function (next) {
-  this.promptText = `ZADATAK
+  if (!this.promptText) {
+    this.promptText = `ZADATAK
         Napiši opširan HTML blog post na hrvatskom jeziku na temu ${
           this.theme
         }. Možeš prilagoditi fokus teme ciljanoj publici ${this.audience}.
@@ -67,14 +72,16 @@ blogParametersSchema.pre("save", async function (next) {
         Ne koristi riječi “poglavlje”, “tema”, “opis”, “podtema” u naslovima. Naslove piši kao u pravom blogu.
         Uključi bogat vokabular i duge, SEO-prijateljske rečenice, ali bez “keyword stuffing”-a.
 
-        STRUKTURA HTML-a (SAMO "<body>" i "<article>")
-        Ispiši isključivo element "<body>…</body>" bez "<html>", "<head>", "<title>", CSS-a ili JS-a.
+        STRUKTURA HTML-a (SAMO '<body>' i '<article>')
+        Ispiši isključivo element '<body>…</body>' bez '<html>', '<head>', '<title>', CSS-a ili JS-a.
 
+        JAKO JE BITNO, DA MI NE REMETI JSON DATOTEKU, DA NE KORISTIĐ NAVODNIKE ' U TEKSTU. GDJE MISLIŠ DA TREBAJU BITI NAVODNICI, KORISTI ' UMJESTO NJIH.
+        ZAPAMTI TO.
 
-        Unutar "<body>" koristi semantički HTML ovim redoslijedom:
+        Unutar '<body>' koristi semantički HTML ovim redoslijedom:
 
         1. Bez naslova stranice ili glavnog naslova.
-        2. Uvodni odlomak sa naslovom koji ističe da je to uvodni odlomak, ne direktno, nego suptilno sažeto postavite kontekst i vrijednost za čitatelja dI prikladnom slikom. Ne piši o publici, piši za publiku. Ne koristi izraze poput "opis bloga:" ili "ciljana publika:".
+        2. Uvodni odlomak sa naslovom koji ističe da je to uvodni odlomak, ne direktno, nego suptilno sažeto postavite kontekst i vrijednost za čitatelja dI prikladnom slikom. Ne piši o publici, piši za publiku. Ne koristi izraze poput 'opis bloga:' ili 'ciljana publika:'.
         3. Glavna tijela članka u sekcijama:
         - Za svako poglavlje iz ${this.chaptersString()} niza  za naziv sekcije (naslov možete promijeniti ako postoji prikladnija varijanta).
         - Ispod <h2> napišite opis sekcije (možete ga nadopuniti i prilagoditi publici).
@@ -82,7 +89,7 @@ blogParametersSchema.pre("save", async function (next) {
         - Svaki (pod)odjeljak mora imati najmanje 5 potpunih rečenica.
         - Dodajte dodatne sekcije ako doprinose jasnoći i potpunosti teme.
         6. Zaključak s jasnim “takeaways” (ključni savjeti / koraci), naslov poglavlja treba biti prikladan za čitatelja.
-        7. ako postoje, <ul> i <ol> elementi trebaju imati class="list"
+        7. ako postoje, <ul> i <ol> elementi trebaju imati class='list'
         8. Ne izmišljaj resurse ni reference; ako ih spominješ, sadržaj zaista mora biti prisutan u članku.
 
 
@@ -105,8 +112,8 @@ blogParametersSchema.pre("save", async function (next) {
 
         U svakoj većoj sekciji dodaj barem jednu relevantnu sliku.
         Format slike mora biti točno kao u primjeru {img_example} – zadrži isti hostname i path, zamijeni samo opis slike s onime što slika prikazuje, pogodno za SEO. Tako da tako i nazovem datoteku.
-        Za svaku sliku koristi "<figure class="fig">", unutar nje "<img>" i "<figcaption>" <figcaption> ne smije započeti sa "slika opisuje..." nego samo napiši kratku rečenicu o članku i slici potpoglavlja u kojoj se nalazi.
-        U "<img>" obavezno stavi "alt" i "title" atribute s deskriptivnim, SEO-prijateljskim tekstom.
+        Za svaku sliku koristi '<figure class='fig'>', unutar nje '<img>' i '<figcaption>' <figcaption> ne smije započeti sa 'slika opisuje...' nego samo napiši kratku rečenicu o članku i slici potpoglavlja u kojoj se nalazi.
+        U '<img>' obavezno stavi 'alt' i 'title' atribute s deskriptivnim, SEO-prijateljskim tekstom.
         Slike moraju biti konkretno vezane uz sekciju u kojoj se nalaze. Moraju se nalaziti odmah nakon naslova sekcije ili podsekcije.
         Primjer formata slike: ${imageExample}
 
@@ -120,21 +127,21 @@ blogParametersSchema.pre("save", async function (next) {
 
         IZLAZNI FORMAT (STROGO SE DRŽI REDOSLIJEDA)
 
-        1. Prvo ispiši kompletan HTML sadržaj isključivo u "<body>…</body>".
+        1. Prvo ispiši kompletan HTML sadržaj isključivo u '<body>…</body>'.
         2. Napiši SEO s obzirom na temu blog posta ${
           this.theme
         } i njegov sadržaj.
-        2. Nakon "</body>" ispiši tri SEO linije bez ikakvih tagova ili dodatnog markup-a, točno ovim formatom (jedna stavka po liniji):
+        2. Nakon '</body>' ispiši tri SEO linije bez ikakvih tagova ili dodatnog markup-a, točno ovim formatom (jedna stavka po liniji):
 
-        """
+        '''
         title - generiraj SEO-prijateljski naslov od 50-60 znakova
         description - generiraj SEO-prijateljski meta opis od 150-160 znakova
         keywords - generiraj 5-10 relevantnih ključnih riječi ili fraza, odvojene zarezom
 
         bez navodnika i bez ikakvog dodatnog teksta
-        """
+        '''
 
-        Nakon "</body>", ispiši sljedeće blokove teksta, bez HTML tagova i bez dodatnog markup-a, redom:
+        Nakon '</body>', ispiši sljedeće blokove teksta, bez HTML tagova i bez dodatnog markup-a, redom:
 
         Blog title,
         Ciljana publika: Cijeli blog post mora biti izričito namijenjen publici ${
@@ -144,10 +151,11 @@ blogParametersSchema.pre("save", async function (next) {
 
         DODATNE NAPOMENE
 
+        Ni u kojem slučaju nemoj koristiti navodnike ', već samo smiješ koristiti ' umjesto njih gdje je potrebno.
         Ako je ciljna publika specificirana, ton i primjeri prilagodi njima; inače piši za širu publiku.
         Ako teme iz ${this.chaptersString()} nisu dovoljno sveobuhvatne, smiješ ih izmijeniti ili dodati nove da članak bude potpun.
         Ne uključuj nikakve napomene o tome da si AI ili kako generiraš sadržaj.
-        Ne uključuj ništa osim traženog: "<body>…</body>", zatim SEO linije meni za uporabu.
+        Ne uključuj ništa osim traženog: '<body>…</body>', zatim SEO linije meni za uporabu.
 
 
         ULAZNI PODACI
@@ -156,6 +164,7 @@ blogParametersSchema.pre("save", async function (next) {
         Opis bloga (dopuni i prilagodi publici): ${this.description}
         Predložene sekcije i podpoglavlja: ${this.chaptersString()}
         Primjer formata slike: ${imageExample}`;
+  }
 
   next();
 });
