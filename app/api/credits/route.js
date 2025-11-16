@@ -9,28 +9,29 @@ export async function POST(req) {
       { status: 401 }
     );
   }
-  //const body = await req.json();
 
-  const userRoleEntry = appUser.roles.find(
+  const body = await req.json();
+  console.log("Received body:", body);
+  const { addCreditsAmount } = body;
+  if (typeof addCreditsAmount !== "number" || addCreditsAmount <= 0) {
+    return Response.json(
+      { message: "Invalid credits amount" },
+      { status: 400 }
+    );
+  }
+
+  const userRole = appUser.roles.find(
     (role) => role.roleName === "UserRole"
-  );
-  if (!userRoleEntry) {
+  )?.role;
+
+  if (!userRole) {
     return Response.json(
       { message: "UserRole not found for the app user" },
       { status: 404 }
     );
   }
 
-  const userRoleId = userRoleEntry.role._id;
-  const userRole = await UserRole.findById(userRoleId);
-  if (!userRole) {
-    return Response.json(
-      { message: "UserRole document not found" },
-      { status: 404 }
-    );
-  }
-
-  userRole.credits += 10;
+  userRole.credits += addCreditsAmount;
   await userRole.save();
 
   return Response.json(

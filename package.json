@@ -14,7 +14,7 @@
     "@emotion/styled": "^11.14.1",
     "@mui/material": "^7.3.4",
     "@reduxjs/toolkit": "^2.10.1",
-    "axios": "^1.13.1",
+    "axios": "^1.13.2",
     "joi": "^18.0.1",
     "mongodb": "^6.20.0",
     "mongoose": "^8.19.2",

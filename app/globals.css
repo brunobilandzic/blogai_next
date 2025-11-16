@@ -4,28 +4,28 @@
 
 @tailwind utilities;
 
-
 /* Global layout styles */
 
 .layout {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    padding: 20px;
-
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  padding: 20px;
 }
 
 /*Button styles*/
 
 .btn {
-    @apply bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-fit;
+  @apply bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-fit cursor-pointer;
 }
 
 .btn-action {
-    @apply bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded;
+  @apply bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded;
 }
 
+.btn-danger {
+  @apply bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded;
+}
 
-
-
+/* Repetition utility classes */
 

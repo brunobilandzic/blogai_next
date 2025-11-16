@@ -1,0 +1,19 @@
+.container {
+  @apply p-4 bg-white rounded-lg shadow-md z-30 absolute left-1/2 min-w-96;
+}
+
+.header {
+  @apply flex justify-between items-center h-12 p-4 border border-gray-300;
+}
+
+.body {
+  @apply mt-4;
+}
+
+.footer {
+  @apply flex mt-4 justify-start gap-2 items-center;
+}
+
+.close {
+  @apply cursor-pointer text-gray-500 hover:text-gray-700;
+}
