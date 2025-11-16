@@ -2,6 +2,15 @@ import Link from "next/link";
 import { PageItem } from "../UI/page/elements";
 
 export default function CreditsDashboardTile({ credits }) {
+  const addCredits = async () => {
+    console.log("Add credits clicked");
+    const response = await fetch("/api/credits", {
+      method: "POST",
+    });
+    const data = await response.json();
+    console.log("Credits added:", data);
+  };
+
   return (
     <div>
       <PageItem>
@@ -15,9 +24,9 @@ export default function CreditsDashboardTile({ credits }) {
         </div>
         <hr />
         <div>
-          <Link href={"/credits/add"}>
-            <div className="btn">Add Credits</div>
-          </Link>
+          <div className="btn" onClick={addCredits}>
+            Add Credits
+          </div>
         </div>
       </PageItem>
     </div>
