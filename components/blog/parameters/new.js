@@ -18,7 +18,7 @@ export default function NewParameters() {
       body: JSON.stringify(blogParams),
     });
 
-    console.log("Response:", response.status);    
+    setBlogParams(defaultBlogParams);
   };
 
   const onChange = (e) => {
