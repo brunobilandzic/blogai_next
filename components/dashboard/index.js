@@ -1,9 +1,9 @@
 "use client";
 
 import { useSelector } from "react-redux";
-import PrametersDashboardTile from "../parameters";
-import { PageItem } from "../UI/page/elements";
+import { PrametersDashboardTile } from "../blog/parameters/Parameters";
 import CreditsDashboardTile from "../credits";
+
 // components/dashboard/main.js
 // Dashboard component that displays user and customer information and actions
 

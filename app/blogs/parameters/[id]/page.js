@@ -1,4 +1,4 @@
-import { PrametersResponseWrapper } from "@/components/wrappers/parametersResponse";
+import { PrametersResponseWrapper } from "@/components/wrappers/PrametersResponseWrapper";
 import clean from "@/lib/db/clean";
 import { BlogParameters } from "@/models/openai/parameters";
 

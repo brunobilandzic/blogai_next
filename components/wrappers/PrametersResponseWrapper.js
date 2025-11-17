@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import ParametersComponent from "../blog/parameters/parameters";
+import ParametersComponent from "../blog/parameters/Parameters";
 
 export function PrametersResponseWrapper({ blogParameters }) {
   const [responseMessage, setResponseMessage] = useState(null);

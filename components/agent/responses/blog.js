@@ -1,6 +1,6 @@
 "use client";
 
-export default function BlogResponse({ response }) {
+export default function BlogResponse({ blogPost }) {
   return (
     <div>
       <h2 className="text-2xl font-bold mb-4">Blog Response</h2>
