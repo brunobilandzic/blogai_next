@@ -37,8 +37,15 @@
 
 /* repetitive utility classes */
 
+.fst {
+  @apply flex justify-start items-start;
+}
+
+.fsc {
+  @apply flex justify-start items-center;
+}
 .fbc {
-  @apply flex justify-center items-center;
+  @apply flex justify-between items-center;
 }
 
 .fcc {
@@ -49,4 +56,22 @@
 
 .tile-title {
   @apply text-lg font-semibold py-2;
+}
+
+/* form styles */
+
+.form {
+  @apply flex flex-col gap-4;
+}
+
+.input-field {
+  @apply w-full border border-gray-300 rounded px-2 py-2 hover:border-gray-400;
+}
+
+.textarea-field {
+  @apply w-full h-32 border border-gray-300 rounded px-2 py-1 hover:border-gray-400;
+}
+
+.form-select {
+  @apply w-full border border-gray-300 rounded px-2 py-2 hover:border-gray-400;
 }

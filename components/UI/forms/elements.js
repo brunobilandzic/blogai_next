@@ -1,39 +1,38 @@
 export const Input = ({ label, type = "text", name, value, onChange }) => {
   return (
+    <input
+      className="input-field"
+      type={type}
+      id={name}
+      name={name}
+      placeholder={label}
+      value={value}
+      onChange={onChange}
+    />
+  );
+};
+export const TextArea = ({ label, name, value, onChange, rows }) => {
+  return (
     <div className="form-group">
-      <label className="label" htmlFor={name}>
-        {label}
-      </label>
-      <input
-        type={type}
+      <textarea
+        className="textarea-field"
         id={name}
         name={name}
         value={value}
+        placeholder={label}
         onChange={onChange}
+        rows={rows || 4}
       />
-    </div>
-  );
-};
-export const TextArea = ({ label, name, value, onChange }) => {
-  return (
-    <div className="form-group">
-      <label className="label" htmlFor={name}>
-        {label}
-      </label>
-      <textarea id={name} name={name} value={value} onChange={onChange} />
     </div>
   );
 };
 
 export const Select = ({ label, name, value, onChange, options }) => {
   return (
-    <div className="form-group">
-      <label className="label" htmlFor={name}>
-        {label}
-      </label>
-      <select id={name} name={name} value={value} onChange={onChange}>
-        <option key="zero" value="">
-          Select an option
+    <div>
+      <select  className="form-select" id={name} name={name} value={value} onChange={onChange}>
+        <option key="zero" disabled hidden value="">
+          {label}
         </option>
         {options.map((option) => (
           <option key={option.value} value={option.value}>
@@ -44,4 +43,3 @@ export const Select = ({ label, name, value, onChange, options }) => {
     </div>
   );
 };
-

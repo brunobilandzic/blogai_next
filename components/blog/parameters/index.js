@@ -61,16 +61,9 @@ export default function ParametersComponent({
 export function NewParametersDashboardTile() {
   return (
     <PageItem>
-      <Link href={"/blogs/parameters/new"}>
+      <Link href={"/blog/parameters/new"}>
         <div className="tile-title">
           Create blog parameters
-          {/* <div>
-                <img
-                  src="/image/dashboard_links/new_parameters.jpg"
-                  alt="Create new blog parameters"
-                  className="w-full h-auto rounded-md mt-2"
-                />
-              </div> */}
         </div>
       </Link>
     </PageItem>

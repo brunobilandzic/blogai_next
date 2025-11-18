@@ -58,7 +58,7 @@ export function BlogPostContent({ content }) {
           Text
         </div>
       </div>{" "}
-      {html && <div dangerouslySetInnerHTML={{ __html: content }} />}
+      {html && <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: content?.replace(/\n/g, "<br />") }} />}
       {!html && <div>{content}</div>}
     </>
   );

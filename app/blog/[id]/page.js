@@ -1,4 +1,5 @@
 import dbConnect from "@/lib/db/mongooseConnect";
+import {} from "@/models/openai"
 import { BlogPost } from "@/models/openai/blog";
 import clean from "@/lib/db/clean";
 import { BlogPostComponent } from "@/components/blog/blog";

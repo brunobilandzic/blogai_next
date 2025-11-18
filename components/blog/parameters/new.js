@@ -9,15 +9,14 @@ import {
 import { BlogParametersForm } from "@/components/UI/forms/params";
 
 export default function NewParameters() {
-  const [blogParams, setBlogParams] = useState(testBlogParams);
+  const [blogParams, setBlogParams] = useState(defaultBlogParams);
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch("/api/blog/parameters", {
+    await fetch("/api/blog/parameters", {
       method: "POST",
       body: JSON.stringify(blogParams),
     });
-
     setBlogParams(defaultBlogParams);
   };
 
