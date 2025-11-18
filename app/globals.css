@@ -34,5 +34,19 @@
 .btn-inactive {
   @apply bg-gray-500;
 }
-/* Repetition utility classes */
 
+/* repetitive utility classes */
+
+.fbc {
+  @apply flex justify-center items-center;
+}
+
+.fcc {
+  @apply flex flex-col justify-center items-center;
+}
+
+/* page outlook */
+
+.tile-title {
+  @apply text-lg font-semibold py-2;
+}

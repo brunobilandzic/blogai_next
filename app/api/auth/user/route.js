@@ -3,15 +3,18 @@
 // Called from a appUser provider in lib/providers.js
 // which populates the Redux store with the AppUser data
 
-import { sessionAppUserServer } from "@/lib/actions/user";
+import { sessionAppUserServer } from "@/lib/actions/userServer";
 
 export async function GET(req) {
   const { _, appUser } = await sessionAppUserServer();
   if (appUser) {
-    return Response.json({ appUser}, {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
+    return Response.json(
+      { appUser },
+      {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
   } else {
     return Response.json(
       { error: "Unauthorized" },

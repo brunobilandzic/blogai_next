@@ -1,4 +1,4 @@
-import { sessionAppUserServer } from "@/lib/actions/user";
+import { sessionAppUserServer } from "@/lib/actions/userServer";
 import { getRoleObject } from "@/lib/roles";
 import { validateBlogParams } from "@/lib/validators/blog";
 import { BlogParameters, ChapterParameters } from "@/models/openai/parameters";
@@ -65,7 +65,6 @@ export async function POST(req) {
   const blogParameters = new BlogParameters(body);
   blogParameters.role = userRole;
   userRole.blogParameters.push(blogParameters._id);
-
 
   let saveChapter = (chapterParam) => {
     return new Promise(async (resolve, reject) => {

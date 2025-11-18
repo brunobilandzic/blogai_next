@@ -17,15 +17,12 @@ export function NavItem({ href, label, className = "", onClick }) {
 }
 
 const loggedInNavItems = [
-  { href: "/users/profile", label: "Profile" },
-  { href: "/dashboard", label: "Dashboard" },
-  { href: "/agent", label: "Agent" },
+  { href: "/user/profile", label: "Profile" },
+  { href: "/user/dashboard", label: "Dashboard" },
 ];
 
 const adminNavItems = [
-  { href: "/admin/dashboard", label: "Admin Dashboard" },
-  { href: "/admin/users", label: "User Management" },
-  { href: "/admin/settings", label: "System Settings" },
+  { href: "/admin/users", label: "Manage Users" },
 ];
 
 const commonNavItems = [

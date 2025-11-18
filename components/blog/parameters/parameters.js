@@ -20,9 +20,15 @@ export default function ParametersComponent({
   } = blogParameters;
 
   const onGenerateClick = async () => {
-    console.log("Generating blog post with prompt:", blogParameters.promptText.length);
+    console.log(
+      "Generating blog post with prompt:",
+      blogParameters.promptText.length
+    );
     setResponseMessage("Generating blog post...");
-    const res = await handleGenerateClick(blogParameters.promptText, blogParameters._id);
+    const res = await handleGenerateClick(
+      blogParameters.promptText,
+      blogParameters._id
+    );
     console.log("Blog post generated client string:", res);
     setResponseMessage(res);
   };
@@ -52,37 +58,21 @@ export default function ParametersComponent({
   );
 }
 
-export function PrametersDashboardTile({ appUser }) {
+export function NewParametersDashboardTile() {
   return (
     <PageItem>
-      <div className="flex flex-col gap-3">
-        <div>
-          <Link href={"/blogs/parameters/new"}>
-            <div className="">
-              <div className="text-lg font-semibold">
-                Create blog parameters
-              </div>
-              <div>
+      <Link href={"/blogs/parameters/new"}>
+        <div className="tile-title">
+          Create blog parameters
+          {/* <div>
                 <img
                   src="/image/dashboard_links/new_parameters.jpg"
                   alt="Create new blog parameters"
                   className="w-full h-auto rounded-md mt-2"
                 />
-              </div>
-            </div>
-          </Link>
+              </div> */}
         </div>
-        <hr />
-        <div>
-          <Link href={"/blogs/parameters/all"}>
-            <div className="">
-              <div className="text-lg hover:text-blue-950 font-semibold">
-                View all blog parameters
-              </div>
-            </div>
-          </Link>
-        </div>
-      </div>
+      </Link>
     </PageItem>
   );
 }

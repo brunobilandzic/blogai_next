@@ -1,4 +1,4 @@
-import { sessionAppUserServer } from "@/lib/actions/user";
+import { sessionAppUserServer } from "@/lib/actions/userServer";
 import { BlogParameters } from "@/models/openai/parameters";
 import { BlogPost } from "@/models/openai/blog";
 

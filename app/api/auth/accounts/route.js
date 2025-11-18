@@ -1,11 +1,17 @@
-import { auth } from "@/lib/auth";
-import { sessionAppUserServer } from "@/lib/actions/user";
+import { sessionAppUserServer } from "@/lib/actions/userServer";
 
 export async function GET(req) {
-  const {session, appUser} = await sessionAppUserServer();
+  const { session, appUser } = await sessionAppUserServer();
 
-  return Response.json({status: session?.status, user: appUser || null, expires: session?.expires || null}, {
-    status: 200,
-    headers: { "Content-Type": "application/json" },
-  });
+  return Response.json(
+    {
+      status: session?.status,
+      user: appUser || null,
+      expires: session?.expires || null,
+    },
+    {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    }
+  );
 }

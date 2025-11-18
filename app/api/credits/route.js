@@ -1,4 +1,4 @@
-import { sessionAppUserServer } from "@/lib/actions/user";
+import { sessionAppUserServer } from "@/lib/actions/userServer";
 import { UserRole } from "@/models/user/User";
 
 export async function POST(req) {
