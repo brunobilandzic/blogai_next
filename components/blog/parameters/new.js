@@ -13,7 +13,7 @@ export default function NewParameters() {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch("/api/blogs/parameters", {
+    const response = await fetch("/api/blog/parameters", {
       method: "POST",
       body: JSON.stringify(blogParams),
     });

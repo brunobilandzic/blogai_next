@@ -1,5 +1,5 @@
 import { sessionAppUserServer } from "@/lib/actions/userServer";
-import { getRoleObject } from "@/lib/roles";
+import { getRoleObject } from "@/lib/actions/userServer";
 import { validateBlogParams } from "@/lib/validators/blog";
 import { BlogParameters, ChapterParameters } from "@/models/openai/parameters";
 

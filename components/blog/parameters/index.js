@@ -26,7 +26,7 @@ export default function ParametersComponent({
     );
     setResponseMessage("Generating blog post...");
     const res = await handleGenerateClick(
-      blogParameters.promptText,
+      "hello world i am testing write some html, short",
       blogParameters._id
     );
     console.log("Blog post generated client string:", res);
@@ -105,5 +105,15 @@ export function ChapterParameters({ chapterParameter }) {
         </ul>
       </div>
     </div>
+  );
+}
+
+export function ViewAllParametersTile() {
+  return (
+    <PageItem>
+      <Link href="/blog/parameters">
+        <div className="tile-title">View all created parameters</div>
+      </Link>
+    </PageItem>
   );
 }

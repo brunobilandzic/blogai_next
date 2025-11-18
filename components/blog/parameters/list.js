@@ -6,10 +6,10 @@ export default function BlogParametersList({ blogParametersList }) {
 
   return (
     <>
-      <div className="flex flex-col md:flex-row gap-2 md:gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-2 md:gap-4">
         {blogParametersList.map((params, i) => (
           <div key={i}>
-            <Link href={`/blogs/parameters/${params._id}`}>
+            <Link href={`/blog/parameters/${params._id}`}>
               <PageItem>
                 <BlogParametersTile blogParameters={params} />
               </PageItem>
