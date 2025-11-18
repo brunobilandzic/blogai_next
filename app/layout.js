@@ -13,7 +13,7 @@ export default function RootLayout({ children }) {
         <Suspense>
           <Providers>
             <Navbar />
-            <div className="max-w-9/12 mx-auto p-4">{children}</div>
+            <div className="max-w-9/12 mx-auto p-4 pb-8">{children}</div>
           </Providers>
         </Suspense>
       </body>

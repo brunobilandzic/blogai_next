@@ -9,6 +9,7 @@ export default function ParametersComponent({
   setResponseMessage,
 }) {
   const {
+    _id,
     theme,
     description,
     tone,
@@ -19,12 +20,14 @@ export default function ParametersComponent({
   } = blogParameters;
 
   const onGenerateClick = async () => {
-    console.log("Generating blog post with prompt:", blogParameters.promptText);
+    console.log("Generating blog post with prompt:", blogParameters.promptText.length);
     setResponseMessage("Generating blog post...");
-    const res = await handleGenerateClick(blogParameters.promptText);
+    const res = await handleGenerateClick(blogParameters.promptText, blogParameters._id);
     console.log("Blog post generated client string:", res);
     setResponseMessage(res);
   };
+
+  console.log("id:", _id);
 
   return (
     <div className="border p-4 rounded-lg flex flex-col gap-2 shadow-sm">

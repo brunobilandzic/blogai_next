@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import ParametersComponent from "../blog/parameters/Parameters";
+import ResponseComponent from "../blog/blog/Response";
 
 export function PrametersResponseWrapper({ blogParameters }) {
   const [responseMessage, setResponseMessage] = useState(null);
@@ -14,12 +15,9 @@ export function PrametersResponseWrapper({ blogParameters }) {
           setResponseMessage={setResponseMessage}
         />
       </div>
-      {responseMessage && (
-        <div className="mt-4 p-4 border rounded bg-gray-50">
-          <h3 className="font-semibold mb-2">Response:</h3>
-          {responseMessage}
-        </div>
-      )}
+      <div>
+        <ResponseComponent responseMessage={responseMessage} />
+      </div>
     </div>
   );
 }
