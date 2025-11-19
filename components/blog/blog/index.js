@@ -5,18 +5,12 @@ import Link from "next/link";
 
 export const BlogPostComponent = ({ blogPost }) => {
   const { blogParameters, content, createdAt } = blogPost;
-  const { theme, tone, length, audience } = blogParameters;
 
-  console.log("Rendering BlogPostComponent for theme:", theme);
-
+  console.log("Rendering BlogPostComponent for theme:", blogParameters.theme);
+  
   return (
     <div className="">
-      <div className="font-semibold text-lg ">{theme}</div>
-      <div className="flex flex-col gap-1">
-        <div className="">Tone: {tone}</div>
-        <div className="">Length: {length}</div>
-        <div className="">Audience: {audience}</div>
-      </div>
+      <BlogPostInfo {...blogParameters} />
       <div className="text-sm text-gray-600">
         Created At: {new Date(createdAt).toLocaleString("hr-HR")}
       </div>
@@ -58,8 +52,29 @@ export function BlogPostContent({ content }) {
           Text
         </div>
       </div>{" "}
-      {html && <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: content?.replace(/\n/g, "<br />") }} />}
+      {html && (
+        <div
+          className="prose max-w-none"
+          dangerouslySetInnerHTML={{
+            __html: content?.replace(/\n/g, "<br />"),
+          }}
+        />
+      )}
       {!html && <div>{content}</div>}
     </>
   );
 }
+
+export const BlogPostInfo = ({ theme, tone, length, audience }) => {
+  return (
+    <div>
+      {" "}
+      <div className="font-semibold text-lg ">{theme}</div>
+      <div className="flex flex-col gap-1">
+        <div className="">Tone: {tone}</div>
+        <div className="">Length: {length}</div>
+        <div className="">Audience: {audience}</div>
+      </div>
+    </div>
+  );
+};
