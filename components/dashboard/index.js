@@ -5,7 +5,7 @@ import {
   NewParametersDashboardTile,
   ViewAllParametersTile,
 } from "../blog/parameters";
-import CreditsDashboardTile from "../credits";
+import {CreditsDashboardTile} from "../credits";
 import { AllBlogsDashboardTile } from "../blog/blog";
 import { USER_ROLE } from "@/lib/constants";
 

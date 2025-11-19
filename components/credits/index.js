@@ -6,7 +6,7 @@ import axios from "axios";
 import { setAppUserFromApi } from "@/lib/providers";
 import { Input } from "../UI/forms/elements";
 
-export default function CreditsDashboardTile({ credits }) {
+export function CreditsDashboardTile({ credits }) {
   const dispatch = useDispatch();
   const [addCreditsPopupOpen, setAddCreditsPopupOpen] = useState(false);
   const [addCreditsAmount, setAddCreditsAmount] = useState(0);

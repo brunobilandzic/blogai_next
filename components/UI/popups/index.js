@@ -26,7 +26,7 @@ function Backdrop({ onCancel }) {
   return (
     <div
       onClick={onCancel}
-      className="fixed top-0 left-0 z-20 w-full h-screen bg-black "
+      className="fixed top-0 left-0 z-20 w-full h-screen bg-black opacity-40 "
     ></div>
   );
 }

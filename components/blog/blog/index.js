@@ -7,7 +7,7 @@ export const BlogPostComponent = ({ blogPost }) => {
   const { blogParameters, content, createdAt } = blogPost;
 
   console.log("Rendering BlogPostComponent for theme:", blogParameters.theme);
-  
+
   return (
     <div className="">
       <BlogPostInfo {...blogParameters} />
@@ -24,11 +24,11 @@ export const BlogPostComponent = ({ blogPost }) => {
 export const AllBlogsDashboardTile = () => {
   console.log("Rendering AllBlogsDashboardTile");
   return (
-    <PageItem>
-      <Link href={"/blog"}>
+    <Link href={"/blog"}>
+      <PageItem>
         <div className="tile-title">View All Blogs</div>
-      </Link>
-    </PageItem>
+      </PageItem>
+    </Link>
   );
 };
 

@@ -20,20 +20,13 @@ export default function ParametersComponent({
   } = blogParameters;
 
   const onGenerateClick = async () => {
-    console.log(
-      "Generating blog post with prompt:",
-      blogParameters.promptText.length
-    );
     setResponseMessage("Generating blog post...");
     const res = await handleGenerateClick(
       "hello world i am testing write some html, short",
       blogParameters._id
     );
-    console.log("Blog post generated client string:", res);
     setResponseMessage(res);
   };
-
-  console.log("id:", _id);
 
   return (
     <div className="border p-4 rounded-lg flex flex-col gap-2 shadow-sm">
@@ -60,18 +53,15 @@ export default function ParametersComponent({
 
 export function NewParametersDashboardTile() {
   return (
-    <PageItem>
-      <Link href={"/blog/parameters/new"}>
-        <div className="tile-title">
-          Create blog parameters
-        </div>
-      </Link>
-    </PageItem>
+    <Link href={"/blog/parameters/new"}>
+      <PageItem>
+        <div className="tile-title">Create blog parameters</div>
+      </PageItem>
+    </Link>
   );
 }
 
 export function ChaptersParameters({ chaptersParameters }) {
-  console.log("chaptersParameters:", chaptersParameters);
   return (
     <div className="flex flex-wrap w-full">
       {chaptersParameters.map((chapterParameters, i) => (
@@ -84,7 +74,6 @@ export function ChaptersParameters({ chaptersParameters }) {
 }
 
 export function ChapterParameters({ chapterParameter }) {
-  console.log("chapterParameter:", chapterParameter);
   return (
     <div className="border p-4 rounded-lg flex flex-col gap-2 shadow-sm text-sm ">
       <div className="font-semibold text-md ">{chapterParameter.title}</div>
@@ -103,10 +92,10 @@ export function ChapterParameters({ chapterParameter }) {
 
 export function ViewAllParametersTile() {
   return (
-    <PageItem>
-      <Link href="/blog/parameters">
+    <Link href="/blog/parameters">
+      <PageItem>
         <div className="tile-title">View all created parameters</div>
-      </Link>
-    </PageItem>
+      </PageItem>
+    </Link>
   );
 }

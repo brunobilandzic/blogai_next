@@ -1,5 +1,5 @@
 .container {
-  @apply p-4 bg-white rounded-lg shadow-md z-30 absolute left-1/2 min-w-96;
+  @apply p-4 bg-white rounded-lg shadow-md z-30 absolute -left-1/2 top-1/2 min-w-96;
 }
 
 .header {
