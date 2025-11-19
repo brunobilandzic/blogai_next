@@ -16,7 +16,7 @@ export default function Dashboard() {
   const { roles, preferredRole } = useSelector((state) => state.appUserInfo);
 
   let userRole = roles
-    ? roles.find((role) => role.roleName === USER_ROLE)?.role
+    ? roles.find((role) => role.roleName === preferredRole)?.role
     : null;
 
   return (
