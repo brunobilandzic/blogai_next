@@ -1,8 +1,13 @@
 "use client";
 
-import { handleGenerateClick } from "@/lib/openai/responses/fetchResponse";
+import { handleGenerateClick } from "@/lib/actions/blog/blog";
 import { PageItem } from "@/components/UI/page/elements";
 import Link from "next/link";
+import { getUserRoleClient } from "@/lib/actions/userClient";
+import { useDispatch, useSelector } from "react-redux";
+import { deductCredits } from "@/lib/store/features/appUserSlice";
+import { GENERATE_BLOG_POST_COST } from "@/lib/constants";
+import { getRemainingCredits } from "@/lib/store/features/helpers";
 
 export default function ParametersComponent({
   blogParameters,
@@ -19,17 +24,27 @@ export default function ParametersComponent({
     createdAt,
   } = blogParameters;
 
+  const userRole = getUserRoleClient();
+  const dispatch = useDispatch();
+  const remainingCredits = useSelector((state) => getRemainingCredits(state));
+
   const onGenerateClick = async () => {
-    setResponseMessage("Generating blog post...");
-    const res = await handleGenerateClick(
+    const { response, remainingCredits } = await handleGenerateClick(
       "hello world i am testing write some html, short",
       blogParameters._id
     );
-    setResponseMessage(res);
+
+    dispatch(
+      deductCredits({
+        remainingCredits,
+      })
+    );
+    alert(`Generated response! Remaining credits: ${remainingCredits}`);
+    setResponseMessage(response);
   };
 
   return (
-    <div className="border p-4 rounded-lg flex flex-col gap-2 shadow-sm">
+    <div className="flex flex-col gap-2 shadow-sm">
       <div className="font-semibold text-lg ">{theme}</div>
       <div className="flex flex-col gap-1">
         <div className="">Tone: {tone}</div>
@@ -41,8 +56,13 @@ export default function ParametersComponent({
       <div className="w-full">
         <ChaptersParameters chaptersParameters={chaptersParameters} />
       </div>
-      <div className="btn btn-action" onClick={onGenerateClick}>
-        Generate
+      <div className="fcs gap-2">
+        <div className="text-sm text-gray-600">
+          Remaining credits: {userRole?.credits}
+        </div>
+        <div className="btn btn-action" onClick={onGenerateClick}>
+          Generate
+        </div>
       </div>
       <div className="text-sm text-gray-600">
         Created At: {new Date(createdAt).toLocaleString("hr-HR")}

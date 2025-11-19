@@ -3,8 +3,8 @@
 import { getUserRoleClient } from "@/lib/actions/userClient";
 import Link from "next/link";
 
-export default async function ProfilePage({ appUser }) {
-  const userRole = await getUserRoleClient();
+export default  function ProfilePage({ appUser }) {
+  const userRole = getUserRoleClient();
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div>

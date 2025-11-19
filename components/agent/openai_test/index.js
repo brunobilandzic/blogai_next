@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { handleGenerateClick } from "@/lib/openai/responses/fetchResponse";
+import { handleGenerateClick } from "@/lib/openai/fetchResponse";
 
 export default function OAITest() {
   const [prompt, setPrompt] = useState("");

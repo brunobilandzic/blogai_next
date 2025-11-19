@@ -9,7 +9,7 @@ import {
 import { BlogParametersForm } from "@/components/UI/forms/params";
 
 export default function NewParameters() {
-  const [blogParams, setBlogParams] = useState(defaultBlogParams);
+  const [blogParams, setBlogParams] = useState(testBlogParams);
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -17,7 +17,8 @@ export default function NewParameters() {
       method: "POST",
       body: JSON.stringify(blogParams),
     });
-    setBlogParams(defaultBlogParams);
+    alert("Blog parameters saved!");
+    setBlogParams(testBlogParams);
   };
 
   const onChange = (e) => {
@@ -81,7 +82,7 @@ export default function NewParameters() {
   };
 
   return (
-    <>
+    <div className="fcc gap-4">
       <BlogParametersForm
         blogParams={blogParams}
         onChange={onChange}
@@ -90,7 +91,11 @@ export default function NewParameters() {
         onChangeSubChapter={onChangeSubChapter}
         onAddSubChapter={onAddSubChapter}
       />
-      <button onClick={onSubmit}>Submit</button>
-    </>
+      <div className="pt-4 pb-4 text-xl gap-4 fcc">
+        <div className="btn btn-action mx-auto" onClick={onSubmit}>
+          Submit
+        </div>
+      </div>
+    </div>
   );
 }

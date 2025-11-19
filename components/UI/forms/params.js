@@ -48,7 +48,7 @@ export const BlogParametersForm = ({
           onChange={onChange}
           options={lengthOptions}
         />
-        <div onClick={addNewChapter} className="fsc gap-6 pt-8 pb-4 text-2xl">
+        <div onClick={addNewChapter} className="fsc gap-6 pt-2 pb-3 text-2xl">
           <h3 className="font-semibold  px-2">Chapters</h3>
           <div className="text-2xl cursor-pointer hover:text-gray-800">
             <MdAddCircle />
