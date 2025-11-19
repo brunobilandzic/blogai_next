@@ -1,6 +1,7 @@
 import { Input, TextArea, Select } from "./elements";
 import { toneOptions, lengthOptions } from "./constants";
 import { MdAddCircle, MdDelete } from "react-icons/md";
+import { v4 as uuid } from "uuid";
 
 export const BlogParametersForm = ({
   blogParams,
@@ -67,7 +68,7 @@ export const BlogParametersForm = ({
             <div className="fst gap-4">
               <div className="flex flex-col gap-2 w-8/12 self-end">
                 {chapter.subChapters.map((subChapter, j) => (
-                  <div className="flex items-center">
+                  <div key={uuid()} className="flex items-center">
                     <Input
                       key={j}
                       type="text"

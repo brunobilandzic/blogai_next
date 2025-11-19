@@ -1,5 +1,6 @@
 import { sessionAppUserServer } from "@/lib/actions/userServer";
 import { getRoleObject } from "@/lib/actions/userServer";
+import { checkAndDeductCredits } from "@/lib/openai/credits";
 import { validateBlogParams } from "@/lib/validators/blog";
 import { BlogParameters, ChapterParameters } from "@/models/openai/parameters";
 
@@ -19,6 +20,7 @@ export async function GET(req) {
       { status: 401 }
     );
   }
+
   const blogParams = await userRole.populate("blogParameters");
 
   console.log(blogParams);
@@ -46,6 +48,17 @@ export async function POST(req) {
       { message: "Unauthorized: No user role found for app user" },
       { status: 401 }
     );
+  }
+
+  const { success, message, remainingCredits } = await checkAndDeductCredits(
+    userRole
+  );
+  console.log("Credit check:", success, message, remainingCredits);
+  if (!success) {
+    return Response.json({
+      message,
+      remainingCredits: userRole.credits,
+    });
   }
 
   const body = await req.json();
@@ -109,6 +122,7 @@ export async function POST(req) {
     {
       message: "Blog parameters saved successfully",
       blogParameters,
+      remainingCredits,
     },
     { status: 201 }
   );
