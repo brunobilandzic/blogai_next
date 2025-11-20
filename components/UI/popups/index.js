@@ -30,3 +30,29 @@ function Backdrop({ onCancel }) {
     ></div>
   );
 }
+
+export function PopupConfirmAction({ isOpen, onCancel, onConfirm, message }) {
+  return (
+    <Popup
+      isOpen={isOpen}
+      onCancel={onCancel}
+      title="Confirm Action"
+      footer={ConfirmActionFooter(onConfirm, onCancel)}
+    >
+      <div>{message}</div>
+    </Popup>
+  );
+}
+
+export const ConfirmActionFooter = (onConfirm, onCancel) => {
+  return (
+    <div className="frc gap-2">
+      <div className="btn btn-action" onClick={onConfirm}>
+        Confirm
+      </div>
+      <div className="btn btn-danger" onClick={onCancel}>
+        Cancel
+      </div>
+    </div>
+  );
+};

@@ -2,18 +2,17 @@
 import { useState } from "react";
 import { PageItem } from "../../UI/page/elements";
 import Link from "next/link";
+import { MdDeleteForever } from "react-icons/md";
+import Popup, { PopupConfirmAction } from "@/components/UI/popups";
+import { useRouter } from "next/navigation";
+import { deleteBlogPost } from "@/lib/actions/blog/blog";
 
 export const BlogPostComponent = ({ blogPost }) => {
   const { blogParameters, content, createdAt } = blogPost;
-
-  console.log("Rendering BlogPostComponent for theme:", blogParameters.theme);
-
   return (
     <div className="">
-      <BlogPostInfo {...blogParameters} />
-      <div className="text-sm text-gray-600">
-        Created At: {new Date(createdAt).toLocaleString("hr-HR")}
-      </div>
+      <BlogPostInfo {...blogParameters} blogCreatedAt={createdAt} />
+
       <div className="mt-4">
         <BlogPostContent content={content} />
       </div>
@@ -65,12 +64,54 @@ export function BlogPostContent({ content }) {
   );
 }
 
-export const BlogPostInfo = ({ theme, tone, length, audience }) => {
+export const BlogPostInfo = ({
+  theme,
+  tone,
+  length,
+  audience,
+  description,
+  blogCreatedAt,
+  blogPost: blogPostId,
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter();
+
+  const onDeleteConfirm = async () => {
+    await deleteBlogPost(blogPostId);
+    setIsOpen(false);
+    router.push("/blog/posts");
+  };
+
   return (
     <div>
-      {" "}
-      <div className="font-semibold text-lg ">{theme}</div>
-      <div className="flex flex-col gap-1">
+      <div className="mb-2">
+        <div className="text-sm text-gray-600">
+          Created At: {new Date(blogCreatedAt).toLocaleString("hr-HR")}
+        </div>
+        <div className="fsc gap-2 relative">
+          <div className="font-semibold text-lg">{theme}</div>
+          <div
+            className="text-red-600 cursor-pointer hover:text-red-800 text-xl mt-0.5"
+            title="Delete Blog Post"
+            onClick={() => setIsOpen(true)}
+          >
+            <MdDeleteForever />
+          </div>
+          <div>
+            <PopupConfirmAction
+              isOpen={isOpen}
+              onCancel={() => setIsOpen(false)}
+              onConfirm={() => {
+                // Add your confirm action logic here
+                onDeleteConfirm();
+              }}
+              message="Are you sure you want to delete this blog post?"
+            />
+          </div>
+        </div>
+      </div>
+      <div className="mb-2  text-gray-700">{description}</div>
+      <div className="">
         <div className="">Tone: {tone}</div>
         <div className="">Length: {length}</div>
         <div className="">Audience: {audience}</div>

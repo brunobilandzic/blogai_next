@@ -56,6 +56,10 @@
   @apply flex flex-col justify-center items-center;
 }
 
+.frc {
+  @apply flex flex-row justify-center items-center;
+}
+
 .fcs {
   @apply flex flex-col justify-start items-start;
 }

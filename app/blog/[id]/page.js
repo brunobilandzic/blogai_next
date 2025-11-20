@@ -18,12 +18,12 @@ export default async function Page({ params }) {
   if (!blogPost) {
     return <div>Blog Post not found for ID: {id}</div>;
   }
-
+  await blogPost.populate("blogParameters");
   const cleanedBlogPost = clean(blogPost);
 
   if (!blogPost) {
     return <div>Blog Post not found for ID: {id}</div>;
   }
-
+  console.log("cleanedBlogPost:", cleanedBlogPost);
   return <BlogPostComponent blogPost={cleanedBlogPost} />;
 }
