@@ -38,7 +38,7 @@ export default function ParametersComponent({ blogParameters }) {
     dispatch(deductCredits({ remainingCredits }));
 
     alert(`Generated response! Remaining credits: ${remainingCredits}`);
-
+    setBlogPostId(blogPost._id);
     router.push(`/blog/${blogPost._id}`);
   };
 
