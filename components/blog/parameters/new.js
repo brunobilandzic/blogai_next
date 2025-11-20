@@ -6,19 +6,22 @@ import {
   defaultChapterParams,
   testBlogParams,
 } from "@/components/UI/forms/constants";
+import { useRouter } from "next/navigation";
 import { BlogParametersForm } from "@/components/UI/forms/params";
 
 export default function NewParameters() {
   const [blogParams, setBlogParams] = useState(testBlogParams);
-
+  const router = useRouter();
   const onSubmit = async (e) => {
     e.preventDefault();
-    await fetch("/api/blog/parameters", {
+    const res = await fetch("/api/blog/parameters", {
       method: "POST",
       body: JSON.stringify(blogParams),
     });
-    alert("Blog parameters saved!");
-    setBlogParams(testBlogParams);
+    const { message, blogParameters } = await res.json();
+    alert(message);
+
+    router.push(`/blog/parameters/${blogParameters._id}`);
   };
 
   const onChange = (e) => {

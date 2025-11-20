@@ -10,11 +10,13 @@ export default function BlogParametersList({ blogParametersList }) {
     <>
       <div className="tiles-grid">
         {blogParametersList.map((params, i) => (
-          <div key={i} >
+          <div key={i}>
             <Link href={`/blog/parameters/${params._id}`}>
+            <div className={`${params.blogPost ? 'border-green-500' : 'border-gray-300'} `}>
               <PageItem>
                 <BlogParametersTile blogParameters={params} />
               </PageItem>
+            </div>
             </Link>
           </div>
         ))}
@@ -31,6 +33,7 @@ export default function BlogParametersList({ blogParametersList }) {
 }
 
 export function BlogParametersTile({ blogParameters }) {
+  const { blogPost } = blogParameters;
   return (
     <>
       <div>
@@ -39,6 +42,13 @@ export function BlogParametersTile({ blogParameters }) {
         <div className="text-sm text-gray-600">
           {new Date(blogParameters.createdAt).toLocaleString("hr-HR")}
         </div>
+        {/*     <div className="absolute bottom-1 right-2">
+          {blogParameters?.blogPost ? (
+            <div>yes</div>
+          ) : (
+            <div className="">no</div>
+          )}
+        </div> */}
       </div>
     </>
   );

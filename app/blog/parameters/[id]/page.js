@@ -1,3 +1,4 @@
+import ParametersComponent from "@/components/blog/parameters";
 import { PrametersResponseWrapper } from "@/components/wrappers/PrametersResponseWrapper";
 import clean from "@/lib/db/clean";
 import dbConnect from "@/lib/db/mongooseConnect";
@@ -19,7 +20,7 @@ export default async function Page({ params }) {
   return (
     <>
       {" "}
-      <PrametersResponseWrapper blogParameters={blogParameters} />{" "}
+      <ParametersComponent blogParameters={blogParameters} />{" "}
     </>
   );
 }

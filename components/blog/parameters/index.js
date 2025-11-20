@@ -9,11 +9,9 @@ import { deductCredits } from "@/lib/store/features/appUserSlice";
 import { getRemainingCredits } from "@/lib/store/features/helpers";
 import { MdDeleteForever } from "react-icons/md";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
-export default function ParametersComponent({
-  blogParameters,
-  setResponseMessage,
-}) {
+export default function ParametersComponent({ blogParameters }) {
   const {
     _id,
     theme,
@@ -26,15 +24,13 @@ export default function ParametersComponent({
     blogPost,
   } = blogParameters;
 
-  console.log("blog post associated:", blogPost);
-  console.log("blog js fe id:", blogPost?._id);
-  const userRole = getUserRoleClient();
+  const router = useRouter();
   const dispatch = useDispatch();
   const remainingCredits = useSelector((state) => getRemainingCredits(state));
   const [blogPostId, setBlogPostId] = useState(blogPost?._id || null);
 
   const onGenerateClick = async () => {
-    const { response, remainingCredits, blogPost } = await handleGenerateClick(
+    const { remainingCredits, blogPost } = await handleGenerateClick(
       "hello world i am testing write some html, short",
       blogParameters._id
     );
@@ -42,7 +38,8 @@ export default function ParametersComponent({
     dispatch(deductCredits({ remainingCredits }));
 
     alert(`Generated response! Remaining credits: ${remainingCredits}`);
-    setBlogPostId(blogPost._id);
+
+    router.push(`/blog/${blogPost._id}`);
   };
 
   const onDeleteBlog = async () => {
@@ -54,7 +51,10 @@ export default function ParametersComponent({
   };
 
   return (
-    <div className="flex flex-col gap-2 shadow-sm">
+    <div className="flex flex-col gap-2 ">
+      <div className="text-sm text-gray-600">
+        Created At: {new Date(createdAt).toLocaleString("hr-HR")}
+      </div>
       <div>{blogPostId}</div>
       <div className="font-semibold text-lg ">{theme}</div>
       <div className="flex flex-col gap-1">
@@ -67,11 +67,9 @@ export default function ParametersComponent({
       <div className="w-full">
         <ChaptersParameters chaptersParameters={chaptersParameters} />
       </div>
-      <div className="text-sm text-gray-600">
-        Created At: {new Date(createdAt).toLocaleString("hr-HR")}
-      </div>
+
       {!blogPostId && (
-        <div className="fcs gap-2">
+        <div className="fcc mt-4 gap-2">
           <div className="text-sm text-gray-600">
             Remaining credits: {remainingCredits}
           </div>
