@@ -26,7 +26,7 @@ export const AllBlogsDashboardTile = () => {
   return (
     <Link href={"/blog"}>
       <PageItem>
-        <div className="tile-title">View All Blogs</div>
+        <div>View All Blogs</div>
       </PageItem>
     </Link>
   );

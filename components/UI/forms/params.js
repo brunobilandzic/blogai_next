@@ -67,9 +67,8 @@ export const BlogParametersForm = ({
             <div className="fst gap-4">
               <div className="flex flex-col gap-2 w-8/12 self-end">
                 {chapter.subChapters.map((subChapter, j) => (
-                  <div className="flex items-center">
+                  <div key={j} className="flex items-center">
                     <Input
-                      key={j}
                       type="text"
                       label={`Subchapter ${j + 1}`}
                       name={`subChapter-${j + 1}`}

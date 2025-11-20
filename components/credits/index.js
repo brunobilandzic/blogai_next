@@ -28,22 +28,23 @@ export function CreditsDashboardTile({ credits }) {
   };
 
   return (
-    <div className="relative">
-      <Popup
-        isOpen={addCreditsPopupOpen}
-        onCancel={() => setAddCreditsPopupOpen(false)}
-        title="Add Credits"
-        footer={addCreditsPopupFooter(
-          () => addCredits(addCreditsAmount),
-          () => setAddCreditsPopupOpen(false)
-        )}
-      >
-        <AddCreditsForm
-          value={addCreditsAmount}
-          setAddAmount={setAddCreditsAmount}
-        />
-      </Popup>
-      <PageItem>
+    <PageItem>
+      <div className="relative">
+        <Popup
+          isOpen={addCreditsPopupOpen}
+          onCancel={() => setAddCreditsPopupOpen(false)}
+          title="Add Credits"
+          footer={addCreditsPopupFooter(
+            () => addCredits(addCreditsAmount),
+            () => setAddCreditsPopupOpen(false)
+          )}
+        >
+          <AddCreditsForm
+            value={addCreditsAmount}
+            setAddAmount={setAddCreditsAmount}
+          />
+        </Popup>
+
         <div>
           <div>
             <div className="font-semibold">Credits</div>
@@ -58,12 +59,12 @@ export function CreditsDashboardTile({ credits }) {
             Add Credits
           </div>
         </div>
-      </PageItem>
-    </div>
+      </div>
+    </PageItem>
   );
 }
 
-const AddCreditsForm = ({  setAddAmount }) => {
+const AddCreditsForm = ({ setAddAmount }) => {
   return (
     <div>
       <Input

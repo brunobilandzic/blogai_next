@@ -19,6 +19,8 @@ export function NavItem({ href, label, className = "", onClick }) {
 const loggedInNavItems = [
   { href: "/user/profile", label: "Profile" },
   { href: "/user/dashboard", label: "Dashboard" },
+  { href: "/blog/parameters", label: "Parameters" },
+  { href: "/blog/posts", label: "Blog Posts" },
 ];
 
 const adminNavItems = [

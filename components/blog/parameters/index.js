@@ -25,8 +25,6 @@ export default function ParametersComponent({
   } = blogParameters;
 
   const userRole = getUserRoleClient();
-  const dispatch = useDispatch();
-  const remainingCredits = useSelector((state) => getRemainingCredits(state));
 
   const onGenerateClick = async () => {
     const { response, remainingCredits } = await handleGenerateClick(
@@ -34,11 +32,6 @@ export default function ParametersComponent({
       blogParameters._id
     );
 
-    dispatch(
-      deductCredits({
-        remainingCredits,
-      })
-    );
     alert(`Generated response! Remaining credits: ${remainingCredits}`);
     setResponseMessage(response);
   };
@@ -75,7 +68,7 @@ export function NewParametersDashboardTile() {
   return (
     <Link href={"/blog/parameters/new"}>
       <PageItem>
-        <div className="tile-title">Create blog parameters</div>
+        <div>Create blog parameters</div>
       </PageItem>
     </Link>
   );
@@ -114,7 +107,7 @@ export function ViewAllParametersTile() {
   return (
     <Link href="/blog/parameters">
       <PageItem>
-        <div className="tile-title">View all created parameters</div>
+        <div>View all created parameters</div>
       </PageItem>
     </Link>
   );
