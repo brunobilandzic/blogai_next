@@ -21,7 +21,6 @@ export async function GET(req) {
   }
   const blogParams = await userRole.populate("blogParameters");
 
-  console.log(blogParams);
 
   return Response.json({
     message: "Blog parameters fetched successfully",

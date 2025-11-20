@@ -60,6 +60,10 @@
   @apply flex flex-col justify-start items-start;
 }
 
+.fse {
+  @apply flex  justify-start items-end;
+}
+
 /* page outlook */
 
 .tile-title {
