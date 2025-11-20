@@ -1,13 +1,14 @@
 "use client";
 
-import { handleGenerateClick } from "@/lib/actions/blog/blog";
+import { deleteBlogPost, handleGenerateClick } from "@/lib/actions/blog/blog";
 import { PageItem } from "@/components/UI/page/elements";
 import Link from "next/link";
 import { getUserRoleClient } from "@/lib/actions/userClient";
 import { useDispatch, useSelector } from "react-redux";
 import { deductCredits } from "@/lib/store/features/appUserSlice";
-import { GENERATE_BLOG_POST_COST } from "@/lib/constants";
 import { getRemainingCredits } from "@/lib/store/features/helpers";
+import { MdDeleteForever } from "react-icons/md";
+import { useState } from "react";
 
 export default function ParametersComponent({
   blogParameters,
@@ -22,22 +23,39 @@ export default function ParametersComponent({
     audience,
     chaptersParameters,
     createdAt,
+    blogPost,
   } = blogParameters;
 
+  console.log("blog post associated:", blogPost);
+  console.log("blog js fe id:", blogPost?._id);
   const userRole = getUserRoleClient();
+  const dispatch = useDispatch();
+  const remainingCredits = useSelector((state) => getRemainingCredits(state));
+  const [blogPostId, setBlogPostId] = useState(blogPost?._id || null);
 
   const onGenerateClick = async () => {
-    const { response, remainingCredits } = await handleGenerateClick(
+    const { response, remainingCredits, blogPost } = await handleGenerateClick(
       "hello world i am testing write some html, short",
       blogParameters._id
     );
 
+    dispatch(deductCredits({ remainingCredits }));
+
     alert(`Generated response! Remaining credits: ${remainingCredits}`);
-    setResponseMessage(response);
+    setBlogPostId(blogPost._id);
+  };
+
+  const onDeleteBlog = async () => {
+    const { success } = await deleteBlogPost(blogPostId);
+    if (success) {
+      alert("Blog post deleted successfully.");
+    }
+    setBlogPostId(null);
   };
 
   return (
     <div className="flex flex-col gap-2 shadow-sm">
+      <div>{blogPostId}</div>
       <div className="font-semibold text-lg ">{theme}</div>
       <div className="flex flex-col gap-1">
         <div className="">Tone: {tone}</div>
@@ -49,17 +67,32 @@ export default function ParametersComponent({
       <div className="w-full">
         <ChaptersParameters chaptersParameters={chaptersParameters} />
       </div>
-      <div className="fcs gap-2">
-        <div className="text-sm text-gray-600">
-          Remaining credits: {userRole?.credits}
-        </div>
-        <div className="btn btn-action" onClick={onGenerateClick}>
-          Generate
-        </div>
-      </div>
       <div className="text-sm text-gray-600">
         Created At: {new Date(createdAt).toLocaleString("hr-HR")}
       </div>
+      {!blogPostId && (
+        <div className="fcs gap-2">
+          <div className="text-sm text-gray-600">
+            Remaining credits: {remainingCredits}
+          </div>
+          <div className="btn btn-action" onClick={onGenerateClick}>
+            Generate
+          </div>
+        </div>
+      )}
+      {blogPostId && (
+        <div className="fsc gap-4">
+          <div className="text-green-700 font-semibold">
+            Blog post already generated.
+          </div>
+          <div
+            className="text-3xl cursor-pointer hover:text-gray-800"
+            onClick={onDeleteBlog}
+          >
+            <MdDeleteForever />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

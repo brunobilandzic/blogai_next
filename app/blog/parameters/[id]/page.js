@@ -7,7 +7,9 @@ export default async function Page({ params }) {
   await dbConnect();
   const { id } = await params;
   const blogParameters = clean(
-    await BlogParameters.findById(id).populate("chaptersParameters")
+    await BlogParameters.findById(id)
+      .populate("chaptersParameters")
+      .populate("blogPost")
   );
 
   if (!blogParameters) {
