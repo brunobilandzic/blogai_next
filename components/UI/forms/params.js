@@ -1,15 +1,90 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { defaultBlogParams, defaultChapterParams } from "./constants";
 import { Input, TextArea, Select } from "./elements";
 import { toneOptions, lengthOptions } from "./constants";
 import { MdAddCircle, MdDelete } from "react-icons/md";
 
-export const BlogParametersForm = ({
-  blogParams,
-  onChange,
-  onChangeChapter,
-  addNewChapter,
-  onChangeSubChapter,
-  onAddSubChapter,
-}) => {
+export default function BlogParametersForm({ _blogParams }) {
+  const [blogParams, setBlogParams] = useState(
+    _blogParams || defaultBlogParams
+  );
+  const router = useRouter();
+
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    const res = await fetch("/api/blog/parameters", {
+      method: "POST",
+      body: JSON.stringify(blogParams),
+    });
+    const { message, blogParameters } = await res.json();
+    alert(message);
+
+    router.push(`/blog/parameters/${blogParameters._id}`);
+  };
+
+  const onChange = (e) => {
+    const { name, value } = e.target;
+    setBlogParams((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const onChangeChapter = (index, e) => {
+    const { name, value } = e.target;
+    const updatedChapters = blogParams.chaptersParameters.map((chapter, i) =>
+      i === index ? { ...chapter, [name]: value } : chapter
+    );
+    setBlogParams((prev) => ({
+      ...prev,
+      chaptersParameters: updatedChapters,
+    }));
+  };
+
+  const addNewChapter = () => {
+    setBlogParams((prev) => ({
+      ...prev,
+      chaptersParameters: [...prev.chaptersParameters, defaultChapterParams],
+    }));
+  };
+
+  const onChangeSubChapter = (chapterIndex, subChapterIndex, e) => {
+    const { value } = e.target;
+
+    const updatedChapters = blogParams.chaptersParameters.map((chapter, i) => {
+      if (i === chapterIndex) {
+        const updatedSubChapters = chapter.subChapters.map((subChapter, j) =>
+          j === subChapterIndex ? value : subChapter
+        );
+        return { ...chapter, subChapters: updatedSubChapters };
+      }
+      return chapter;
+    });
+    setBlogParams((prev) => ({
+      ...prev,
+      chaptersParameters: updatedChapters,
+    }));
+  };
+
+  const onAddSubChapter = (chapterIndex) => {
+    const updatedChapters = blogParams.chaptersParameters.map((chapter, i) => {
+      if (i === chapterIndex) {
+        return {
+          ...chapter,
+          subChapters: [...chapter.subChapters, ""],
+        };
+      }
+      return chapter;
+    });
+    setBlogParams((prev) => ({
+      ...prev,
+      chaptersParameters: updatedChapters,
+    }));
+  };
+
   return (
     <div className="w-full">
       {/* Form for blog parameters */}
@@ -93,9 +168,14 @@ export const BlogParametersForm = ({
           </div>
         ))}
       </div>
+      <div className="pt-4 pb-4 text-xl gap-4 fcc">
+        <div className="btn btn-action mx-auto" onClick={onSubmit}>
+          Submit
+        </div>
+      </div>
     </div>
   );
-};
+}
 
 export const ChaptersParametersForm = ({ chapterParams, onChange, i }) => {
   return (
