@@ -4,7 +4,7 @@ export const defaultChapterParams = {
   length: "",
 };
 
-export const defaultBlogParams = {
+export const defaultBlogParameters = {
   theme: "",
   description: "",
   audience: "",
@@ -13,7 +13,7 @@ export const defaultBlogParams = {
   chaptersParameters: [defaultChapterParams],
 };
 
-export const testBlogParams = {
+export const testBlogParameters = {
   theme: "The Future of Artificial Intelligence",
   description:
     "An in-depth analysis of how AI will shape various industries and our daily lives in the next decade.",

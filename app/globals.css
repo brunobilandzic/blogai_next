@@ -35,6 +35,10 @@
   @apply bg-gray-500;
 }
 
+.text-link {
+  @apply hover:underline cursor-pointer hover:text-blue-800;
+}
+
 /* repetitive utility classes */
 
 .fst {

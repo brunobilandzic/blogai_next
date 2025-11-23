@@ -7,13 +7,13 @@ import { getUserRoleClient } from "@/lib/actions/userClient";
 import { useDispatch, useSelector } from "react-redux";
 import { deductCredits } from "@/lib/store/features/appUserSlice";
 import { getRemainingCredits } from "@/lib/store/features/helpers";
-import { MdDeleteForever } from "react-icons/md";
+import { MdDeleteForever, MdEdit } from "react-icons/md";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function ParametersComponent({ blogParameters }) {
   const {
-    _id,
+    _id: id,
     theme,
     description,
     tone,
@@ -55,8 +55,14 @@ export default function ParametersComponent({ blogParameters }) {
       <div className="text-sm text-gray-600">
         Created At: {new Date(createdAt).toLocaleString("hr-HR")}
       </div>
-      <div>{blogPostId}</div>
-      <div className="font-semibold text-lg ">{theme}</div>
+      <div
+        className="font-semibold text-lg text-link"
+        onClick={() => {
+          router.push(`${id}/edit`);
+        }}
+      >
+        {theme}
+      </div>
       <div className="flex flex-col gap-1">
         <div className="">Tone: {tone}</div>
         <div className="">Length: {length}</div>

@@ -21,7 +21,6 @@ export async function GET(req) {
   }
   const blogParams = await userRole.populate("blogParameters");
 
-
   return Response.json({
     message: "Blog parameters fetched successfully",
     blogParams: blogParams,
@@ -110,5 +109,141 @@ export async function POST(req) {
       blogParameters,
     },
     { status: 201 }
+  );
+}
+
+export async function PUT(req, { params }) {
+  console.log("Updatingblog parameters...");
+
+  const { appUser } = await sessionAppUserServer();
+  if (!appUser) {
+    return Response.json(
+      { message: "Unauthorized: No app user found in session" },
+      { status: 401 }
+    );
+  }
+
+  const userRole = getRoleObject(appUser, "UserRole");
+  if (!userRole) {
+    return Response.json(
+      { message: "Unauthorized: No user role found for app user" },
+      { status: 401 }
+    );
+  }
+
+  const body = await req.json();
+
+  const validation = validateBlogParams(body);
+
+  if (validation.error) {
+    console.error("Validation error:", validation.error);
+    return Response.json(
+      {
+        message: "Invalid blog parameters",
+        errors: validation.error?.details,
+      },
+      { status: 400 }
+    );
+  }
+
+  const blogParameters = await BlogParameters.findById(body._id).populate(
+    "chaptersParameters"
+  );
+  console.log("Updating blog parameters db:", blogParameters);
+
+  if (!blogParameters) {
+    return Response.json(
+      { message: "Blog parameters not found" },
+      { status: 404 }
+    );
+  }
+
+  Object.assign(blogParameters, body);
+
+  let saveChapter = (chapterParam) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        await chapterParam.save();
+        resolve(chapterParam);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  };
+
+  let deleteChapter = (chapterParam) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        await ChapterParameters.deleteOne({ _id: chapterParam._id });
+        resolve(true);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  };
+
+  const promises = [];
+
+  for (let chapterParams of body.chaptersParameters) {
+    console.log("chapterParams body:", chapterParams);
+    if (!chapterParams) continue;
+
+    const existingChapterId = blogParameters.chaptersParameters.find(
+      (cp) => cp._id?.toString() === chapterParams?._id.toString()
+    );
+
+    delete chapterParams._id;
+    console.log("existingChapter:", existingChapter);
+    Object.assign(existingChapter, { chapterParams });
+
+    if (!chapterParams._id) {
+      // New chapter, create and add to blogParameters
+      chapterParams["blogParameters"] = blogParameters._id;
+      const newChapterParam = new ChapterParameters(chapterParams);
+      blogParameters.chaptersParameters.push(newChapterParam);
+      let promise = saveChapter(newChapterParam);
+      promises.push(promise);
+      continue;
+    }
+
+    let promise = saveChapter(existingChapter);
+
+    promises.push(promise);
+  }
+
+  for (let existingChapter of blogParameters.chaptersParameters) {
+    if (
+      !body.chaptersParameters.find(
+        (cp) => cp._id?.toString() === existingChapter._id.toString()
+      )
+    ) {
+      let promise = deleteChapter(existingChapter);
+      promises.push(promise);
+    }
+  }
+
+  const savedChapters = await Promise.all(promises);
+  if (!savedChapters) {
+    return Response.json(
+      {
+        message: "Error saving chapter parameters",
+      },
+      { status: 500 }
+    );
+  }
+
+  await BlogParameters.save();
+  console.log("Saved", savedChapters.length, "chapters.");
+
+  console.log(
+    `Blog parameters "${blogParameters.theme}" with ${blogParameters.chaptersParameters.length} chapters updated.`
+  );
+
+  return Response.json(
+    {
+      message: "Blog parameters updated successfully",
+      blogParameters,
+    },
+    { status: 200 }
   );
 }

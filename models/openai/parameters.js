@@ -14,13 +14,13 @@ const blogParametersSchema = new mongoose.Schema({
   audience: { type: String, required: true },
   tone: {
     type: String,
-    required: true,
+
     enum: ["formal", "informal", "neutral"],
     default: "neutral",
   },
   length: {
     type: String,
-    required: true,
+
     enum: ["short", "medium", "long"],
     default: "medium",
   },
@@ -42,7 +42,7 @@ const chapterParametersSchema = new mongoose.Schema({
   subChapters: [{ type: String }],
   length: {
     type: String,
-    required: true,
+
     enum: ["short", "medium", "long"],
     default: "medium",
   },

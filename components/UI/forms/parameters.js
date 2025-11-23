@@ -2,14 +2,14 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { defaultBlogParams, defaultChapterParams } from "./constants";
+import { defaultBlogParameters, defaultChapterParams } from "./constants";
 import { Input, TextArea, Select } from "./elements";
 import { toneOptions, lengthOptions } from "./constants";
 import { MdAddCircle, MdDelete } from "react-icons/md";
 
-export default function BlogParametersForm({ _blogParams }) {
+export default function BlogParametersForm({ _blogParameters }) {
   const [blogParams, setBlogParams] = useState(
-    _blogParams || defaultBlogParams
+    _blogParameters || defaultBlogParameters
   );
   const router = useRouter();
 
@@ -23,6 +23,26 @@ export default function BlogParametersForm({ _blogParams }) {
     alert(message);
 
     router.push(`/blog/parameters/${blogParameters._id}`);
+  };
+
+  const onPut = async (e) => {
+    e.preventDefault();
+
+    if (!blogParams?._id) {
+      alert("No blog parameters ID found for update.");
+      return;
+    }
+
+    const res = await fetch(`/api/blog/parameters`, {
+      method: "PUT",
+      body: JSON.stringify(blogParams),
+    });
+    crossOriginIsolated.la
+    const { message, blogParameters } = await res.json();
+    console.log("PUT response:", message, blogParameters);
+    alert(message);
+
+    //router.push(`/blog/parameters`);
   };
 
   const onChange = (e) => {
@@ -169,8 +189,11 @@ export default function BlogParametersForm({ _blogParams }) {
         ))}
       </div>
       <div className="pt-4 pb-4 text-xl gap-4 fcc">
-        <div className="btn btn-action mx-auto" onClick={onSubmit}>
-          Submit
+        <div
+          className="btn btn-action mx-auto"
+          onClick={_blogParameters?._id ? onPut : onSubmit}
+        >
+          {_blogParameters?._id ? "Update Blog Parameters" : "Create Blog Parameters"}
         </div>
       </div>
     </div>
