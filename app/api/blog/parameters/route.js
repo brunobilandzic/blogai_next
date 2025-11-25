@@ -112,8 +112,8 @@ export async function POST(req) {
   );
 }
 
-export async function PUT(req, { params }) {
-  console.log("Updatingblog parameters...");
+export async function PUT(req) {
+  console.log("Updating blog parameters...");
 
   const { appUser } = await sessionAppUserServer();
   if (!appUser) {
@@ -132,9 +132,7 @@ export async function PUT(req, { params }) {
   }
 
   const body = await req.json();
-
   const validation = validateBlogParams(body);
-
   if (validation.error) {
     console.error("Validation error:", validation.error);
     return Response.json(
@@ -149,7 +147,8 @@ export async function PUT(req, { params }) {
   const blogParameters = await BlogParameters.findById(body._id).populate(
     "chaptersParameters"
   );
-  console.log("Updating blog parameters db:", blogParameters);
+
+  console.log("blog params chapters:", blogParameters);
 
   if (!blogParameters) {
     return Response.json(
@@ -160,21 +159,33 @@ export async function PUT(req, { params }) {
 
   Object.assign(blogParameters, body);
 
-  let saveChapter = (chapterParam) => {
+  // PROMISES FOR CHAPTERS
+  let updateChapter = (chapterParams, cpId) => {
     return new Promise(async (resolve, reject) => {
       try {
-        await chapterParam.save();
-        resolve(chapterParam);
+        const chapterParameter = await ChapterParameters.findById(cpId);
+        Object.assign(chapterParameter, chapterParams);
+        await saveChapter(chapterParameter);
+        resolve(chapterParameter);
       } catch (error) {
         reject(error);
       }
     });
   };
-
-  let deleteChapter = (chapterParam) => {
+  let saveChapter = async (chapterParams) => {
+    await chapterParams.save();
+    return chapterParams;
+  };
+  let deleteChapter = (id) => {
     return new Promise(async (resolve, reject) => {
+      console.log(`deleting chapterParams id: ${id}`);
       try {
-        await ChapterParameters.deleteOne({ _id: chapterParam._id });
+        if (!id) {
+          console.log("No ID provided for chapter deletion.");
+          resolve(true);
+          return;
+        }
+        await ChapterParameters.deleteOne({ _id: id });
         resolve(true);
       } catch (error) {
         reject(error);
@@ -185,40 +196,39 @@ export async function PUT(req, { params }) {
   const promises = [];
 
   for (let chapterParams of body.chaptersParameters) {
-    console.log("chapterParams body:", chapterParams);
     if (!chapterParams) continue;
 
-    const existingChapterId = blogParameters.chaptersParameters.find(
-      (cp) => cp._id?.toString() === chapterParams?._id.toString()
-    );
-
-    delete chapterParams._id;
-    console.log("existingChapter:", existingChapter);
-    Object.assign(existingChapter, { chapterParams });
-
-    if (!chapterParams._id) {
-      // New chapter, create and add to blogParameters
-      chapterParams["blogParameters"] = blogParameters._id;
-      const newChapterParam = new ChapterParameters(chapterParams);
-      blogParameters.chaptersParameters.push(newChapterParam);
-      let promise = saveChapter(newChapterParam);
+    if (chapterParams._id) {
+      console.log(
+        `updating chapterParams: ${chapterParams.title}, id: ${chapterParams?._id}`
+      );
+      const existingChapterId = blogParameters.chaptersParameters.find(
+        (cpid) => cpid.toString() === chapterParams?._id.toString()
+      );
+      console.log("existingChapterId found:", existingChapterId);
+      let promise = updateChapter(chapterParams, existingChapterId);
       promises.push(promise);
-      continue;
+    } else {
+      const newChapterParams = new ChapterParameters(chapterParams);
+      newChapterParams["blogParameters"] = blogParameters._id;
+
+      blogParameters.chaptersParameters.push(newChapterParams._id);
+      console.log("new chapterParams:", newChapterParams.title);
+      let promise = saveChapter(newChapterParams);
+      promises.push(promise);
     }
-
-    let promise = saveChapter(existingChapter);
-
-    promises.push(promise);
   }
 
-  for (let existingChapter of blogParameters.chaptersParameters) {
+  console.log("delete, existing are:", blogParameters.chaptersParameters);
+  for (let existingChapterId of blogParameters.chaptersParameters) {
     if (
       !body.chaptersParameters.find(
-        (cp) => cp._id?.toString() === existingChapter._id.toString()
+        (cp) => cp._id?.toString() === existingChapterId?.toString()
       )
     ) {
-      let promise = deleteChapter(existingChapter);
-      promises.push(promise);
+      console.log("deleting chapterParams id:", existingChapterId);
+      /* let promise = deleteChapter(existingChapterId);
+      promises.push(promise); */
     }
   }
 
@@ -231,14 +241,12 @@ export async function PUT(req, { params }) {
       { status: 500 }
     );
   }
+  console.log("Saved/Updated/Deleted", savedChapters.length, "chapters.");
+  const freshBlogParams = await BlogParameters.findById(body._id);
 
-  await BlogParameters.save();
-  console.log("Saved", savedChapters.length, "chapters.");
+  freshBlogParams.chaptersParameters = savedChapters;
 
-  console.log(
-    `Blog parameters "${blogParameters.theme}" with ${blogParameters.chaptersParameters.length} chapters updated.`
-  );
-
+  await freshBlogParams.save();
   return Response.json(
     {
       message: "Blog parameters updated successfully",

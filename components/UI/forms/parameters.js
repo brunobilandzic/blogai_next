@@ -37,7 +37,6 @@ export default function BlogParametersForm({ _blogParameters }) {
       method: "PUT",
       body: JSON.stringify(blogParams),
     });
-    crossOriginIsolated.la
     const { message, blogParameters } = await res.json();
     console.log("PUT response:", message, blogParameters);
     alert(message);
