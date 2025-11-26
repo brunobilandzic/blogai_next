@@ -104,6 +104,29 @@ export default function BlogParametersForm({ _blogParameters }) {
     }));
   };
 
+  const onRemoveChapter = (chapterIndex) => {
+    const updatedChapters = blogParams.chaptersParameters.filter(
+      (chapter, i) => i !== chapterIndex
+    );
+    setBlogParams((prev) => ({
+      ...prev,
+      chaptersParameters: updatedChapters,
+    }));
+  };
+
+  const onRemoveSubChapter = (chapterIndex, subChapterIndex) => {
+    setBlogParams((prev) => {
+      const updatedChapters = prev.chaptersParameters.map((chapter, i) => {
+        if (i !== chapterIndex) return chapter;
+        const updatedSubChapters = chapter.subChapters.filter(
+          (_, j) => j !== subChapterIndex
+        );
+        return { ...chapter, subChapters: updatedSubChapters };
+      });
+      return { ...prev, chaptersParameters: updatedChapters };
+    });
+  };
+
   return (
     <div className="w-full">
       {/* Form for blog parameters */}
@@ -150,37 +173,54 @@ export default function BlogParametersForm({ _blogParameters }) {
         </div>
         {/* Chapter parameters form will go here */}
         {blogParams.chaptersParameters.map((chapter, i) => (
-          <div key={i} className="flex flex-col gap-4">
-            <h3 className="font-semibold  px-2">Chapter {i + 1}</h3>
-            <ChaptersParametersForm
-              i={i + 1}
-              key={i}
-              chapterParams={chapter}
-              onChange={(e) => onChangeChapter(i, e)}
-            />
-            <div className="fst gap-4">
-              <div className="flex flex-col gap-2 w-8/12 self-end">
-                {chapter.subChapters.map((subChapter, j) => (
-                  <div key={j} className="flex items-center">
-                    <Input
-                      type="text"
-                      label={`Subchapter ${j + 1}`}
-                      name={`subChapter-${j + 1}`}
-                      value={subChapter}
-                      onChange={(e) => onChangeSubChapter(i, j, e)}
-                    />
-                    <div className="-ml-7">
-                      <MdDelete />
-                    </div>
-                  </div>
-                ))}
+          <div key={i} className="border-t pt-4">
+            {" "}
+            <div className="flex justify-start gap-4 ">
+              <h3 className="font-semibold  px-2">
+                Chapter {i + 1} - {chapter.title}
+              </h3>
+              <div
+                className="cursor-pointer hover:text-red-800"
+                onClick={() => onRemoveChapter(i)}
+              >
+                <MdDelete className="text-2xl" />
               </div>
-              <div className="mt-2">
-                <div
-                  onClick={() => onAddSubChapter(i)}
-                  className="fcc text-2xl cursor-pointer hover:text-gray-800"
-                >
-                  <MdAddCircle />
+            </div>
+            <div key={i} className="flex flex-col gap-4">
+              <ChaptersParametersForm
+                i={i + 1}
+                key={i}
+                chapterParams={chapter}
+                onChange={(e) => onChangeChapter(i, e)}
+                onRemove={() => onRemoveChapter(i)}
+              />
+              <div className="flex  gap-4">
+                <div className="flex flex-col gap-2 w-8/12 self-end">
+                  {chapter.subChapters.map((subChapter, j) => (
+                    <div key={j} className="flex items-center">
+                      <Input
+                        type="text"
+                        label={`Subchapter ${j + 1}`}
+                        name={`subChapter-${j + 1}`}
+                        value={subChapter}
+                        onChange={(e) => onChangeSubChapter(i, j, e)}
+                      />
+                      <div
+                        className="-ml-7 cursor-pointer hover:text-red-800"
+                        onClick={() => onRemoveSubChapter(i, j)}
+                      >
+                        <MdDelete />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-2">
+                  <div
+                    onClick={() => onAddSubChapter(i)}
+                    className="fcc text-2xl cursor-pointer hover:text-green-800"
+                  >
+                    <MdAddCircle />
+                  </div>
                 </div>
               </div>
             </div>
@@ -192,17 +232,25 @@ export default function BlogParametersForm({ _blogParameters }) {
           className="btn btn-action mx-auto"
           onClick={_blogParameters?._id ? onPut : onSubmit}
         >
-          {_blogParameters?._id ? "Update Blog Parameters" : "Create Blog Parameters"}
+          {_blogParameters?._id
+            ? "Update Blog Parameters"
+            : "Create Blog Parameters"}
         </div>
       </div>
     </div>
   );
 }
 
-export const ChaptersParametersForm = ({ chapterParams, onChange, i }) => {
+export const ChaptersParametersForm = ({
+  chapterParams,
+  onChange,
+  i,
+  onRemoveChapter,
+}) => {
   return (
     <div className="form">
       {/* Form for chapter parameters */}
+
       <Input
         type="text"
         label={`Title`}
@@ -210,6 +258,7 @@ export const ChaptersParametersForm = ({ chapterParams, onChange, i }) => {
         value={chapterParams.title}
         onChange={onChange}
       />
+
       <Select
         label={`Length`}
         name="length"

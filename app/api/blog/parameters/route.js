@@ -132,6 +132,7 @@ export async function PUT(req) {
   }
 
   const body = await req.json();
+  console.log("New blog parameters theme:", body.theme);
   const validation = validateBlogParams(body);
   if (validation.error) {
     console.error("Validation error:", validation.error);
@@ -148,7 +149,7 @@ export async function PUT(req) {
     "chaptersParameters"
   );
 
-  console.log("blog params chapters:", blogParameters);
+  
 
   if (!blogParameters) {
     return Response.json(
@@ -157,7 +158,19 @@ export async function PUT(req) {
     );
   }
 
+  body.chapterParameters = body.chaptersParameters.filter(
+    (cp) =>
+      !(
+        typeof cp === "undefined" ||
+        cp === null ||
+        cp._id === null ||
+        cp._id === ""
+      )
+  );
+
   Object.assign(blogParameters, body);
+
+  console.log("blog params theme:", blogParameters.theme);
 
   // PROMISES FOR CHAPTERS
   let updateChapter = (chapterParams, cpId) => {
@@ -220,6 +233,7 @@ export async function PUT(req) {
   }
 
   console.log("delete, existing are:", blogParameters.chaptersParameters);
+
   for (let existingChapterId of blogParameters.chaptersParameters) {
     if (
       !body.chaptersParameters.find(
