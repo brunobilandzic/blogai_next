@@ -259,8 +259,8 @@ export async function PUT(req) {
   const freshBlogParams = await BlogParameters.findById(body._id);
 
   freshBlogParams.chaptersParameters = savedChapters;
-
   await freshBlogParams.save();
+  
   return Response.json(
     {
       message: "Blog parameters updated successfully",
