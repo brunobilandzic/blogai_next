@@ -1,7 +1,9 @@
+import { deleteBlogPost, generateBlogPost } from "@/lib/actions/blog/blog";
 import { sessionAppUserServer } from "@/lib/actions/userServer";
 import { getRoleObject } from "@/lib/actions/userServer";
 import { validateBlogParams } from "@/lib/validators/blog";
 import { BlogParameters, ChapterParameters } from "@/models/openai/parameters";
+import mongoose from "mongoose";
 
 export async function GET(req) {
   const { appUser } = await sessionAppUserServer();
@@ -132,7 +134,6 @@ export async function PUT(req) {
   }
 
   const body = await req.json();
-  console.log("New blog parameters theme:", body.theme);
   const validation = validateBlogParams(body);
   if (validation.error) {
     console.error("Validation error:", validation.error);
@@ -167,8 +168,6 @@ export async function PUT(req) {
   );
 
   Object.assign(blogParameters, body);
-
-  console.log("blog params theme:", blogParameters.theme);
 
   // PROMISES FOR CHAPTERS
   let updateChapter = (chapterParams, cpId) => {
@@ -230,7 +229,10 @@ export async function PUT(req) {
     }
   }
 
-  console.log("delete, existing are:", blogParameters.chaptersParameters);
+  console.log(
+    "entering delete, existing are:",
+    blogParameters.chaptersParameters
+  );
 
   for (let existingChapterId of blogParameters.chaptersParameters) {
     if (
@@ -239,13 +241,13 @@ export async function PUT(req) {
       )
     ) {
       console.log("deleting chapterParams id:", existingChapterId);
-      /* let promise = deleteChapter(existingChapterId);
-      promises.push(promise); */
+      let promise = deleteChapter(existingChapterId);
+      promises.push(promise);
     }
   }
 
-  const savedChapters = await Promise.all(promises);
-  if (!savedChapters) {
+  const updatedChapters = await Promise.all(promises);
+  if (!updatedChapters) {
     return Response.json(
       {
         message: "Error saving chapter parameters",
@@ -253,20 +255,46 @@ export async function PUT(req) {
       { status: 500 }
     );
   }
-  console.log("Saved/Updated/Deleted", savedChapters.length, "chapters.");
+  console.log("Resolved", updatedChapters.length, "chapter promises.");
 
-  const freshBlogParams = await BlogParameters.findByIdAndUpdate(
+  let freshBlogParams = await BlogParameters.findByIdAndUpdate(
     blogParameters._id,
-    { ...blogParameters, chaptersParameters: savedChapters },
+    { ...blogParameters, chaptersParameters: updatedChapters },
     { new: true }
   ).populate("chaptersParameters");
+
+  freshBlogParams.setPrompt();
+
+  console.log("freshBlogParams bid:", freshBlogParams.blogPost);
+
+  // await deleteBlogPost(freshBlogParams.blogPost);
+  const generatedResult = await generateBlogPost(
+    freshBlogParams.promptText,
+    freshBlogParams._id
+  );
+
+  if (!generatedResult) {
+    return Response.json(
+      { message: "Error generating blog post" },
+      { status: 500 }
+    );
+  }
+
+  const { blogPost, remainingCredits } = generatedResult;
+
+  freshBlogParams = await BlogParameters.findById(freshBlogParams._id);
+  freshBlogParams.blogPost = blogPost._id;
+
+  console.log("freshBlogParams blog id generated:", freshBlogParams.blogPost);
 
   await freshBlogParams.save();
 
   return Response.json(
     {
       message: "Blog parameters updated successfully",
-      blogParameters,
+      blogParametersId: freshBlogParams._id,
+      remainingCredits,
+      blogPostId: blogPost._id,
     },
     { status: 200 }
   );

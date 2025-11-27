@@ -59,7 +59,7 @@ blogParametersSchema.methods.chaptersString = function () {
   return chaptersString;
 };
 
-blogParametersSchema.pre("save", async function (next) {
+blogParametersSchema.methods.setPrompt = function () {
   if (!this.promptText) {
     this.promptText = `ZADATAK
         Napiši opširan HTML blog post na hrvatskom jeziku na temu ${
@@ -165,9 +165,7 @@ blogParametersSchema.pre("save", async function (next) {
         Predložene sekcije i podpoglavlja: ${this.chaptersString()}
         Primjer formata slike: ${imageExample}`;
   }
-
-  next();
-});
+};
 
 chapterParametersSchema.methods.chapterString = function () {
   return `Poglavlje ${this.theme} -> Opis poglavlja ${this.theme}: ${
@@ -176,6 +174,11 @@ chapterParametersSchema.methods.chapterString = function () {
     ", "
   )}, Duljina poglavlja: ${this.length}`;
 };
+
+blogParametersSchema.pre("save", async function (next) {
+  this.setPrompt();
+  next();
+});
 
 export const BlogParameters =
   mongoose.models.BlogParameters ||

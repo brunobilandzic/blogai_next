@@ -37,11 +37,17 @@ export default function BlogParametersForm({ _blogParameters }) {
       method: "PUT",
       body: JSON.stringify(blogParams),
     });
-    const { message, blogParameters } = await res.json();
-    console.log("PUT response:", message, blogParameters);
+    const { message, blogParametersId, remainingCredits, blogPostId } =
+      await res.json();
+    console.log(
+      "PUT response:",
+      message,
+      blogParametersId,
+      remainingCredits,
+      blogPostId
+    );
     alert(message);
-
-    //router.push(`/blog/parameters`);
+    router.push(`/blog/parameters/${blogParametersId}`);
   };
 
   const onChange = (e) => {
