@@ -3,13 +3,14 @@
 import { deleteBlogPost, handleGenerateClick } from "@/lib/actions/blog/blog";
 import { PageItem } from "@/components/UI/page/elements";
 import Link from "next/link";
-import { getUserRoleClient } from "@/lib/actions/userClient";
 import { useDispatch, useSelector } from "react-redux";
 import { deductCredits } from "@/lib/store/features/appUserSlice";
 import { getRemainingCredits } from "@/lib/store/features/helpers";
-import { MdDeleteForever, MdEdit } from "react-icons/md";
+import { MdDeleteForever, MdEdit, MdOpenInNew } from "react-icons/md";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { deleteBlogParameters } from "@/lib/actions/blog/parameters";
+import { PopupConfirmAction } from "@/components/UI/popups";
 
 export default function ParametersComponent({ blogParameters }) {
   const {
@@ -28,6 +29,7 @@ export default function ParametersComponent({ blogParameters }) {
   const dispatch = useDispatch();
   const remainingCredits = useSelector((state) => getRemainingCredits(state));
   const [blogPostId, setBlogPostId] = useState(blogPost?._id || null);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
   const onGenerateClick = async () => {
     const { remainingCredits, blogPost } = await handleGenerateClick(
@@ -50,18 +52,43 @@ export default function ParametersComponent({ blogParameters }) {
     setBlogPostId(null);
   };
 
+  const onDeleteBlogParameters = async () => {
+    const { success } = await deleteBlogParameters(blogParameters._id);
+    if (success) {
+      alert("Blog parameters deleted successfully.");
+      router.push(`/blog/parameters`);
+    } else {
+      alert("Error deleting blog parameters.");
+    }
+  };
+
   return (
     <div className="flex flex-col gap-2 ">
       <div className="text-sm text-gray-600">
         Created At: {new Date(createdAt).toLocaleString("hr-HR")}
       </div>
-      <div
-        className="font-semibold text-lg text-link"
-        onClick={() => {
-          router.push(`${id}/edit`);
-        }}
-      >
-        {theme}
+      <div className="fsc gap-2 ">
+        <div
+          className="font-semibold text-lg text-link"
+          onClick={() => {
+            router.push(`${id}/edit`);
+          }}
+        >
+          {theme}
+        </div>
+        <div
+          className="text-2xl cursor-pointer  hover:text-red-800"
+          onClick={() => setDeleteModalOpen(true)}
+        >
+          {" "}
+          <PopupConfirmAction
+            message={`Are you sure you want to delete the blog parameters "${theme}"? This action cannot be undone.`}
+            onConfirm={onDeleteBlogParameters}
+            isOpen={deleteModalOpen}
+            onClose={() => setDeleteModalOpen(false)}
+          />
+          <MdDeleteForever />
+        </div>
       </div>
       <div className="flex flex-col gap-1">
         <div className="">Tone: {tone}</div>
@@ -85,12 +112,18 @@ export default function ParametersComponent({ blogParameters }) {
         </div>
       )}
       {blogPostId && (
-        <div className="fsc gap-4">
-          <div className="text-green-700 font-semibold">
-            Blog post already generated.
+        <div className="fsc">
+          <div className="text-green-700 font-semibold fsc gap-4">
+            Blog post already generated.{" "}
+            <div
+              className="text-link cursor-pointer text-2xl"
+              onClick={() => router.push(`/blog/${blogPostId}`)}
+            >
+              <MdOpenInNew />
+            </div>
           </div>
           <div
-            className="text-3xl cursor-pointer hover:text-gray-800"
+            className="text-2xl cursor-pointer hover:text-gray-800"
             onClick={onDeleteBlog}
           >
             <MdDeleteForever />

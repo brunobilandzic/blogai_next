@@ -166,60 +166,62 @@ export default function BlogParametersForm({ _blogParameters }) {
           options={lengthOptions}
         />
         <div onClick={addNewChapter} className="fsc gap-6 pt-2 pb-3 text-2xl">
-          <h3 className="font-semibold  px-2">Chapters</h3>
+          <h3 className="font-semibold">Chapters</h3>
           <div className="text-2xl cursor-pointer hover:text-gray-800">
             <MdAddCircle />
           </div>
         </div>
         {/* Chapter parameters form will go here */}
         {blogParams.chaptersParameters.map((chapter, i) => (
-          <div key={i} className="border-t pt-4">
+          <div key={i} className="">
             {" "}
-            <div className="flex justify-start gap-4 ">
-              <h3 className="font-semibold  px-2">
-                Chapter {i + 1} - {chapter.title}
-              </h3>
-              <div
-                className="cursor-pointer hover:text-red-800"
-                onClick={() => onRemoveChapter(i)}
-              >
-                <MdDelete className="text-2xl" />
-              </div>
-            </div>
-            <div key={i} className="flex flex-col gap-4">
-              <ChaptersParametersForm
-                i={i + 1}
-                key={i}
-                chapterParams={chapter}
-                onChange={(e) => onChangeChapter(i, e)}
-                onRemove={() => onRemoveChapter(i)}
-              />
-              <div className="flex  gap-4">
-                <div className="flex flex-col gap-2 w-8/12 self-end">
-                  {chapter.subChapters.map((subChapter, j) => (
-                    <div key={j} className="flex items-center">
-                      <Input
-                        type="text"
-                        label={`Subchapter ${j + 1}`}
-                        name={`subChapter-${j + 1}`}
-                        value={subChapter}
-                        onChange={(e) => onChangeSubChapter(i, j, e)}
-                      />
-                      <div
-                        className="-ml-7 cursor-pointer hover:text-red-800"
-                        onClick={() => onRemoveSubChapter(i, j)}
-                      >
-                        <MdDelete />
-                      </div>
-                    </div>
-                  ))}
+            <div className="flex flex-col gap-4">
+              <div className="flex justify-start items-center gap-4 ">
+                <h3 className="font-semibold ">
+                  Chapter {i + 1} - {chapter.title}
+                </h3>
+                <div
+                  className="cursor-pointer hover:text-red-800"
+                  onClick={() => onRemoveChapter(i)}
+                >
+                  <MdDelete className="text-2xl" />
                 </div>
-                <div className="mt-2">
-                  <div
-                    onClick={() => onAddSubChapter(i)}
-                    className="fcc text-2xl cursor-pointer hover:text-green-800"
-                  >
-                    <MdAddCircle />
+              </div>
+              <div key={i} className="flex flex-col gap-4">
+                <ChaptersParametersForm
+                  i={i + 1}
+                  key={i}
+                  chapterParams={chapter}
+                  onChange={(e) => onChangeChapter(i, e)}
+                  onRemove={() => onRemoveChapter(i)}
+                />
+                <div className="flex  gap-4">
+                  <div className="flex flex-col gap-2 w-8/12 self-end">
+                    {chapter.subChapters.map((subChapter, j) => (
+                      <div key={j} className="flex items-center">
+                        <Input
+                          type="text"
+                          label={`Subchapter ${j + 1}`}
+                          name={`subChapter-${j + 1}`}
+                          value={subChapter}
+                          onChange={(e) => onChangeSubChapter(i, j, e)}
+                        />
+                        <div
+                          className="-ml-7 cursor-pointer hover:text-red-800"
+                          onClick={() => onRemoveSubChapter(i, j)}
+                        >
+                          <MdDelete />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-2">
+                    <div
+                      onClick={() => onAddSubChapter(i)}
+                      className="fcc text-2xl cursor-pointer hover:text-green-800"
+                    >
+                      <MdAddCircle />
+                    </div>
                   </div>
                 </div>
               </div>

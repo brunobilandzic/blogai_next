@@ -91,7 +91,7 @@ export const BlogPostInfo = ({
         <div className="fsc gap-2 relative">
           <div className="font-semibold text-lg">{theme}</div>
           <div
-            className="text-red-600 cursor-pointer hover:text-red-800 text-xl mt-0.5"
+            className="text-red-600 cursor-pointer hover:text-red-800 text-2xl "
             title="Delete Blog Post"
             onClick={() => setIsOpen(true)}
           >
