@@ -149,8 +149,6 @@ export async function PUT(req) {
     "chaptersParameters"
   );
 
-  
-
   if (!blogParameters) {
     return Response.json(
       { message: "Blog parameters not found" },
@@ -256,11 +254,15 @@ export async function PUT(req) {
     );
   }
   console.log("Saved/Updated/Deleted", savedChapters.length, "chapters.");
-  const freshBlogParams = await BlogParameters.findById(body._id);
 
-  freshBlogParams.chaptersParameters = savedChapters;
+  const freshBlogParams = await BlogParameters.findByIdAndUpdate(
+    blogParameters._id,
+    { ...blogParameters, chaptersParameters: savedChapters },
+    { new: true }
+  ).populate("chaptersParameters");
+
   await freshBlogParams.save();
-  
+
   return Response.json(
     {
       message: "Blog parameters updated successfully",
