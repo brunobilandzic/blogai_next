@@ -1,6 +1,6 @@
 "use client";
 
-import { deleteBlogPost, handleGenerateClick } from "@/lib/actions/blog/blog";
+import { deleteBlogPost, generateBlogPost } from "@/lib/actions/blog/blog";
 import { PageItem } from "@/components/UI/page/elements";
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
@@ -32,7 +32,7 @@ export default function ParametersComponent({ blogParameters }) {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
   const onGenerateClick = async () => {
-    const { remainingCredits, blogPost } = await handleGenerateClick(
+    const { remainingCredits, blogPost } = await generateBlogPost(
       "hello world i am testing write some html, short",
       blogParameters._id
     );

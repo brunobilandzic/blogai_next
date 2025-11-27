@@ -15,7 +15,7 @@ export default async function Page({ params }) {
   console.log("chaptersParameters:", blogParameters?.chaptersParameters);
   return (
     <div>
-      <BlogParametersForm _blogParameters={clean(blogParameters)} test="test" />
+      <BlogParametersForm _blogParameters={clean(blogParameters)} />
     </div>
   );
 }

@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { PageItem } from "../../UI/page/elements";
 import Link from "next/link";
-import { MdDeleteForever } from "react-icons/md";
+import { MdDeleteForever, MdOpenInNew } from "react-icons/md";
 import Popup, { PopupConfirmAction } from "@/components/UI/popups";
 import { useRouter } from "next/navigation";
 import { deleteBlogPost } from "@/lib/actions/blog/blog";
@@ -65,6 +65,7 @@ export function BlogPostContent({ content }) {
 }
 
 export const BlogPostInfo = ({
+  _id: blogParametersId,
   theme,
   tone,
   length,
@@ -111,10 +112,19 @@ export const BlogPostInfo = ({
         </div>
       </div>
       <div className="mb-2  text-gray-700">{description}</div>
-      <div className="">
+      <div className="flex flex-col gap-2 mb-4">
         <div className="">Tone: {tone}</div>
         <div className="">Length: {length}</div>
         <div className="">Audience: {audience}</div>
+
+        <Link href={`/blog/parameters/${blogParametersId}/edit`}>
+          <div className="text-link flex items-center gap-1">
+            Edit Parameters{" "}
+            <div className="mt-0.5">
+              <MdOpenInNew />
+            </div>
+          </div>
+        </Link>
       </div>
     </div>
   );
