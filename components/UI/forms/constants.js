@@ -43,3 +43,9 @@ export const lengthOptions = [
   { value: "medium", label: "Medium" },
   { value: "long", label: "Long" },
 ];
+
+export const testChapterParameters = {
+  title: "The Rise of AI in Healthcare",
+  subChapters: ["AI-driven diagnostics", "Personalized treatment plans"],
+  length: "medium",
+};

@@ -2,7 +2,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { defaultBlogParameters, defaultChapterParams } from "./constants";
+import {
+  defaultBlogParameters,
+  defaultChapterParams,
+  testChapterParameters,
+} from "./constants";
 import { Input, TextArea, Select } from "./elements";
 import { toneOptions, lengthOptions } from "./constants";
 import { MdAddCircle, MdDelete } from "react-icons/md";
@@ -37,6 +41,7 @@ export default function BlogParametersForm({ _blogParameters }) {
       method: "PUT",
       body: JSON.stringify(blogParams),
     });
+    console.log("PUT response object:", res);
     const { message, blogParametersId, remainingCredits, blogPostId } =
       await res.json();
     console.log(
@@ -72,7 +77,7 @@ export default function BlogParametersForm({ _blogParameters }) {
   const addNewChapter = () => {
     setBlogParams((prev) => ({
       ...prev,
-      chaptersParameters: [...prev.chaptersParameters, defaultChapterParams],
+      chaptersParameters: [...prev.chaptersParameters, testChapterParameters],
     }));
   };
 

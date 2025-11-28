@@ -121,7 +121,8 @@ export async function PUT(req) {
   }
 
   const body = await req.json();
-
+  console.log("theme:", body.theme);
+  console.log("old blog id", body.blogPost);
   // Validate incoming blog parameters
   const validation = validateBlogParams(body);
   if (validation.error) {
@@ -136,25 +137,30 @@ export async function PUT(req) {
   }
 
   // Fetch existing blog parameters
-  const blogParameters = await getBlogParametersById(body._id);
+  let blogParameters = await getBlogParametersById(body._id);
   if (!blogParameters) {
     return Response.json(
       { message: "Blog parameters not found" },
       { status: 404 }
     );
   }
+  console.log("Fetched blog parameters:", blogParameters);
 
-  body.chaptersParameters = cleanSubdocuments(body.chaptersParameters);
+  // body.chaptersParameters = cleanSubdocuments(body.chaptersParameters);
 
-  Object.assign(blogParameters, body);
   const chapterPromises = [];
+  console.log("body chapters:", body.chaptersParameters);
+  console.log("existing old chapters:", blogParameters.chaptersParameters);
 
   for (let chapterParams of body.chaptersParameters) {
+    console.log("processing chapterParams:", chapterParams);
     if (!chapterParams) continue;
 
     if (chapterParams._id) {
+      console.log("updating existing chapterParams:", chapterParams.title);
       chapterPromises.push(updateChapter(chapterParams, chapterParams._id));
     } else {
+      console.log("creating new chapterParams:", chapterParams.title);
       chapterPromises.push(
         createChapterParameters(blogParameters, chapterParams)
       );
@@ -168,18 +174,19 @@ export async function PUT(req) {
     body.chaptersParameters
   );
 
-  for (let existingChapterId of blogParameters.chaptersParameters) {
+  for (let existingChapter of body.chaptersParameters) {
     if (
       !body.chaptersParameters.find(
-        (cp) => cp._id?.toString() === existingChapterId?.toString()
+        (cp) => cp._id?.toString() === existingChapter._id?.toString()
       )
     ) {
-      chapeterPromises.push(deleteChapter(existingChapterId));
-      console.log("marked for deletion chapter id:", existingChapterId);
+      chapterPromises.push(deleteChapter(existingChapter._id));
+      console.log("marked for deletion chapter id:", existingChapter.theme);
     }
   }
 
   const updatedChapters = await Promise.all(chapterPromises);
+
   if (!updatedChapters) {
     return Response.json(
       {
@@ -190,11 +197,28 @@ export async function PUT(req) {
   }
 
   console.log("Resolved", updatedChapters.length, "chapter promises.");
-
-  let freshBlogParams = await getBlogParametersById(blogParameters._id);
-
-  freshBlogParams.chaptersParameters = updatedChapters;
+  console.log("updatedChapters:", updatedChapters);
+  console.log(
+    "updated ids:",
+    updatedChapters.map((chapter) => chapter._id)
+  );
+  console.log("blogParameters id: ", blogParameters._id);
+  const { chaptersParameters, ...bodyWithoutChapters } = body;
+  let freshBlogParams = await BlogParameters.findByIdAndUpdate(
+    blogParameters._id,
+    {
+      ...bodyWithoutChapters,
+      $set: {
+        chaptersParameters: updatedChapters.map((chapter) => chapter._id),
+      },
+    },
+    { new: true }
+  );
   freshBlogParams.setPrompt();
+  console.log(
+    "Saving updated blog parameters...",
+    freshBlogParams.chaptersParameters
+  );
   await freshBlogParams.save();
 
   // await deleteBlogPost(freshBlogParams.blogPost);
@@ -211,12 +235,13 @@ export async function PUT(req) {
   }
 
   const { blogPost, remainingCredits } = generatedResult;
-
-  freshBlogParams = await BlogParameters.findById(freshBlogParams._id);
+  /* 
+  freshBlogParams = await BlogParameters.findById(freshBlogParams._id); */
   freshBlogParams.blogPost = blogPost._id;
 
   console.log("freshBlogParams blog id generated:", freshBlogParams.blogPost);
 
+  console.log("Saving updated blog parameters...", freshBlogParams);
   await freshBlogParams.save();
 
   return Response.json(
