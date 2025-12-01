@@ -24,10 +24,17 @@ export default function BlogParametersForm({ _blogParameters }) {
       method: "POST",
       body: JSON.stringify(blogParams),
     });
-    const { message, blogParameters } = await res.json();
-    alert(message);
+    const { message, blogParametersId, blogPostId, remainingCredits } =
+      await res.json();
 
-    router.push(`/blog/parameters/${blogParameters._id}`);
+    alert(
+      `${message}
+    Remaining credits: ${
+      typeof remainingCredits !== "undefined" ? remainingCredits : "N/A"
+    }${blogPostId ? "\nA blog post was generated." : ""}`
+    );
+
+    router.push(`/blog/parameters/${blogParametersId}`);
   };
 
   const onPut = async (e) => {
@@ -57,7 +64,10 @@ export default function BlogParametersForm({ _blogParameters }) {
     const { message, blogParametersId, remainingCredits, blogPostId } =
       await res.json();
 
-    alert(message);
+    alert(`${message}
+    Remaining credits: ${
+      typeof remainingCredits !== "undefined" ? remainingCredits : "N/A"
+    }${blogPostId ? "\nA blog post was generated." : ""}`);
     router.push(`/blog/parameters/${blogParametersId}`);
     router.refresh();
   };

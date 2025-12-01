@@ -92,17 +92,32 @@ export async function POST(req) {
   }
   blogParameters.chaptersParameters = savedChapters;
 
+  await blogParameters.save()
+
+  const generatedResult = await generateBlogPost(
+    blogParameters.promptText,
+    blogParameters._id
+  );
+
+  if (!generatedResult) {
+    return Response.json(
+      { message: "Error generating blog post" },
+      { status: 500 }
+    );
+  }
+
+  const { blogPost, remainingCredits } = generatedResult;
+  blogParameters.blogPost = blogPost._id;
+
   await blogParameters.save();
   await userRole.save();
-
-  console.log(
-    `Blog parameters "${blogParameters.theme}" with ${blogParameters.chaptersParameters.length} chapters saved.`
-  );
 
   return Response.json(
     {
       message: "Blog parameters saved successfully",
-      blogParameters,
+      blogParametersId: blogParameters._id,
+      blogPostId: blogPost._id,
+      remainingCredits,
     },
     { status: 201 }
   );
@@ -121,7 +136,6 @@ export async function PUT(req) {
 
   const body = await req.json();
 
-  console.log("PUT blog id to delete:", body.blogPost);
   // Validate incoming blog parameters
   const validation = validateBlogParams(body);
   if (validation.error) {
@@ -152,7 +166,6 @@ export async function PUT(req) {
     if (chapterParams._id) {
       chapterPromises.push(updateChapter(chapterParams, chapterParams._id));
     } else {
-      console.log("creating new chapterParams:", chapterParams.title);
       chapterPromises.push(
         createChapterParameters(blogParameters, chapterParams)
       );
@@ -166,7 +179,6 @@ export async function PUT(req) {
       )
     ) {
       chapterPromises.push(deleteChapter(existingChapter._id));
-      console.log("marked for deletion chapter id:", existingChapter.theme);
     }
   }
 
@@ -181,8 +193,6 @@ export async function PUT(req) {
     );
   }
 
-  console.log("updatedChapters from promises:", updatedChapters.length);
-  // Update blog parameters with new chapter references
   const { chaptersParameters, ...bodyWithoutChapters } = body;
 
   await deleteBlogPost(bodyWithoutChapters.blogPost);
@@ -212,7 +222,6 @@ export async function PUT(req) {
 
   const { blogPost, remainingCredits } = generatedResult;
   freshBlogParams.blogPost = blogPost._id;
-  console.log("New BLOG ID:", freshBlogParams.blogPost);
 
   await freshBlogParams.save();
 
