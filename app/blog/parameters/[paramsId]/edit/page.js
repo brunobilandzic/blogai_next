@@ -8,14 +8,16 @@ export default async function Page({ params }) {
   await dbConnect();
   const { paramsId } = await params;
 
-  const blogParameters = await BlogParameters.findById(paramsId)
-    .populate("chaptersParameters")
-    .lean();
+  const blogParameters = clean(
+    await BlogParameters.findById(paramsId).populate("chaptersParameters")
+  );
 
-  console.log("chaptersParameters:", blogParameters?.chaptersParameters);
   return (
     <div>
       <BlogParametersForm _blogParameters={clean(blogParameters)} />
     </div>
   );
 }
+
+export const revalidate = 0;
+export const dynamic = "force-dynamic";

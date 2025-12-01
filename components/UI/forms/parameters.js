@@ -37,23 +37,29 @@ export default function BlogParametersForm({ _blogParameters }) {
       alert("No blog parameters ID found for update.");
       return;
     }
+    const res = await fetch(
+      `/api/blog/parameters`,
+      {
+        method: "PUT",
+        body: JSON.stringify(blogParams),
+      },
+      { cache: "no-store" }
+    );
+    if (res.status !== 200) {
+      const { errors } = await res.json();
+      return alert(
+        `Failed to update blog parameters: ${errors
+          ?.map((e) => e.message)
+          .join(", ")}`
+      );
+    }
 
-    const res = await fetch(`/api/blog/parameters`, {
-      method: "PUT",
-      body: JSON.stringify(blogParams),
-    });
-    console.log("PUT response object:", res);
     const { message, blogParametersId, remainingCredits, blogPostId } =
       await res.json();
-    console.log(
-      "PUT response:",
-      message,
-      blogParametersId,
-      remainingCredits,
-      blogPostId
-    );
+
     alert(message);
     router.push(`/blog/parameters/${blogParametersId}`);
+    router.refresh();
   };
 
   const onChange = (e) => {
@@ -141,6 +147,9 @@ export default function BlogParametersForm({ _blogParameters }) {
 
   return (
     <div className="w-full">
+      <div className="text-red-600 font-bold text-lg my-5">
+        {JSON.stringify(blogParams.blogPost)}
+      </div>
       {/* Form for blog parameters */}
       <div className="flex flex-col gap-4">
         <Input

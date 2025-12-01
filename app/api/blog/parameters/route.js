@@ -38,8 +38,6 @@ export async function GET(req) {
 }
 
 export async function POST(req) {
-  console.log("Creating new blog parameters...");
-
   const { appUser } = await sessionAppUserServer();
   if (!appUser) {
     return Response.json(
@@ -70,6 +68,7 @@ export async function POST(req) {
     );
   }
 
+  console.log(`Creating new blog parameters ${body.theme}...`);
   const blogParameters = new BlogParameters(body);
   blogParameters.role = userRole;
   userRole.blogParameters.push(blogParameters._id);
@@ -122,7 +121,7 @@ export async function PUT(req) {
 
   const body = await req.json();
 
-  console.log("PUT BLOG ID", body.blogPost);
+  console.log("PUT blog id to delete:", body.blogPost);
   // Validate incoming blog parameters
   const validation = validateBlogParams(body);
   if (validation.error) {
@@ -186,8 +185,7 @@ export async function PUT(req) {
   // Update blog parameters with new chapter references
   const { chaptersParameters, ...bodyWithoutChapters } = body;
 
-  console.log("body without chapters blogid:", bodyWithoutChapters.blogPost);
-
+  await deleteBlogPost(bodyWithoutChapters.blogPost);
   let freshBlogParams = await BlogParameters.findByIdAndUpdate(
     blogParameters._id,
     {
@@ -199,7 +197,6 @@ export async function PUT(req) {
     { new: true }
   );
   freshBlogParams.setPrompt();
-  await deleteBlogPost(body.blogPost);
 
   const generatedResult = await generateBlogPost(
     freshBlogParams.promptText,
@@ -214,13 +211,8 @@ export async function PUT(req) {
   }
 
   const { blogPost, remainingCredits } = generatedResult;
-  console.log("Generated blog post:", blogPost);
-  /* 
-  freshBlogParams = await BlogParameters.findById(freshBlogParams._id); */
-
   freshBlogParams.blogPost = blogPost._id;
-
-  console.log("freshBlogParams blog id generated:", freshBlogParams.blogPost);
+  console.log("New BLOG ID:", freshBlogParams.blogPost);
 
   await freshBlogParams.save();
 

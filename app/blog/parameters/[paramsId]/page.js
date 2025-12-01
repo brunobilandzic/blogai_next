@@ -1,6 +1,5 @@
 import "@/models/openai";
 import ParametersComponent from "@/components/blog/parameters";
-import { PrametersResponseWrapper } from "@/components/wrappers/PrametersResponseWrapper";
 import clean from "@/lib/db/clean";
 import dbConnect from "@/lib/db/mongooseConnect";
 import { BlogParameters } from "@/models/openai/parameters";
@@ -25,3 +24,5 @@ export default async function Page({ params }) {
     </>
   );
 }
+
+export const revalidate = 0;
