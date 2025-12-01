@@ -147,9 +147,6 @@ export default function BlogParametersForm({ _blogParameters }) {
 
   return (
     <div className="w-full">
-      <div className="text-red-600 font-bold text-lg my-5">
-        {JSON.stringify(blogParams.blogPost)}
-      </div>
       {/* Form for blog parameters */}
       <div className="flex flex-col gap-4">
         <Input

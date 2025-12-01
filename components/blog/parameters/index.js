@@ -67,9 +67,7 @@ export default function ParametersComponent({ blogParameters }) {
   return (
     <div className="flex flex-col gap-2 ">
       <div className="text-sm text-gray-600">
-        Created At: {new Date(createdAt).toLocaleString("hr-HR")} Blog Post ID:
-        {blogPostId || " Not generated yet.\t"}
-        {JSON.stringify(blogParameters.blogPost)}
+        Created At: {new Date(createdAt).toLocaleString("hr-HR")}
         Params ID: {id}
       </div>
       <div className="fsc gap-2 ">
