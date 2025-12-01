@@ -28,8 +28,10 @@ export default function ParametersComponent({ blogParameters }) {
   const router = useRouter();
   const dispatch = useDispatch();
   const remainingCredits = useSelector((state) => getRemainingCredits(state));
-  const [blogPostId, setBlogPostId] = useState(blogPost?._id || null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [blogPostId, setBlogPostId] = useState(blogPost?._id || null);
+
+  console.log("blogpostid:", blogPostId);
 
   const onGenerateClick = async () => {
     const { remainingCredits, blogPost } = await generateBlogPost(
@@ -65,7 +67,10 @@ export default function ParametersComponent({ blogParameters }) {
   return (
     <div className="flex flex-col gap-2 ">
       <div className="text-sm text-gray-600">
-        Created At: {new Date(createdAt).toLocaleString("hr-HR")}
+        Created At: {new Date(createdAt).toLocaleString("hr-HR")} Blog Post ID:
+        {blogPostId || " Not generated yet.\t"}
+        {JSON.stringify(blogParameters.blogPost)}
+        Params ID: {id}
       </div>
       <div className="fsc gap-2 ">
         <div
@@ -101,7 +106,7 @@ export default function ParametersComponent({ blogParameters }) {
         <ChaptersParameters chaptersParameters={chaptersParameters} />
       </div>
 
-      {!blogPostId && (
+      {!blogPost && (
         <div className="fcc mt-4 gap-2">
           <div className="text-sm text-gray-600">
             Remaining credits: {remainingCredits}
@@ -111,13 +116,13 @@ export default function ParametersComponent({ blogParameters }) {
           </div>
         </div>
       )}
-      {blogPostId && (
+      {blogPost && (
         <div className="fsc">
           <div className="text-green-700 font-semibold fsc gap-4">
             Blog post already generated.{" "}
             <div
               className="text-link cursor-pointer text-2xl"
-              onClick={() => router.push(`/blog/${blogPostId}`)}
+              onClick={() => router.push(`/blog/${blogPost._id}`)}
             >
               <MdOpenInNew />
             </div>

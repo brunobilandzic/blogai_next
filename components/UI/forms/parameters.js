@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import {
   defaultBlogParameters,
   defaultChapterParams,
+  testBlogParameters,
   testChapterParameters,
 } from "./constants";
 import { Input, TextArea, Select } from "./elements";
@@ -13,7 +14,7 @@ import { MdAddCircle, MdDelete } from "react-icons/md";
 
 export default function BlogParametersForm({ _blogParameters }) {
   const [blogParams, setBlogParams] = useState(
-    _blogParameters || defaultBlogParameters
+    _blogParameters || testBlogParameters
   );
   const router = useRouter();
 

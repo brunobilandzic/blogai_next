@@ -1,12 +1,13 @@
 import BlogParametersList from "@/components/blog/parameters/List";
-import { getAllBlogParams } from "@/lib/actions/blog/parameters";
+import { getAllBlogParameters } from "@/lib/actions/blog/parameters";
 import clean from "@/lib/db/clean";
 
 export default async function Page() {
-  const blogParams = clean(await getAllBlogParams());
+  const blogParameters = clean(await getAllBlogParameters());
+  console.log(blogParameters.find((bp) => bp.blogPost));
   return (
     <>
-      <BlogParametersList blogParametersList={blogParams} />
+      <BlogParametersList blogParametersList={blogParameters} />
     </>
   );
 }

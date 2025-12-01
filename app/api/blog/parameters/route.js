@@ -11,6 +11,7 @@ import {
   createChapterParameters,
 } from "@/lib/actions/blog/parameters";
 import { cleanSubdocuments } from "@/lib/db/clean";
+import { BlogPost } from "@/models/openai/blog";
 
 export async function GET(req) {
   const { appUser } = await sessionAppUserServer();
@@ -90,7 +91,6 @@ export async function POST(req) {
       { status: 500 }
     );
   }
-  console.log("Saved", savedChapters.length, "chapters.");
   blogParameters.chaptersParameters = savedChapters;
 
   await blogParameters.save();
@@ -121,8 +121,8 @@ export async function PUT(req) {
   }
 
   const body = await req.json();
-  console.log("theme:", body.theme);
-  console.log("old blog id", body.blogPost);
+
+  console.log("PUT BLOG ID", body.blogPost);
   // Validate incoming blog parameters
   const validation = validateBlogParams(body);
   if (validation.error) {
@@ -144,20 +144,13 @@ export async function PUT(req) {
       { status: 404 }
     );
   }
-  console.log("Fetched blog parameters:", blogParameters);
-
-  // body.chaptersParameters = cleanSubdocuments(body.chaptersParameters);
 
   const chapterPromises = [];
-  console.log("body chapters:", body.chaptersParameters);
-  console.log("existing old chapters:", blogParameters.chaptersParameters);
 
   for (let chapterParams of body.chaptersParameters) {
-    console.log("processing chapterParams:", chapterParams);
     if (!chapterParams) continue;
 
     if (chapterParams._id) {
-      console.log("updating existing chapterParams:", chapterParams.title);
       chapterPromises.push(updateChapter(chapterParams, chapterParams._id));
     } else {
       console.log("creating new chapterParams:", chapterParams.title);
@@ -167,14 +160,7 @@ export async function PUT(req) {
     }
   }
 
-  console.log(
-    "entering delete, existing are:",
-    blogParameters.chaptersParameters,
-    "body are:",
-    body.chaptersParameters
-  );
-
-  for (let existingChapter of body.chaptersParameters) {
+  for (let existingChapter of blogParameters.chaptersParameters) {
     if (
       !body.chaptersParameters.find(
         (cp) => cp._id?.toString() === existingChapter._id?.toString()
@@ -196,14 +182,12 @@ export async function PUT(req) {
     );
   }
 
-  console.log("Resolved", updatedChapters.length, "chapter promises.");
-  console.log("updatedChapters:", updatedChapters);
-  console.log(
-    "updated ids:",
-    updatedChapters.map((chapter) => chapter._id)
-  );
-  console.log("blogParameters id: ", blogParameters._id);
+  console.log("updatedChapters from promises:", updatedChapters.length);
+  // Update blog parameters with new chapter references
   const { chaptersParameters, ...bodyWithoutChapters } = body;
+
+  console.log("body without chapters blogid:", bodyWithoutChapters.blogPost);
+
   let freshBlogParams = await BlogParameters.findByIdAndUpdate(
     blogParameters._id,
     {
@@ -215,13 +199,8 @@ export async function PUT(req) {
     { new: true }
   );
   freshBlogParams.setPrompt();
-  console.log(
-    "Saving updated blog parameters...",
-    freshBlogParams.chaptersParameters
-  );
-  await freshBlogParams.save();
+  await deleteBlogPost(body.blogPost);
 
-  // await deleteBlogPost(freshBlogParams.blogPost);
   const generatedResult = await generateBlogPost(
     freshBlogParams.promptText,
     freshBlogParams._id
@@ -235,13 +214,14 @@ export async function PUT(req) {
   }
 
   const { blogPost, remainingCredits } = generatedResult;
+  console.log("Generated blog post:", blogPost);
   /* 
   freshBlogParams = await BlogParameters.findById(freshBlogParams._id); */
+
   freshBlogParams.blogPost = blogPost._id;
 
   console.log("freshBlogParams blog id generated:", freshBlogParams.blogPost);
 
-  console.log("Saving updated blog parameters...", freshBlogParams);
   await freshBlogParams.save();
 
   return Response.json(

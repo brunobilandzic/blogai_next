@@ -9,6 +9,7 @@ import clean from "@/lib/db/clean";
 
 export default function BlogParametersList({ blogParametersList }) {
   console.log(`Fetched ${blogParametersList.length} blog parameters:`);
+  console.log("Blog Posts Id:", blogParametersList.map(bp => bp.blogPost));
 
   return (
     <>
