@@ -30,6 +30,7 @@ export default function ParametersComponent({ blogParameters }) {
   const remainingCredits = useSelector((state) => getRemainingCredits(state));
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [blogPostId, setBlogPostId] = useState(blogPost?._id || null);
+  const [showPromptText, setShowPromptText] = useState(false);
 
   console.log("blogpostid:", blogPostId);
 
@@ -102,6 +103,15 @@ export default function ParametersComponent({ blogParameters }) {
       <div className="font-semibold text-md ">Chapters:</div>
       <div className="w-full">
         <ChaptersParameters chaptersParameters={chaptersParameters} />
+      </div>
+      <div>
+        <div
+          className={`btn ${showPromptText ? "btn-active" : "btn-inactive"}`}
+          onClick={() => setShowPromptText(!showPromptText)}
+        >
+          {showPromptText ? "Hide Prompt Text" : "Show Prompt Text"}
+        </div>
+        {showPromptText && <PromptText promptText={blogParameters.promptText} />}
       </div>
 
       {!blogPost && (
@@ -184,4 +194,23 @@ export function ViewAllParametersTile() {
       </PageItem>
     </Link>
   );
+}
+
+export function PromptText({ edit, setPromptText, promptText }) {
+  if (!edit) {
+    return (
+      <div className="border p-4 rounded-lg flex flex-col gap-2 shadow-sm  whitespace-pre-wrap">
+        {promptText}
+      </div>
+    );
+  } else {
+    return (
+      <textarea
+        className="w-full border p-4 rounded-lg flex flex-col gap-2 shadow-sm  whitespace-pre-wrap"
+        value={promptText}
+        onChange={(e) => setPromptText(e.target.value)}
+        rows={10}
+      ></textarea>
+    );
+  }
 }

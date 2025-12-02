@@ -8,6 +8,7 @@ import {
   testBlogParameters,
   testChapterParameters,
 } from "./constants";
+import { PromptText } from "@/components/blog/parameters";
 import { Input, TextArea, Select } from "./elements";
 import { toneOptions, lengthOptions } from "./constants";
 import { MdAddCircle, MdDelete } from "react-icons/md";
@@ -15,6 +16,10 @@ import { MdAddCircle, MdDelete } from "react-icons/md";
 export default function BlogParametersForm({ _blogParameters }) {
   const [blogParams, setBlogParams] = useState(
     _blogParameters || testBlogParameters
+  );
+  const [editPromptText, setEditPromptText] = useState(false);
+  const [promptText, setPromptText] = useState(
+    _blogParameters?.promptText || ""
   );
   const router = useRouter();
 
@@ -256,7 +261,24 @@ export default function BlogParametersForm({ _blogParameters }) {
             </div>
           </div>
         ))}
+
+        <div className="flex flex-col gap-2">
+          <div
+            className={`btn ${editPromptText ? "btn-active" : "btn-inactive"}`}
+            onClick={() => setEditPromptText(!editPromptText)}
+          >
+            {editPromptText ? "Hide Prompt Text Editor" : "Edit Prompt Text"}
+          </div>
+          {editPromptText && (
+            <PromptText
+              promptText={promptText}
+              setPromptText={setPromptText}
+              edit={true}
+            />
+          )}
+        </div>
       </div>
+
       <div className="pt-4 pb-4 text-xl gap-4 fcc">
         <div
           className="btn btn-action mx-auto"
