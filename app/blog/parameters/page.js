@@ -4,7 +4,6 @@ import clean from "@/lib/db/clean";
 
 export default async function Page() {
   const blogParameters = clean(await getAllBlogParameters());
-  console.log(blogParameters.find((bp) => bp.blogPost));
   return (
     <>
       <BlogParametersList blogParametersList={blogParameters} />

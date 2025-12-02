@@ -32,8 +32,6 @@ export default function ParametersComponent({ blogParameters }) {
   const [blogPostId, setBlogPostId] = useState(blogPost?._id || null);
   const [showPromptText, setShowPromptText] = useState(false);
 
-  console.log("blogpostid:", blogPostId);
-
   const onGenerateClick = async () => {
     const { remainingCredits, blogPost } = await generateBlogPost(
       "hello world i am testing write some html, short",

@@ -10,7 +10,6 @@ import clean from "@/lib/db/clean";
 
 const Profile = async () => {
   const { appUser } = clean(await sessionAppUserServer());
-  console.log("AppUser in Profile page:", appUser);
 
   if (!appUser) return <NotLoggedInComponent />;
 

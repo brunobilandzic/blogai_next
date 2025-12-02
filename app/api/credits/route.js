@@ -11,7 +11,6 @@ export async function POST(req) {
   }
 
   const body = await req.json();
-  console.log("Received body:", body);
   const { addCreditsAmount } = body;
   if (typeof addCreditsAmount !== "number" || addCreditsAmount <= 0) {
     return Response.json(

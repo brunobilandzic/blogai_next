@@ -2,20 +2,13 @@ import dbConnect from "@/lib/db/mongooseConnect";
 import mongoose from "mongoose";
 
 export async function DELETE(req) {
-  console.log("Received request to /api/admin/deletedb");
-
   try {
     await dbConnect();
     const collections = await mongoose.connection.db
       .listCollections()
       .toArray();
-    console.log(
-      "Collections to be deleted:",
-      collections.map((col) => col.name)
-    );
     for (const collection of collections) {
       await mongoose.connection.db.dropCollection(collection.name);
-      console.log(`Dropped collection: ${collection.name}`);
     }
     return new Response(
       JSON.stringify({

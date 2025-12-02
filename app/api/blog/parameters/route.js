@@ -68,7 +68,6 @@ export async function POST(req) {
     );
   }
 
-  console.log(`Creating new blog parameters ${body.theme}...`);
   const blogParameters = new BlogParameters(body);
   blogParameters.role = userRole;
   userRole.blogParameters.push(blogParameters._id);
@@ -105,7 +104,6 @@ export async function POST(req) {
 
   const { blogPost, remainingCredits } = generatedResult;
   blogParameters.blogPost = blogPost._id;
-
   await blogParameters.save();
   await userRole.save();
 
@@ -122,8 +120,6 @@ export async function POST(req) {
 
 export async function PUT(req) {
   try {
-    console.log("Updating blog parameters...");
-
     const { authError, userRole } = await sessionUserRoleServer();
     if (authError) {
       return Response.json(
@@ -157,7 +153,6 @@ export async function PUT(req) {
     }
     const sameParameters = await compare(blogParameters, body);
     if (sameParameters) {
-      console.log("No changes detected in blog parameters. Skipping update.");
       return Response.json(
         {
           message: "No changes detected in blog parameters",
@@ -174,11 +169,8 @@ export async function PUT(req) {
 
     const chapterPromises = [];
 
-    // Handle chapters with logging (we'll perform the same operations as the later loops
-    // but include console.log in each if branch, then clear arrays so the original loops do nothing)
     for (let chapterParameters of body.chaptersParameters) {
       if (!chapterParameters) {
-        console.log("Skipping falsy chapterParams:", chapterParameters);
         continue;
       }
 
@@ -199,11 +191,6 @@ export async function PUT(req) {
       );
       if (!found) {
         chapterPromises.push(deleteChapter(existingChapter._id));
-      } else {
-        console.log(
-          "Retaining existingChapter (found in incoming body):",
-          existingChapter.title
-        );
       }
     }
 
@@ -246,17 +233,15 @@ export async function PUT(req) {
     await freshBlogParams.save();
 
     if (oldPromptText !== newPromptText) {
-      console.log("Prompt text changed, updating...");
       await BlogParameters.findByIdAndUpdate(blogParameters._id, {
         promptText: newPromptText,
       });
     } else {
       const editPromptBlogParameters = await BlogParameters.findById(
         freshBlogParams._id
-      );
+      ).populate("chaptersParameters");
       editPromptBlogParameters.setPrompt();
       await editPromptBlogParameters.save();
-      console.log(editPromptBlogParameters.promptText.slice(0, 100));
     }
 
     return Response.json(

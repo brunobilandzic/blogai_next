@@ -34,7 +34,6 @@ export default function Dashboard() {
 }
 
 const UserRoleDashboard = ({ credits }) => {
-  console.log("Rendering UserRoleDashboard with credits:", credits);
   return (
     <>
       <AllBlogsDashboardTile />

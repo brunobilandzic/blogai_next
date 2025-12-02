@@ -5,17 +5,12 @@ import { PlaceHolderPageItems } from "@/lib/constants";
 import Link from "next/link";
 import { MdAdd, MdCheck } from "react-icons/md";
 import { useRouter } from "next/navigation";
-import clean from "@/lib/db/clean";
 
 export default function BlogParametersList({ blogParametersList }) {
-  console.log(`Fetched ${blogParametersList.length} blog parameters:`);
-  console.log("Blog Posts Id:", blogParametersList.map(bp => bp.blogPost));
-
   return (
     <>
       <div className="tiles-grid">
         {blogParametersList.map((params, i) => {
-          console.log("Blog id:", params.blogPost);
           return (
             <div className="relative" key={i}>
               <Link href={`/blog/parameters/${params._id}`}>
@@ -55,7 +50,6 @@ export function BlogParametersTile({ blogParameters }) {
 
 const BlogExistsCheck = ({ blogPostId }) => {
   const router = useRouter();
-  console.log("Blog post ID:", blogPostId);
   return (
     <div className="absolute bottom-2 right-2">
       {blogPostId && (

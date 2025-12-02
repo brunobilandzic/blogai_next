@@ -21,7 +21,6 @@ export const BlogPostComponent = ({ blogPost }) => {
 };
 
 export const AllBlogsDashboardTile = () => {
-  console.log("Rendering AllBlogsDashboardTile");
   return (
     <Link href={"/blog"}>
       <PageItem>
@@ -34,7 +33,6 @@ export const AllBlogsDashboardTile = () => {
 export function BlogPostContent({ content }) {
   const [html, setHtml] = useState(false);
 
-  console.log("Rendering BlogPostContent with html:", html);
   return (
     <>
       <div className="my-2 flex gap-2">

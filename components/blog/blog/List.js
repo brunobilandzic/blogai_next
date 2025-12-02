@@ -2,8 +2,6 @@ import { BlogParameters } from "@/models/openai/parameters";
 import Link from "next/link";
 
 export default function BlogList({ blogList }) {
-  console.log(`Fetched ${blogList?.length} blogs:`);
-
   return (
     <div className="grid grid-cols-1 md:grid-cols-4 gap-2 md:gap-4">
       {blogList?.map((blogPost) => (

@@ -14,7 +14,6 @@ const deleteDb = async (dispatch) => {
   const res = await axios.delete("/api/admin/deleteDb");
   signOut();
   dispatch(deleteAppUser());
-  console.log(res.data);
 };
 
 export default function Home() {

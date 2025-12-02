@@ -12,7 +12,6 @@ export function CreditsDashboardTile({ credits }) {
   const [addCreditsAmount, setAddCreditsAmount] = useState(0);
 
   const openAddCreditsPopup = async () => {
-    console.log("Adding credits...");
     setAddCreditsPopupOpen(true);
   };
 

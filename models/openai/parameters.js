@@ -51,7 +51,6 @@ const chapterParametersSchema = new mongoose.Schema({
 
 blogParametersSchema.methods.chaptersString = function () {
   let chaptersString = "";
-
   for (let chapter of this.chaptersParameters) {
     chaptersString += chapter.chapterString() + "; ";
   }
@@ -60,7 +59,6 @@ blogParametersSchema.methods.chaptersString = function () {
 };
 
 blogParametersSchema.methods.setPrompt = function () {
-  console.log("(method): Setting prompt text for blogParameters:", this.theme);
   this.promptText = `ZADATAK
         Napiši opširan HTML blog post na hrvatskom jeziku na temu ${
           this.theme
@@ -175,15 +173,9 @@ chapterParametersSchema.methods.chapterString = function () {
 };
 
 blogParametersSchema.pre("save", async function (next) {
-  console.log("pre save START");
-  try {
-    this.setPrompt();
-    console.log("pre save END");
-    next();
-  } catch (err) {
-    console.error("PRE SAVE ERROR:", err);
-    next(err);
-  }
+  await this.populate("chaptersParameters");
+  this.setPrompt();
+  next();
 });
 
 export const BlogParameters =
