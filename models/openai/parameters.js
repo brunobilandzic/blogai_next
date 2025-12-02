@@ -175,9 +175,15 @@ chapterParametersSchema.methods.chapterString = function () {
 };
 
 blogParametersSchema.pre("save", async function (next) {
-  console.log("saving blogParameters...");
-  this.setPrompt();
-  next();
+  console.log("pre save START");
+  try {
+    this.setPrompt();
+    console.log("pre save END");
+    next();
+  } catch (err) {
+    console.error("PRE SAVE ERROR:", err);
+    next(err);
+  }
 });
 
 export const BlogParameters =

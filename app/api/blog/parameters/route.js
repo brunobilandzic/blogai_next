@@ -252,42 +252,11 @@ export async function PUT(req) {
       });
     } else {
       const editPromptBlogParameters = await BlogParameters.findById(
-        blogParameters._id
+        freshBlogParams._id
       );
-      console.log(
-        "HAS SETPROMPT:",
-        editPromptBlogParameters.setPrompt,
-        "MODEL NAMES:",
-        mongoose.modelNames()
-      );
-
-      console.log("constructor:", editPromptBlogParameters.constructor.name);
-      console.log("DEBUG -----");
-      console.log("ID dokumenta:", editPromptBlogParameters._id);
-      console.log("Tema iz baze:", editPromptBlogParameters.theme);
-      console.log(
-        "Stari prompt:",
-        editPromptBlogParameters.promptText?.slice(0, 100)
-      );
-
       editPromptBlogParameters.setPrompt();
-
-      console.log(
-        "Novi prompt:",
-        editPromptBlogParameters.promptText?.slice(0, 100)
-      );
-      console.log(
-        "Modified?:",
-        editPromptBlogParameters.isModified("promptText")
-      );
-
-      editPromptBlogParameters.markModified("promptText");
-
-      console.log(
-        "Modified AFTER FORCE?:",
-        editPromptBlogParameters.isModified("promptText")
-      );
-      console.log("Spremam dokument...");
+      await editPromptBlogParameters.save();
+      console.log(editPromptBlogParameters.promptText.slice(0, 100));
     }
 
     return Response.json(
