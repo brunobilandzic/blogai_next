@@ -14,20 +14,17 @@ import { toneOptions, lengthOptions } from "./constants";
 import { MdAddCircle, MdDelete } from "react-icons/md";
 
 export default function BlogParametersForm({ _blogParameters }) {
-  const [blogParams, setBlogParams] = useState(
+  const [blogParameters, setBlogParams] = useState(
     _blogParameters || testBlogParameters
   );
   const [editPromptText, setEditPromptText] = useState(false);
-  const [promptText, setPromptText] = useState(
-    _blogParameters?.promptText || ""
-  );
   const router = useRouter();
 
   const onSubmit = async (e) => {
     e.preventDefault();
     const res = await fetch("/api/blog/parameters", {
       method: "POST",
-      body: JSON.stringify(blogParams),
+      body: JSON.stringify(blogParameters),
     });
     const { message, blogParametersId, blogPostId, remainingCredits } =
       await res.json();
@@ -45,7 +42,7 @@ export default function BlogParametersForm({ _blogParameters }) {
   const onPut = async (e) => {
     e.preventDefault();
 
-    if (!blogParams?._id) {
+    if (!blogParameters?._id) {
       alert("No blog parameters ID found for update.");
       return;
     }
@@ -53,7 +50,7 @@ export default function BlogParametersForm({ _blogParameters }) {
       `/api/blog/parameters`,
       {
         method: "PUT",
-        body: JSON.stringify(blogParams),
+        body: JSON.stringify(blogParameters),
       },
       { cache: "no-store" }
     );
@@ -72,7 +69,7 @@ export default function BlogParametersForm({ _blogParameters }) {
     alert(`${message}
     Remaining credits: ${
       typeof remainingCredits !== "undefined" ? remainingCredits : "N/A"
-    }${blogPostId ? "\nA blog post was generated." : ""}`);
+    }\nBlog Post ID: ${blogPostId ? blogPostId : "No blog post generated."}`);
     router.push(`/blog/parameters/${blogParametersId}`);
     router.refresh();
   };
@@ -87,8 +84,8 @@ export default function BlogParametersForm({ _blogParameters }) {
 
   const onChangeChapter = (index, e) => {
     const { name, value } = e.target;
-    const updatedChapters = blogParams.chaptersParameters.map((chapter, i) =>
-      i === index ? { ...chapter, [name]: value } : chapter
+    const updatedChapters = blogParameters.chaptersParameters.map(
+      (chapter, i) => (i === index ? { ...chapter, [name]: value } : chapter)
     );
     setBlogParams((prev) => ({
       ...prev,
@@ -106,15 +103,17 @@ export default function BlogParametersForm({ _blogParameters }) {
   const onChangeSubChapter = (chapterIndex, subChapterIndex, e) => {
     const { value } = e.target;
 
-    const updatedChapters = blogParams.chaptersParameters.map((chapter, i) => {
-      if (i === chapterIndex) {
-        const updatedSubChapters = chapter.subChapters.map((subChapter, j) =>
-          j === subChapterIndex ? value : subChapter
-        );
-        return { ...chapter, subChapters: updatedSubChapters };
+    const updatedChapters = blogParameters.chaptersParameters.map(
+      (chapter, i) => {
+        if (i === chapterIndex) {
+          const updatedSubChapters = chapter.subChapters.map((subChapter, j) =>
+            j === subChapterIndex ? value : subChapter
+          );
+          return { ...chapter, subChapters: updatedSubChapters };
+        }
+        return chapter;
       }
-      return chapter;
-    });
+    );
     setBlogParams((prev) => ({
       ...prev,
       chaptersParameters: updatedChapters,
@@ -122,15 +121,17 @@ export default function BlogParametersForm({ _blogParameters }) {
   };
 
   const onAddSubChapter = (chapterIndex) => {
-    const updatedChapters = blogParams.chaptersParameters.map((chapter, i) => {
-      if (i === chapterIndex) {
-        return {
-          ...chapter,
-          subChapters: [...chapter.subChapters, ""],
-        };
+    const updatedChapters = blogParameters.chaptersParameters.map(
+      (chapter, i) => {
+        if (i === chapterIndex) {
+          return {
+            ...chapter,
+            subChapters: [...chapter.subChapters, ""],
+          };
+        }
+        return chapter;
       }
-      return chapter;
-    });
+    );
     setBlogParams((prev) => ({
       ...prev,
       chaptersParameters: updatedChapters,
@@ -138,7 +139,7 @@ export default function BlogParametersForm({ _blogParameters }) {
   };
 
   const onRemoveChapter = (chapterIndex) => {
-    const updatedChapters = blogParams.chaptersParameters.filter(
+    const updatedChapters = blogParameters.chaptersParameters.filter(
       (chapter, i) => i !== chapterIndex
     );
     setBlogParams((prev) => ({
@@ -168,33 +169,33 @@ export default function BlogParametersForm({ _blogParameters }) {
           label="Theme"
           type="text"
           name="theme"
-          value={blogParams.theme}
+          value={blogParameters.theme}
           onChange={onChange}
         />
         <TextArea
           label="Description"
           name="description"
-          value={blogParams.description}
+          value={blogParameters.description}
           onChange={onChange}
         />
         <Input
           label="Audience"
           type="text"
           name="audience"
-          value={blogParams.audience}
+          value={blogParameters.audience}
           onChange={onChange}
         />
         <Select
           label="Tone"
           name="tone"
-          value={blogParams.tone}
+          value={blogParameters.tone}
           onChange={onChange}
           options={toneOptions}
         />
         <Select
           label="Length"
           name="length"
-          value={blogParams.length}
+          value={blogParameters.length}
           onChange={onChange}
           options={lengthOptions}
         />
@@ -205,7 +206,7 @@ export default function BlogParametersForm({ _blogParameters }) {
           </div>
         </div>
         {/* Chapter parameters form will go here */}
-        {blogParams.chaptersParameters.map((chapter, i) => (
+        {blogParameters.chaptersParameters.map((chapter, i) => (
           <div key={i} className="">
             {" "}
             <div className="flex flex-col gap-4">
@@ -271,8 +272,8 @@ export default function BlogParametersForm({ _blogParameters }) {
           </div>
           {editPromptText && (
             <PromptText
-              promptText={promptText}
-              setPromptText={setPromptText}
+              promptText={blogParameters.promptText}
+              onChange={onChange}
               edit={true}
             />
           )}

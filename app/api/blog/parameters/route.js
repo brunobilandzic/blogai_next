@@ -1,6 +1,6 @@
 import { deleteBlogPost, generateBlogPost } from "@/lib/actions/blog/blog";
 import { sessionAppUserServer } from "@/lib/actions/userServer";
-import { getRoleObject } from "@/lib/actions/userServer";
+import { getRoleObject, sessionUserRoleServer } from "@/lib/actions/userServer";
 import { validateBlogParams } from "@/lib/validators/blog";
 import { BlogParameters, ChapterParameters } from "@/models/openai/parameters";
 import {
@@ -9,9 +9,9 @@ import {
   deleteChapter,
   saveChapter,
   createChapterParameters,
+  compare,
 } from "@/lib/actions/blog/parameters";
-import { cleanSubdocuments } from "@/lib/db/clean";
-import { BlogPost } from "@/models/openai/blog";
+import mongoose from "mongoose";
 
 export async function GET(req) {
   const { appUser } = await sessionAppUserServer();
@@ -94,10 +94,7 @@ export async function POST(req) {
 
   await blogParameters.save();
 
-  const generatedResult = await generateBlogPost(
-    blogParameters.promptText,
-    blogParameters._id
-  );
+  const generatedResult = await generateBlogPost(blogParameters._id);
 
   if (!generatedResult) {
     return Response.json(
@@ -127,7 +124,7 @@ export async function PUT(req) {
   try {
     console.log("Updating blog parameters...");
 
-    const { authError } = await sessionAppUserServer();
+    const { authError, userRole } = await sessionUserRoleServer();
     if (authError) {
       return Response.json(
         { message: `AUTH ERROR: ${authError}` },
@@ -158,6 +155,22 @@ export async function PUT(req) {
         { status: 404 }
       );
     }
+    const sameParameters = await compare(blogParameters, body);
+    if (sameParameters) {
+      console.log("No changes detected in blog parameters. Skipping update.");
+      return Response.json(
+        {
+          message: "No changes detected in blog parameters",
+          blogParametersId: blogParameters._id,
+          remainingCredits: userRole.credits,
+          blogPostId: blogParameters.blogPost,
+        },
+        { status: 200 }
+      );
+    }
+
+    const oldPromptText = blogParameters.promptText;
+    const newPromptText = body.promptText;
 
     const chapterPromises = [];
 
@@ -218,12 +231,8 @@ export async function PUT(req) {
       },
       { new: true }
     );
-    freshBlogParams.setPrompt();
 
-    const generatedResult = await generateBlogPost(
-      freshBlogParams.promptText,
-      freshBlogParams._id
-    );
+    const generatedResult = await generateBlogPost(freshBlogParams._id);
 
     if (!generatedResult) {
       return Response.json(
@@ -231,11 +240,55 @@ export async function PUT(req) {
         { status: 500 }
       );
     }
-
     const { blogPost, remainingCredits } = generatedResult;
-    freshBlogParams.blogPost = blogPost._id;
 
+    freshBlogParams.blogPost = blogPost._id;
     await freshBlogParams.save();
+
+    if (oldPromptText !== newPromptText) {
+      console.log("Prompt text changed, updating...");
+      await BlogParameters.findByIdAndUpdate(blogParameters._id, {
+        promptText: newPromptText,
+      });
+    } else {
+      const editPromptBlogParameters = await BlogParameters.findById(
+        blogParameters._id
+      );
+      console.log(
+        "HAS SETPROMPT:",
+        editPromptBlogParameters.setPrompt,
+        "MODEL NAMES:",
+        mongoose.modelNames()
+      );
+
+      console.log("constructor:", editPromptBlogParameters.constructor.name);
+      console.log("DEBUG -----");
+      console.log("ID dokumenta:", editPromptBlogParameters._id);
+      console.log("Tema iz baze:", editPromptBlogParameters.theme);
+      console.log(
+        "Stari prompt:",
+        editPromptBlogParameters.promptText?.slice(0, 100)
+      );
+
+      editPromptBlogParameters.setPrompt();
+
+      console.log(
+        "Novi prompt:",
+        editPromptBlogParameters.promptText?.slice(0, 100)
+      );
+      console.log(
+        "Modified?:",
+        editPromptBlogParameters.isModified("promptText")
+      );
+
+      editPromptBlogParameters.markModified("promptText");
+
+      console.log(
+        "Modified AFTER FORCE?:",
+        editPromptBlogParameters.isModified("promptText")
+      );
+      console.log("Spremam dokument...");
+    }
 
     return Response.json(
       {

@@ -60,8 +60,8 @@ blogParametersSchema.methods.chaptersString = function () {
 };
 
 blogParametersSchema.methods.setPrompt = function () {
-  if (!this.promptText) {
-    this.promptText = `ZADATAK
+  console.log("(method): Setting prompt text for blogParameters:", this.theme);
+  this.promptText = `ZADATAK
         Napiši opširan HTML blog post na hrvatskom jeziku na temu ${
           this.theme
         }. Možeš prilagoditi fokus teme ciljanoj publici ${this.audience}.
@@ -160,11 +160,10 @@ blogParametersSchema.methods.setPrompt = function () {
 
         ULAZNI PODACI
 
-        Tema: ${this.title}
+        Tema: ${this.theme}
         Opis bloga (dopuni i prilagodi publici): ${this.description}
         Predložene sekcije i podpoglavlja: ${this.chaptersString()}
         Primjer formata slike: ${imageExample}`;
-  }
 };
 
 chapterParametersSchema.methods.chapterString = function () {
@@ -176,6 +175,7 @@ chapterParametersSchema.methods.chapterString = function () {
 };
 
 blogParametersSchema.pre("save", async function (next) {
+  console.log("saving blogParameters...");
   this.setPrompt();
   next();
 });

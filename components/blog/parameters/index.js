@@ -70,6 +70,7 @@ export default function ParametersComponent({ blogParameters }) {
       <div className="text-sm text-gray-600">
         Created At: {new Date(createdAt).toLocaleString("hr-HR")}
         Params ID: {id}
+        Blog ID: {blogPostId || "N/A"}
       </div>
       <div className="fsc gap-2 ">
         <div
@@ -111,7 +112,9 @@ export default function ParametersComponent({ blogParameters }) {
         >
           {showPromptText ? "Hide Prompt Text" : "Show Prompt Text"}
         </div>
-        {showPromptText && <PromptText promptText={blogParameters.promptText} />}
+        {showPromptText && (
+          <PromptText promptText={blogParameters.promptText} />
+        )}
       </div>
 
       {!blogPost && (
@@ -196,7 +199,7 @@ export function ViewAllParametersTile() {
   );
 }
 
-export function PromptText({ edit, setPromptText, promptText }) {
+export function PromptText({ edit, onChange, promptText }) {
   if (!edit) {
     return (
       <div className="border p-4 rounded-lg flex flex-col gap-2 shadow-sm  whitespace-pre-wrap">
@@ -208,7 +211,8 @@ export function PromptText({ edit, setPromptText, promptText }) {
       <textarea
         className="w-full border p-4 rounded-lg flex flex-col gap-2 shadow-sm  whitespace-pre-wrap"
         value={promptText}
-        onChange={(e) => setPromptText(e.target.value)}
+        name="promptText"
+        onChange={onChange}
         rows={10}
       ></textarea>
     );
