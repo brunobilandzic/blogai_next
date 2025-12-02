@@ -92,7 +92,7 @@ export async function POST(req) {
   }
   blogParameters.chaptersParameters = savedChapters;
 
-  await blogParameters.save()
+  await blogParameters.save();
 
   const generatedResult = await generateBlogPost(
     blogParameters.promptText,
@@ -124,114 +124,130 @@ export async function POST(req) {
 }
 
 export async function PUT(req) {
-  console.log("Updating blog parameters...");
+  try {
+    console.log("Updating blog parameters...");
 
-  const { authError } = await sessionAppUserServer();
-  if (authError) {
-    return Response.json(
-      { message: `AUTH ERROR: ${authError}` },
-      { status: 401 }
-    );
-  }
-
-  const body = await req.json();
-
-  // Validate incoming blog parameters
-  const validation = validateBlogParams(body);
-  if (validation.error) {
-    console.error("Validation error:", validation.error);
-    return Response.json(
-      {
-        message: "Invalid blog parameters",
-        errors: validation.error?.details,
-      },
-      { status: 400 }
-    );
-  }
-
-  // Fetch existing blog parameters
-  let blogParameters = await getBlogParametersById(body._id);
-  if (!blogParameters) {
-    return Response.json(
-      { message: "Blog parameters not found" },
-      { status: 404 }
-    );
-  }
-
-  const chapterPromises = [];
-
-  for (let chapterParams of body.chaptersParameters) {
-    if (!chapterParams) continue;
-
-    if (chapterParams._id) {
-      chapterPromises.push(updateChapter(chapterParams, chapterParams._id));
-    } else {
-      chapterPromises.push(
-        createChapterParameters(blogParameters, chapterParams)
+    const { authError } = await sessionAppUserServer();
+    if (authError) {
+      return Response.json(
+        { message: `AUTH ERROR: ${authError}` },
+        { status: 401 }
       );
     }
-  }
 
-  for (let existingChapter of blogParameters.chaptersParameters) {
-    if (
-      !body.chaptersParameters.find(
-        (cp) => cp._id?.toString() === existingChapter._id?.toString()
-      )
-    ) {
-      chapterPromises.push(deleteChapter(existingChapter._id));
+    const body = await req.json();
+
+    // Validate incoming blog parameters
+    const validation = validateBlogParams(body);
+    if (validation.error) {
+      console.error("Validation error:", validation.error);
+      return Response.json(
+        {
+          message: "Invalid blog parameters",
+          errors: validation.error?.details,
+        },
+        { status: 400 }
+      );
     }
-  }
 
-  const updatedChapters = await Promise.all(chapterPromises);
+    // Fetch existing blog parameters
+    let blogParameters = await getBlogParametersById(body._id);
+    if (!blogParameters) {
+      return Response.json(
+        { message: "Blog parameters not found" },
+        { status: 404 }
+      );
+    }
 
-  if (!updatedChapters) {
+    const chapterPromises = [];
+
+    // Handle chapters with logging (we'll perform the same operations as the later loops
+    // but include console.log in each if branch, then clear arrays so the original loops do nothing)
+    for (let chapterParameters of body.chaptersParameters) {
+      if (!chapterParameters) {
+        console.log("Skipping falsy chapterParams:", chapterParameters);
+        continue;
+      }
+
+      if (chapterParameters._id) {
+        chapterPromises.push(
+          updateChapter(chapterParameters, chapterParameters._id)
+        );
+      } else {
+        chapterPromises.push(
+          createChapterParameters(blogParameters, chapterParameters)
+        );
+      }
+    }
+
+    for (let existingChapter of blogParameters.chaptersParameters) {
+      const found = body.chaptersParameters.find(
+        (cp) => cp._id?.toString() === existingChapter._id?.toString()
+      );
+      if (!found) {
+        chapterPromises.push(deleteChapter(existingChapter._id));
+      } else {
+        console.log(
+          "Retaining existingChapter (found in incoming body):",
+          existingChapter.title
+        );
+      }
+    }
+
+    const updatedChapters = await Promise.all(chapterPromises);
+
+    if (!updatedChapters) {
+      return Response.json(
+        {
+          message: "Error saving chapter parameters",
+        },
+        { status: 500 }
+      );
+    }
+
+    const { chaptersParameters, ...bodyWithoutChapters } = body;
+
+    await deleteBlogPost(bodyWithoutChapters.blogPost);
+    let freshBlogParams = await BlogParameters.findByIdAndUpdate(
+      blogParameters._id,
+      {
+        ...bodyWithoutChapters,
+        $set: {
+          chaptersParameters: updatedChapters.map((chapter) => chapter._id),
+        },
+      },
+      { new: true }
+    );
+    freshBlogParams.setPrompt();
+
+    const generatedResult = await generateBlogPost(
+      freshBlogParams.promptText,
+      freshBlogParams._id
+    );
+
+    if (!generatedResult) {
+      return Response.json(
+        { message: "Error generating blog post" },
+        { status: 500 }
+      );
+    }
+
+    const { blogPost, remainingCredits } = generatedResult;
+    freshBlogParams.blogPost = blogPost._id;
+
+    await freshBlogParams.save();
+
     return Response.json(
       {
-        message: "Error saving chapter parameters",
+        message: "Blog parameters updated successfully",
+        blogParametersId: freshBlogParams._id,
+        remainingCredits,
+        blogPostId: blogPost._id,
       },
-      { status: 500 }
+      { status: 200 }
     );
+  } catch (error) {
+    console.error("Error in PUT /api/blog/parameters:", error);
+    return Response.json({ message: "Internal server error" }, { status: 500 });
   }
-
-  const { chaptersParameters, ...bodyWithoutChapters } = body;
-
-  await deleteBlogPost(bodyWithoutChapters.blogPost);
-  let freshBlogParams = await BlogParameters.findByIdAndUpdate(
-    blogParameters._id,
-    {
-      ...bodyWithoutChapters,
-      $set: {
-        chaptersParameters: updatedChapters.map((chapter) => chapter._id),
-      },
-    },
-    { new: true }
-  );
-  freshBlogParams.setPrompt();
-
-  const generatedResult = await generateBlogPost(
-    freshBlogParams.promptText,
-    freshBlogParams._id
-  );
-
-  if (!generatedResult) {
-    return Response.json(
-      { message: "Error generating blog post" },
-      { status: 500 }
-    );
-  }
-
-  const { blogPost, remainingCredits } = generatedResult;
-  freshBlogParams.blogPost = blogPost._id;
-
-  await freshBlogParams.save();
-
-  return Response.json(
-    {
-      message: "Blog parameters updated successfully",
-      blogParametersId: freshBlogParams._id,
-      remainingCredits,
-      blogPostId: blogPost._id,
-    },
-    { status: 200 }
-  );
 }
