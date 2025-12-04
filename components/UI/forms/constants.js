@@ -50,14 +50,10 @@ export const testChapterParameters = {
   length: "medium",
 };
 
-export const defaultBlogParamsDescs = {
-  descriptions: [
-    {
-      theme: "",
-      audience: "",
-      description: "",
-    },
-  ],
+export const defaultBlogParamsDesc = {
+  theme: "",
+  audience: "",
+  description: "",
 };
 
 export const testBlogParamsDesc = {

@@ -9,12 +9,13 @@ import {
   defaultChapterParams,
   testBlogParameters,
   testChapterParameters,
-  testBlogParamsDescs,
   toneOptions,
   lengthOptions,
   testBlogParamsDesc,
+  defaultBlogParamsDesc,
 } from "./constants";
 import { MdAddCircle, MdDelete } from "react-icons/md";
+import { arrayHasEmptyObjects, objectHasEmpty } from "@/lib/validators";
 
 export default function BlogParametersForm({ _blogParameters }) {
   const [blogParameters, setBlogParams] = useState(
@@ -329,6 +330,15 @@ export const ChaptersParametersForm = ({
 export const AIGenerateParametersForm = ({ onGenerate } = {}) => {
   const [paramsDescs, setParamsDescs] = useState([testBlogParamsDesc]);
 
+  const onSubmit = async (e) => {
+    let objectEmpty = false;
+    if (arrayHasEmptyObjects(paramsDescs))
+      return alert("Please fill in all fields before generating.");
+    if (objectEmpty) {
+      return alert("Please fill in all fields before generating.");
+    }
+  };
+
   const onChange = (index, e) => {
     const { name, value } = e.target;
     const updatedParamsDescs = paramsDescs.map((paramsDesc, i) =>
@@ -338,10 +348,9 @@ export const AIGenerateParametersForm = ({ onGenerate } = {}) => {
   };
 
   const onAddParametersDesc = () => {
-    setParamsDescs((prev) => [...prev, testBlogParamsDesc]);
+    setParamsDescs((prev) => [...prev, defaultBlogParamsDesc]);
   };
 
-  const handleGenerate = async () => {};
 
   return (
     <div className="flex flex-col gap-2">
@@ -389,7 +398,7 @@ export const AIGenerateParametersForm = ({ onGenerate } = {}) => {
       </div>
 
       <div className="pt-3 fcc gap-2">
-        <div className="btn btn-action" onClick={handleGenerate}>
+        <div className="btn btn-action" onClick={onSubmit}>
           Create Blog Parameters with AI
         </div>
       </div>
