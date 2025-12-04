@@ -1,5 +1,5 @@
 import BlogParametersList from "@/components/blog/parameters/List";
-import { getAllBlogParameters } from "@/lib/actions/blog/parameters";
+import { getAllBlogParameters } from "@/lib/actions/parameters";
 import clean from "@/lib/db/clean";
 
 export default async function Page() {

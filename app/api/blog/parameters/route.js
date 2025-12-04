@@ -1,4 +1,4 @@
-import { deleteBlogPost, generateBlogPost } from "@/lib/actions/blog/blog";
+import { deleteBlogPost, generateBlogPost } from "@/lib/actions/blog";
 import { sessionAppUserServer } from "@/lib/actions/userServer";
 import { getRoleObject, sessionUserRoleServer } from "@/lib/actions/userServer";
 import { validateBlogParams } from "@/lib/validators/blog";
@@ -10,7 +10,7 @@ import {
   saveChapter,
   createChapterParameters,
   compare,
-} from "@/lib/actions/blog/parameters";
+} from "@/lib/actions/parameters";
 import mongoose from "mongoose";
 
 export async function GET(req) {

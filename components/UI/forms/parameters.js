@@ -10,7 +10,7 @@ import {
 } from "./constants";
 import { PromptText } from "@/components/blog/parameters";
 import { Input, TextArea, Select } from "./elements";
-import { toneOptions, lengthOptions } from "./constants";
+import { defaultBlogParamsDesc, testBlogParamsDesc } from "./constants";
 import { MdAddCircle, MdDelete } from "react-icons/md";
 
 export default function BlogParametersForm({ _blogParameters }) {
@@ -319,6 +319,53 @@ export const ChaptersParametersForm = ({
         onChange={onChange}
         options={lengthOptions}
       />
+    </div>
+  );
+};
+
+export const AIGenerateParametersForm = ({ onGenerate } = {}) => {
+  const [paramsDesc, setParamsDesc] = useState(testBlogParamsDesc);
+
+  const handleGenerate = async () => {};
+
+  return (
+    <div className="form">
+      <h4 className="font-semibold pb-2">AI Prompt Builder</h4>
+
+      <Input
+        label="Theme"
+        type="text"
+        name="ai-theme"
+        value={paramsDesc.theme}
+        onChange={(e) =>
+          setParamsDesc({ ...paramsDesc, theme: e.target.value })
+        }
+      />
+
+      <Input
+        label="Audience"
+        type="text"
+        name="ai-audience"
+        value={paramsDesc.audience}
+        onChange={(e) =>
+          setParamsDesc({ ...paramsDesc, audience: e.target.value })
+        }
+      />
+
+      <TextArea
+        label="Description"
+        name="ai-description"
+        value={paramsDesc.description}
+        onChange={(e) =>
+          setParamsDesc({ ...paramsDesc, description: e.target.value })
+        }
+      />
+
+      <div className="pt-3 fcc gap-2">
+        <div className="btn btn-action" onClick={handleGenerate}>
+          Create Blog Parameters with AI
+        </div>
+      </div>
     </div>
   );
 };

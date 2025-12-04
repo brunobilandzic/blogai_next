@@ -1,25 +1,33 @@
+"use client";
+
 import BlogParametersForm from "@/components/UI/forms/parameters";
 import { MdArrowDownward, MdOpenInNew } from "react-icons/md";
+import { useRouter } from "next/navigation";
 
-const New = () => (
+const NewParameters = () => (
   <div className="flex flex-col justify-center gap-2 pt-4   ">
     <NewParametersHeader />
     <BlogParametersForm />
   </div>
 );
 
-export default New;
+export default NewParameters;
 
 export function NewParametersHeader(params) {
+  const router = useRouter();
+
   return (
-    <div className="flex justify-between items-center">
+    <div className="flex justify-between items-end mb-2">
       <div className="font-bold flex items-center gap-2 text-xl">
-        New Parameters Manual{" "}
+        Manual{" "}
         <div className="mt-1">
           <MdArrowDownward />
         </div>
       </div>
-      <div className="btn  flex items-center justify-end gap-2">
+      <div
+        onClick={() => router.push("/blog/parameters/new/generate")}
+        className="btn  flex items-center justify-end gap-2"
+      >
         <div> AI generate</div>
         <div>
           {" "}

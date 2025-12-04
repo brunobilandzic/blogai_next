@@ -1,6 +1,6 @@
 "use client";
 
-import { deleteBlogPost, generateBlogPost } from "@/lib/actions/blog/blog";
+import { deleteBlogPost, generateBlogPost } from "@/lib/actions/blog";
 import { PageItem } from "@/components/UI/page/elements";
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
@@ -9,7 +9,7 @@ import { getRemainingCredits } from "@/lib/store/features/helpers";
 import { MdDeleteForever, MdEdit, MdOpenInNew } from "react-icons/md";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { deleteBlogParameters } from "@/lib/actions/blog/parameters";
+import { deleteBlogParameters } from "@/lib/actions/parameters";
 import { PopupConfirmAction } from "@/components/UI/popups";
 
 export default function ParametersComponent({ blogParameters }) {

@@ -49,3 +49,15 @@ export const testChapterParameters = {
   subChapters: ["AI-driven diagnostics", "Personalized treatment plans"],
   length: "medium",
 };
+
+export const defaultBlogParamsDesc = {
+  theme: "",
+  audience: "",
+  description: "",
+};
+
+export const testBlogParamsDesc = {
+  theme: "kuhanje",
+  audience: "pocetnici",
+  description: "kako skuhati dobar obrok brzo i jednostavno za pocetnike",
+};

@@ -1,7 +1,7 @@
 import dbConnect from "@/lib/db/mongooseConnect";
 import {} from "@/models/openai";
 import { BlogPostComponent } from "@/components/blog/blog";
-import { getBlogPost } from "@/lib/actions/blog/blog";
+import { getBlogPost } from "@/lib/actions/blog";
 
 export default async function Page({ params }) {
   await dbConnect();

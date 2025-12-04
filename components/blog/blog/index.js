@@ -5,7 +5,7 @@ import Link from "next/link";
 import { MdDeleteForever, MdOpenInNew } from "react-icons/md";
 import Popup, { PopupConfirmAction } from "@/components/UI/popups";
 import { useRouter } from "next/navigation";
-import { deleteBlogPost } from "@/lib/actions/blog/blog";
+import { deleteBlogPost } from "@/lib/actions/blog";
 
 export const BlogPostComponent = ({ blogPost }) => {
   const { blogParameters, content, createdAt } = blogPost;
