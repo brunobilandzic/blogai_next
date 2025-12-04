@@ -1,3 +1,4 @@
+import { PlaceHolderPageItems } from "@/components/UI/page/elements";
 import { BlogParameters } from "@/models/openai/parameters";
 import Link from "next/link";
 
@@ -11,6 +12,9 @@ export default function BlogList({ blogList }) {
           </Link>
         </div>
       ))}
+      <PlaceHolderPageItems
+        count={blogList?.length ? 4 - (blogList.length % 4) : 4}
+      />
     </div>
   );
 }

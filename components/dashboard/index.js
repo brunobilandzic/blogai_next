@@ -7,7 +7,8 @@ import {
 } from "../blog/parameters";
 import { CreditsDashboardTile } from "../credits";
 import { AllBlogsDashboardTile } from "../blog/blog";
-import { PlaceHolderPageItems, USER_ROLE } from "@/lib/constants";
+import { PlaceHolderPageItems,  } from "@/components/UI/page/elements";
+import { USER_ROLE } from "@/lib/constants";
 
 // components/dashboard/main.js
 // Dashboard component that displays user and customer information and actions

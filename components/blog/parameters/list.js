@@ -1,7 +1,7 @@
 "use client";
 
 import { PageItem } from "@/components/UI/page/elements";
-import { PlaceHolderPageItems } from "@/lib/constants";
+import { PlaceHolderPageItems } from "@/components/UI/page/elements";
 import Link from "next/link";
 import { MdAdd, MdCheck } from "react-icons/md";
 import { useRouter } from "next/navigation";

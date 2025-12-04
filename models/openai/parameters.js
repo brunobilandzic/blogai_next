@@ -1,4 +1,4 @@
-import { imageExample } from "@/lib/utils/prompt";
+import { imageExample } from "@/lib/utils/defaults";
 import mongoose from "mongoose";
 
 // Schema for blog parameters

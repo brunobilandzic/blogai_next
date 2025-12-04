@@ -2,15 +2,18 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { PromptText } from "@/components/blog/parameters";
+import { Input, TextArea, Select } from "./elements";
 import {
   defaultBlogParameters,
   defaultChapterParams,
   testBlogParameters,
   testChapterParameters,
+  testBlogParamsDescs,
+  toneOptions,
+  lengthOptions,
+  testBlogParamsDesc,
 } from "./constants";
-import { PromptText } from "@/components/blog/parameters";
-import { Input, TextArea, Select } from "./elements";
-import { defaultBlogParamsDesc, testBlogParamsDesc } from "./constants";
 import { MdAddCircle, MdDelete } from "react-icons/md";
 
 export default function BlogParametersForm({ _blogParameters }) {
@@ -324,42 +327,66 @@ export const ChaptersParametersForm = ({
 };
 
 export const AIGenerateParametersForm = ({ onGenerate } = {}) => {
-  const [paramsDesc, setParamsDesc] = useState(testBlogParamsDesc);
+  const [paramsDescs, setParamsDescs] = useState([testBlogParamsDesc]);
+
+  const onChange = (index, e) => {
+    const { name, value } = e.target;
+    const updatedParamsDescs = paramsDescs.map((paramsDesc, i) =>
+      i === index ? { ...paramsDesc, [name]: value } : paramsDesc
+    );
+    setParamsDescs(updatedParamsDescs);
+  };
+
+  const onAddParametersDesc = () => {
+    setParamsDescs((prev) => [...prev, testBlogParamsDesc]);
+  };
 
   const handleGenerate = async () => {};
 
   return (
-    <div className="form">
-      <h4 className="font-semibold pb-2">AI Prompt Builder</h4>
+    <div className="flex flex-col gap-2">
+      <h4 className="font-semibold pb-2  text-3xl pt-4">AI Prompt Builder</h4>
 
-      <Input
-        label="Theme"
-        type="text"
-        name="ai-theme"
-        value={paramsDesc.theme}
-        onChange={(e) =>
-          setParamsDesc({ ...paramsDesc, theme: e.target.value })
-        }
-      />
+      {paramsDescs.map((paramsDesc, index) => {
+        return (
+          <div key={index} className="mb-4 flex flex-col gap-2">
+            <div className="text-gray-700">
+              Parameters description {index + 1}
+            </div>
+            <div key={index} className="flex flex-col gap-4">
+              <Input
+                label="Theme"
+                type="text"
+                name="theme"
+                value={paramsDesc.theme}
+                onChange={(e) => onChange(index, e)}
+              />
 
-      <Input
-        label="Audience"
-        type="text"
-        name="ai-audience"
-        value={paramsDesc.audience}
-        onChange={(e) =>
-          setParamsDesc({ ...paramsDesc, audience: e.target.value })
-        }
-      />
+              <Input
+                label="Audience"
+                type="text"
+                name="audience"
+                value={paramsDesc.audience}
+                onChange={(e) => onChange(index, e)}
+              />
 
-      <TextArea
-        label="Description"
-        name="ai-description"
-        value={paramsDesc.description}
-        onChange={(e) =>
-          setParamsDesc({ ...paramsDesc, description: e.target.value })
-        }
-      />
+              <TextArea
+                label="Description"
+                name="description"
+                value={paramsDesc.description}
+                onChange={(e) => onChange(index, e)}
+              />
+            </div>
+          </div>
+        );
+      })}
+      <div
+        onClick={onAddParametersDesc}
+        className="btn flex items-center gap-2"
+      >
+        <div>Add New Blog Parameters Description</div>
+        <MdAddCircle className="text-3xl" />
+      </div>
 
       <div className="pt-3 fcc gap-2">
         <div className="btn btn-action" onClick={handleGenerate}>
