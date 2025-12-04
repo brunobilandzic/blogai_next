@@ -25,6 +25,7 @@
 
 .main {
   padding-top: 64px; /* isto kao visina navbar-a */
+  @apply w-full max-w-5xl mx-auto pb-8;
 }
 
 /*Button styles*/

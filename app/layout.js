@@ -13,7 +13,7 @@ export default function RootLayout({ children }) {
         <Suspense>
           <Providers>
             <Navbar />
-            <main className="main mx-auto pb-8">{children}</main>
+            <main className="main">{children}</main>
           </Providers>
         </Suspense>
       </body>
