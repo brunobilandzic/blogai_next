@@ -16,6 +16,7 @@ import {
 } from "./constants";
 import { MdAddCircle, MdDelete } from "react-icons/md";
 import { arrayHasEmptyObjects, objectHasEmpty } from "@/lib/validators";
+import { generateBlogParams } from "@/lib/actions/parameters";
 
 export default function BlogParametersForm({ _blogParameters }) {
   const [blogParameters, setBlogParams] = useState(
@@ -144,7 +145,7 @@ export default function BlogParametersForm({ _blogParameters }) {
 
   const onRemoveChapter = (chapterIndex) => {
     const updatedChapters = blogParameters.chaptersParameters.filter(
-      (chapter, i) => i !== chapterIndex
+      (_, i) => i !== chapterIndex
     );
     setBlogParams((prev) => ({
       ...prev,
@@ -298,12 +299,7 @@ export default function BlogParametersForm({ _blogParameters }) {
   );
 }
 
-export const ChaptersParametersForm = ({
-  chapterParams,
-  onChange,
-  i,
-  onRemoveChapter,
-}) => {
+export const ChaptersParametersForm = ({ chapterParams, onChange }) => {
   return (
     <div className="form">
       {/* Form for chapter parameters */}
@@ -337,6 +333,7 @@ export const AIGenerateParametersForm = ({ onGenerate } = {}) => {
     if (objectEmpty) {
       return alert("Please fill in all fields before generating.");
     }
+    generateBlogParams(paramsDescs);
   };
 
   const onChange = (index, e) => {
@@ -348,9 +345,8 @@ export const AIGenerateParametersForm = ({ onGenerate } = {}) => {
   };
 
   const onAddParametersDesc = () => {
-    setParamsDescs((prev) => [...prev, defaultBlogParamsDesc]);
+    setParamsDescs((prev) => [...prev, testBlogParamsDesc]);
   };
-
 
   return (
     <div className="flex flex-col gap-2">

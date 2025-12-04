@@ -38,11 +38,19 @@ export const toneOptions = [
   { value: "neutral", label: "Neutral" },
 ];
 
+export const getToneValues = () => {
+  return toneOptions.map((option) => option.value);
+};
+
 export const lengthOptions = [
   { value: "short", label: "Short" },
   { value: "medium", label: "Medium" },
   { value: "long", label: "Long" },
 ];
+
+export const getLengthValues = () => {
+  return lengthOptions.map((option) => option.value);
+};
 
 export const testChapterParameters = {
   title: "The Rise of AI in Healthcare",
