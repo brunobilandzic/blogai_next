@@ -19,12 +19,11 @@ export const Navbar = () => {
   const user = useSession().data?.user;
   const roleNames = roles?.map((role) => role.roleName);
   return (
-    <div
-      className={`navbar bg-slate-300 p-4 flex justify-between  w-full ${
+    <header
+      className={`navbar ${
         isExpanded ? "items-start" : "items-center"
       }`}
-      color="info"
-      position="static"
+ 
     >
       <div className="flex flex-col md:flex-row gap-4 ">
         <div className="text-xl">
@@ -40,11 +39,10 @@ export const Navbar = () => {
           </div>
         </div>
         <div className="items-center gap-2 hidden md:flex">
-          {roles ? (            <>
+          {roles ? (
+            <>
               <NavItems preferredRole={preferredRole} roleNames={roleNames} />
-              <ChoosePreferedRole
-                roleNames={roleNames}
-              />
+              <ChoosePreferedRole roleNames={roleNames} />
             </>
           ) : (
             <CommonNavItems />
@@ -54,10 +52,8 @@ export const Navbar = () => {
           <div className="flex flex-col mt-2 gap-2">
             {roles ? (
               <>
-                <NavItems preferredRole={preferredRole}  roles={roles} />
-                <ChoosePreferedRole
-                  roleNames
-                />
+                <NavItems preferredRole={preferredRole} roles={roles} />
+                <ChoosePreferedRole roleNames />
               </>
             ) : (
               <CommonNavItems />
@@ -68,6 +64,6 @@ export const Navbar = () => {
       <div className={`flex items-center gap-4 `}>
         {user ? <AuthNav image={user?.image} /> : <UnauthNav />}
       </div>
-    </div>
+    </header>
   );
 };
