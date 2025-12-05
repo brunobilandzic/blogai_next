@@ -11,6 +11,11 @@ const paramsPromptSchema = new mongoose.Schema({
   description: { type: String, required: true },
   audience: { type: String, required: true },
   promptText: { type: String, required: true },
+  blogParameters: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "BlogParameters",
+  },
+  createdAt: { type: Date, default: Date.now },
 });
 
 export const blogPromptSchema = new mongoose.Schema({

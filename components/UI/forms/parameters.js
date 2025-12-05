@@ -335,9 +335,7 @@ export const AIGenerateParametersForm = ({ onGenerate } = {}) => {
     let objectEmpty = false;
     if (arrayHasEmptyObjects(paramsDescs))
       return alert("Please fill in all fields before generating.");
-    if (objectEmpty) {
-      return alert("Please fill in all fields before generating.");
-    }
+
     generateBlogParams(paramsDescs);
   };
 

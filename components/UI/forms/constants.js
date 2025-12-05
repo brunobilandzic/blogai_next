@@ -69,7 +69,8 @@ export const defaultBlogParamsDesc = {
 };
 
 export const testBlogParamsDesc = {
-  theme: "kuhanje",
-  audience: "pocetnici",
-  description: "kako skuhati dobar obrok brzo i jednostavno za pocetnike",
+  theme: "hajduk",
+  audience: "djeca",
+  description:
+    "kako da djeca vole hajduka, a ne zive otpadnickim zivotom kao mnogi članovi torcide",
 };

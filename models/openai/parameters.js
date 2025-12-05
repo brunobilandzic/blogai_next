@@ -29,6 +29,10 @@ const blogParametersSchema = new mongoose.Schema({
     { type: mongoose.Schema.Types.ObjectId, ref: "ChapterParameters" },
   ],
   prompt: blogPromptSchema,
+  paramsPrompt: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "ParamsPrompt",
+  },
   createdAt: { type: Date, default: Date.now },
 });
 
@@ -74,7 +78,7 @@ blogParametersSchema.methods.setPrompt = function () {
         STRUKTURA HTML-a (SAMO '<body>' i '<article>')
         Ispiši isključivo element '<body>…</body>' bez '<html>', '<head>', '<title>', CSS-a ili JS-a.
 
-        JAKO JE BITNO, DA MI NE REMETI JSON DATOTEKU, DA NE KORISTIĐ NAVODNIKE ' U TEKSTU. GDJE MISLIŠ DA TREBAJU BITI NAVODNICI, KORISTI ' UMJESTO NJIH.
+        JAKO JE BITNO, DA MI NE REMETI JSON DATOTEKU KOJA PREDSTAVLJA BLOG POST, DA NE KORISTIš  " - DVOSTRUKE NAVODNIKE U TEKSTU. GDJE MISLIŠ DA TREBAJU BITI NAVODNICI, KORISTI ' - JEDNOSTRUKE NAVODNIKE.
         ZAPAMTI TO.
 
         Unutar '<body>' koristi semantički HTML ovim redoslijedom:
