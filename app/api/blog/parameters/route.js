@@ -56,7 +56,7 @@ export async function POST(req) {
 
   const body = await req.json();
   console.log("Received blog parameters:", body);
-  
+
   const validation = validateBlogParams(body);
 
   if (validation.error) {
@@ -172,9 +172,6 @@ export async function PUT(req) {
       );
     }
 
-    const oldPromptText = blogParameters.promptText;
-    const newPromptText = body.promptText;
-
     const chapterPromises = [];
 
     for (let chapterParameters of body.chaptersParameters) {
@@ -227,6 +224,8 @@ export async function PUT(req) {
       { new: true }
     );
 
+    console.log("Fresh blog parameters after update:", freshBlogParams);
+
     const generatedResult = await generateBlogPost(freshBlogParams._id);
 
     if (!generatedResult) {
@@ -239,18 +238,6 @@ export async function PUT(req) {
 
     freshBlogParams.blogPost = blogPost._id;
     await freshBlogParams.save();
-
-    if (oldPromptText !== newPromptText) {
-      await BlogParameters.findByIdAndUpdate(blogParameters._id, {
-        promptText: newPromptText,
-      });
-    } else {
-      const editPromptBlogParameters = await BlogParameters.findById(
-        freshBlogParams._id
-      ).populate("chaptersParameters");
-      editPromptBlogParameters.setPrompt();
-      await editPromptBlogParameters.save();
-    }
 
     return Response.json(
       {

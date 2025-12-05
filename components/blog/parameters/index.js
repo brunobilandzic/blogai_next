@@ -13,6 +13,7 @@ import { deleteBlogParameters } from "@/lib/actions/parameters";
 import { PopupConfirmAction } from "@/components/UI/popups";
 import { ShowText } from "@/components/UI/page/text";
 import { ShowPromptButtons } from "@/components/UI/buttons";
+import { TextArea } from "@/components/UI/forms/elements";
 
 export default function ParametersComponent({ blogParameters }) {
   const {
@@ -66,7 +67,7 @@ export default function ParametersComponent({ blogParameters }) {
   };
 
   return (
-    <div className="flex flex-col gap-2 ">
+    <div className="flex flex-col gap-2 overflow-visible">
       <div className="text-sm text-gray-600">
         Created At: {new Date(createdAt).toLocaleString("hr-HR")}
         Params ID: {id}
@@ -105,7 +106,7 @@ export default function ParametersComponent({ blogParameters }) {
       <div className="w-full">
         <ChaptersParameters chaptersParameters={chaptersParameters} />
       </div>
-      <div className="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] w-screen px-10 bg-yellow-200">
+      <div className="p-4  rounded-lg mt-4">
         <Prompt
           edit={false}
           promptText={blogParameters.prompt.promptText}
@@ -200,7 +201,7 @@ export function Prompt({ edit, onChange, promptComment, promptText }) {
   const [showPromptComment, setShowPromptComment] = useState(false);
 
   return (
-    <div className="min-w-dvw ">
+    <div className=" ">
       <div>
         <ShowPromptButtons
           showPromptText={showPromptText}
@@ -211,9 +212,24 @@ export function Prompt({ edit, onChange, promptComment, promptText }) {
       </div>
       <div className="flex gap-4 justify-between">
         {showPromptText && <ShowText label="Prompt Text:" text={promptText} />}
-        {showPromptComment && !edit && (
-          <ShowText label="Prompt Comment:" text={promptComment} />
-        )}
+        {showPromptComment ? (
+          edit ? (
+            <div className="w-full">
+              <div className="font-semibold mb-1">Prompt Comment</div>
+              <TextArea
+                label="Prompt Comment"
+                name="promptComment"
+                value={promptComment}
+                onChange={onChange}
+                rows={6}
+              />{" "}
+            </div>
+          ) : (
+            <>
+              <ShowText label="Prompt Comment:" text={promptComment} />
+            </>
+          )
+        ) : null}
       </div>
     </div>
   );

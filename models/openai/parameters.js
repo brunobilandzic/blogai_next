@@ -162,7 +162,14 @@ blogParametersSchema.methods.setPrompt = function () {
         Tema: ${this.theme}
         Opis bloga (dopuni i prilagodi publici): ${this.description}
         Predložene sekcije i podpoglavlja: ${this.chaptersString()}
-        Primjer formata slike: ${imageExample}`;
+        Primjer formata slike: ${imageExample}
+        ${
+          this.prompt.promptComment
+            ? `Dodatna napomena: ${this.prompt.promptComment}`
+            : ""
+        }
+        
+        `;
 };
 
 chapterParametersSchema.methods.chapterString = function () {

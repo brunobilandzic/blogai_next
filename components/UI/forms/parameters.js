@@ -16,6 +16,7 @@ import {
 import { MdAddCircle, MdDelete } from "react-icons/md";
 import { arrayHasEmptyObjects, objectHasEmpty } from "@/lib/validators";
 import { generateBlogParams } from "@/lib/actions/parameters";
+import { Prompt } from "@/components/blog/parameters";
 
 export default function BlogParametersForm({ _blogParameters }) {
   const [blogParameters, setBlogParams] = useState(
@@ -280,27 +281,6 @@ export default function BlogParametersForm({ _blogParameters }) {
           </div>
         ))}
 
-        {/*  <div className="flex flex-col gap-2">
-          <div
-            className={`btn ${
-              editCustomPromptText ? "btn-active" : "btn-inactive"
-            }`}
-            onClick={() => setEditCustomPromptText(!editCustomPromptText)}
-          >
-            {editCustomPromptText
-              ? "Hide Prompt Comment Editor"
-              : "Edit Prompt Comment"}
-          </div>
-          {editCustomPromptText && (
-            <PromptText
-              promptComment={blogParameters.prompt.promptComment}
-              onChange={onCommentChange}
-              edit={true}
-            />
-          )}
-        </div>
-      </div> */}
-
         <div className="pt-4 pb-4 text-xl gap-4 fcc">
           <div
             className="btn btn-action mx-auto"
@@ -310,6 +290,14 @@ export default function BlogParametersForm({ _blogParameters }) {
               ? "Update Blog Parameters"
               : "Create Blog Parameters"}
           </div>
+        </div>
+        <div className="p-4  rounded-lg mt-4 ">
+          <Prompt
+            edit={true}
+            promptText={blogParameters.prompt.promptText}
+            promptComment={blogParameters.prompt.promptComment}
+            onChange={onCommentChange}
+          />
         </div>
       </div>
     </div>
