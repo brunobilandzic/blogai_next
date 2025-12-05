@@ -22,7 +22,7 @@ export default function BlogParametersForm({ _blogParameters }) {
   const [blogParameters, setBlogParams] = useState(
     _blogParameters || testBlogParameters
   );
-  const [editPromptText, setEditPromptText] = useState(false);
+  const [editCustomPromptText, setEditCustomPromptText] = useState(false);
   const router = useRouter();
 
   const onSubmit = async (e) => {
@@ -80,6 +80,7 @@ export default function BlogParametersForm({ _blogParameters }) {
   };
 
   const onChange = (e) => {
+    console.log("blogParameters before change:", blogParameters);
     const { name, value } = e.target;
     setBlogParams((prev) => ({
       ...prev,
@@ -164,6 +165,18 @@ export default function BlogParametersForm({ _blogParameters }) {
       });
       return { ...prev, chaptersParameters: updatedChapters };
     });
+  };
+
+  const onCommentChange = (e) => {
+    console.log("onCommentChange called", blogParameters);
+    const { name, value } = e.target;
+    setBlogParams((prev) => ({
+      ...prev,
+      prompt: {
+        ...prev.prompt,
+        [name]: value,
+      },
+    }));
   };
 
   return (
@@ -270,15 +283,19 @@ export default function BlogParametersForm({ _blogParameters }) {
 
         <div className="flex flex-col gap-2">
           <div
-            className={`btn ${editPromptText ? "btn-active" : "btn-inactive"}`}
-            onClick={() => setEditPromptText(!editPromptText)}
+            className={`btn ${
+              editCustomPromptText ? "btn-active" : "btn-inactive"
+            }`}
+            onClick={() => setEditCustomPromptText(!editCustomPromptText)}
           >
-            {editPromptText ? "Hide Prompt Text Editor" : "Edit Prompt Text"}
+            {editCustomPromptText
+              ? "Hide Prompt Comment Editor"
+              : "Edit Prompt Comment"}
           </div>
-          {editPromptText && (
+          {editCustomPromptText && (
             <PromptText
-              promptText={blogParameters.promptText}
-              onChange={onChange}
+              promptComment={blogParameters.prompt.promptComment}
+              onChange={onCommentChange}
               edit={true}
             />
           )}

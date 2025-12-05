@@ -30,6 +30,10 @@ export const testBlogParameters = {
       length: "medium",
     },
   ],
+  prompt: {
+    promptText: "",
+    promptComment: "",
+  },
 };
 
 export const toneOptions = [

@@ -1,5 +1,6 @@
 import { imageExample } from "@/lib/utils/defaults";
 import mongoose from "mongoose";
+import { blogPromptSchema } from "./prompt";
 
 // Schema for blog parameters
 // it includes theme, description, tone, length and chapters.
@@ -27,7 +28,7 @@ const blogParametersSchema = new mongoose.Schema({
   chaptersParameters: [
     { type: mongoose.Schema.Types.ObjectId, ref: "ChapterParameters" },
   ],
-  promptText: { type: String },
+  prompt: blogPromptSchema,
   createdAt: { type: Date, default: Date.now },
 });
 
@@ -59,7 +60,7 @@ blogParametersSchema.methods.chaptersString = function () {
 };
 
 blogParametersSchema.methods.setPrompt = function () {
-  this.promptText = `ZADATAK
+  this.prompt.promptText = `ZADATAK
         Napiši opširan HTML blog post na hrvatskom jeziku na temu ${
           this.theme
         }. Možeš prilagoditi fokus teme ciljanoj publici ${this.audience}.

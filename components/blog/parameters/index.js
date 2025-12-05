@@ -111,7 +111,9 @@ export default function ParametersComponent({ blogParameters }) {
           {showPromptText ? "Hide Prompt Text" : "Show Prompt Text"}
         </div>
         {showPromptText && (
-          <PromptText promptText={blogParameters.promptText} />
+          <div className="mt-2 whitespace-pre-wrap border p-4 rounded-lg shadow-sm">
+            {blogParameters.prompt.promptText}
+          </div>
         )}
       </div>
 
@@ -197,7 +199,7 @@ export function ViewAllParametersTile() {
   );
 }
 
-export function PromptText({ edit, onChange, promptText }) {
+export function PromptText({ edit, onChange, promptComment, promptText }) {
   if (!edit) {
     return (
       <div className="border p-4 rounded-lg flex flex-col gap-2 shadow-sm  whitespace-pre-wrap">
@@ -208,8 +210,8 @@ export function PromptText({ edit, onChange, promptText }) {
     return (
       <textarea
         className="w-full border p-4 rounded-lg flex flex-col gap-2 shadow-sm  whitespace-pre-wrap"
-        value={promptText}
-        name="promptText"
+        value={promptComment}
+        name="promptComment"
         onChange={onChange}
         rows={10}
       ></textarea>
