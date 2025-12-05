@@ -25,13 +25,32 @@ export const ChoosePreferedRole = ({ roleNames }) => {
         </div>
       ))}
       <div>
-        <button
-          onClick={() => dispatch(deletePreferredRole())}
-          className={``}
-        >
+        <button onClick={() => dispatch(deletePreferredRole())} className={``}>
           Clear
         </button>
       </div>
     </div>
   );
 };
+
+export function ShowPromptButtons({
+  showPromptText,
+  setShowPromptText,
+  showPromptComment,
+  setShowPromptComment,
+}) {
+  return (
+    <div className="flex gap-2 justify-center">
+      <div className="btn">
+        <button onClick={() => setShowPromptText(!showPromptText)}>
+          {showPromptText ? "Hide Prompt Text" : "Show Prompt Text"}
+        </button>
+      </div>
+      <div className="btn">
+        <button onClick={() => setShowPromptComment(!showPromptComment)}>
+          {showPromptComment ? "Hide Prompt Comment" : "Show Prompt Comment"}
+        </button>
+      </div>
+    </div>
+  );
+}

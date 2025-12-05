@@ -11,6 +11,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { deleteBlogParameters } from "@/lib/actions/parameters";
 import { PopupConfirmAction } from "@/components/UI/popups";
+import { ShowText } from "@/components/UI/page/text";
+import { ShowPromptButtons } from "@/components/UI/buttons";
 
 export default function ParametersComponent({ blogParameters }) {
   const {
@@ -103,18 +105,12 @@ export default function ParametersComponent({ blogParameters }) {
       <div className="w-full">
         <ChaptersParameters chaptersParameters={chaptersParameters} />
       </div>
-      <div>
-        <div
-          className={`btn ${showPromptText ? "btn-active" : "btn-inactive"}`}
-          onClick={() => setShowPromptText(!showPromptText)}
-        >
-          {showPromptText ? "Hide Prompt Text" : "Show Prompt Text"}
-        </div>
-        {showPromptText && (
-          <div className="mt-2 whitespace-pre-wrap border p-4 rounded-lg shadow-sm">
-            {blogParameters.prompt.promptText}
-          </div>
-        )}
+      <div className="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] w-screen px-10 bg-yellow-200">
+        <Prompt
+          edit={false}
+          promptText={blogParameters.prompt.promptText}
+          promptComment={blogParameters.prompt.promptComment}
+        />
       </div>
 
       {!blogPost && (
@@ -199,22 +195,26 @@ export function ViewAllParametersTile() {
   );
 }
 
-export function PromptText({ edit, onChange, promptComment, promptText }) {
-  if (!edit) {
-    return (
-      <div className="border p-4 rounded-lg flex flex-col gap-2 shadow-sm  whitespace-pre-wrap">
-        {promptText}
+export function Prompt({ edit, onChange, promptComment, promptText }) {
+  const [showPromptText, setShowPromptText] = useState(false);
+  const [showPromptComment, setShowPromptComment] = useState(false);
+
+  return (
+    <div className="min-w-dvw ">
+      <div>
+        <ShowPromptButtons
+          showPromptText={showPromptText}
+          setShowPromptText={setShowPromptText}
+          showPromptComment={showPromptComment}
+          setShowPromptComment={setShowPromptComment}
+        />
       </div>
-    );
-  } else {
-    return (
-      <textarea
-        className="w-full border p-4 rounded-lg flex flex-col gap-2 shadow-sm  whitespace-pre-wrap"
-        value={promptComment}
-        name="promptComment"
-        onChange={onChange}
-        rows={10}
-      ></textarea>
-    );
-  }
+      <div className="flex gap-4 justify-between">
+        {showPromptText && <ShowText label="Prompt Text:" text={promptText} />}
+        {showPromptComment && !edit && (
+          <ShowText label="Prompt Comment:" text={promptComment} />
+        )}
+      </div>
+    </div>
+  );
 }

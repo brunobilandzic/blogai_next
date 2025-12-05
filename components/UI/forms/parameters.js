@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { PromptText } from "@/components/blog/parameters";
 import { Input, TextArea, Select } from "./elements";
 import {
   defaultBlogParameters,
@@ -281,7 +280,7 @@ export default function BlogParametersForm({ _blogParameters }) {
           </div>
         ))}
 
-        <div className="flex flex-col gap-2">
+        {/*  <div className="flex flex-col gap-2">
           <div
             className={`btn ${
               editCustomPromptText ? "btn-active" : "btn-inactive"
@@ -300,16 +299,17 @@ export default function BlogParametersForm({ _blogParameters }) {
             />
           )}
         </div>
-      </div>
+      </div> */}
 
-      <div className="pt-4 pb-4 text-xl gap-4 fcc">
-        <div
-          className="btn btn-action mx-auto"
-          onClick={_blogParameters?._id ? onPut : onSubmit}
-        >
-          {_blogParameters?._id
-            ? "Update Blog Parameters"
-            : "Create Blog Parameters"}
+        <div className="pt-4 pb-4 text-xl gap-4 fcc">
+          <div
+            className="btn btn-action mx-auto"
+            onClick={_blogParameters?._id ? onPut : onSubmit}
+          >
+            {_blogParameters?._id
+              ? "Update Blog Parameters"
+              : "Create Blog Parameters"}
+          </div>
         </div>
       </div>
     </div>

@@ -56,7 +56,7 @@ export async function POST(req) {
 
   const body = await req.json();
   console.log("Received blog parameters:", body);
-  return Response.json({ message: "Test response" }, { status: 200 });
+  
   const validation = validateBlogParams(body);
 
   if (validation.error) {
