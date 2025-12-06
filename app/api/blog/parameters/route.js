@@ -10,6 +10,7 @@ import {
   saveChapter,
   createChapterParameters,
   compare,
+  createBlogParameters,
 } from "@/lib/actions/parameters";
 import mongoose from "mongoose";
 
@@ -70,36 +71,24 @@ export async function POST(req) {
     );
   }
 
-  const blogParameters = new BlogParameters(body);
-  blogParameters.role = userRole;
-  userRole.blogParameters.push(blogParameters._id);
+  const blogParameters = await createBlogParameters(body);
 
-  const promises = [];
-
-  for (let chapterParams of body.chaptersParameters) {
-    chapterParams["blogParameters"] = blogParameters._id;
-    const chapterParam = new ChapterParameters(chapterParams);
-    promises.push(saveChapter(chapterParam));
-  }
-
-  const savedChapters = await Promise.all(promises);
-  if (!savedChapters) {
+  if (!blogParameters) {
     return Response.json(
       {
-        message: "Error saving chapter parameters",
+        message: "Error saving blog parameters",
       },
       { status: 500 }
     );
   }
 
-  blogParameters.chaptersParameters = savedChapters;
-  if (body.promptComment) {
+  if (blogParameters.prompt.promptComment && body.promptComment) {
     blogParameters.prompt.promptComment = body.promptComment;
   }
 
   await blogParameters.save();
 
-  console.log("Generated blog parameters:", blogParameters);
+  console.log("Generated blog parameters (POST):", blogParameters);
 
   const generatedResult = await generateBlogPost(blogParameters._id);
 
@@ -185,7 +174,7 @@ export async function PUT(req) {
         );
       } else {
         chapterPromises.push(
-          createChapterParameters(blogParameters, chapterParameters)
+          createChapterParameters(blogParameters._id, chapterParameters)
         );
       }
     }

@@ -15,20 +15,19 @@ const blogParametersSchema = new mongoose.Schema({
   audience: { type: String, required: true },
   tone: {
     type: String,
-
     enum: ["formal", "informal", "neutral"],
     default: "neutral",
   },
   length: {
     type: String,
-
     enum: ["short", "medium", "long"],
     default: "medium",
   },
-  chaptersParameters: [
-    { type: mongoose.Schema.Types.ObjectId, ref: "ChapterParameters" },
-  ],
-  prompt: blogPromptSchema,
+  chaptersParameters: {
+    type: [{ type: mongoose.Schema.Types.ObjectId, ref: "ChapterParameters" }],
+    default: [],
+  },
+  prompt: { type: blogPromptSchema, default: () => ({}) },
   paramsPrompt: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "ParamsPrompt",
