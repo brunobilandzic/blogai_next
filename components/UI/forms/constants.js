@@ -66,6 +66,7 @@ export const defaultBlogParamsDesc = {
   theme: "",
   audience: "",
   description: "",
+  additionalInstructions: "",
 };
 
 export const testBlogParamsDesc = {
@@ -73,4 +74,5 @@ export const testBlogParamsDesc = {
   audience: "djeca",
   description:
     "kako da djeca vole hajduka, a ne zive otpadnickim zivotom kao mnogi članovi torcide",
+  additionalInstructions: "Napiši na jednostavnom jeziku prilagođenom djeci.",
 };

@@ -304,7 +304,7 @@ export default function BlogParametersForm({ _blogParameters }) {
   );
 }
 
-export const ChaptersParametersForm = ({ chapterParams, onChange }) => {
+const ChaptersParametersForm = ({ chapterParams, onChange }) => {
   return (
     <div className="form">
       {/* Form for chapter parameters */}
@@ -332,11 +332,12 @@ export const AIGenerateParametersForm = ({ onGenerate } = {}) => {
   const [paramsDescs, setParamsDescs] = useState([testBlogParamsDesc]);
 
   const onSubmit = async (e) => {
-    let objectEmpty = false;
+    console.log("onSubmit called");
     if (arrayHasEmptyObjects(paramsDescs))
       return alert("Please fill in all fields before generating.");
 
-    generateBlogParams(paramsDescs);
+    const pds = await generateBlogParams(paramsDescs);
+    console.log("pds after generation  saas as:", pds);
   };
 
   const onChange = (index, e) => {
@@ -382,6 +383,13 @@ export const AIGenerateParametersForm = ({ onGenerate } = {}) => {
                 label="Description"
                 name="description"
                 value={paramsDesc.description}
+                onChange={(e) => onChange(index, e)}
+              />
+
+              <TextArea
+                label="Additional Instructions"
+                name="additionalInstructions"
+                value={paramsDesc.additionalInstructions}
                 onChange={(e) => onChange(index, e)}
               />
             </div>
