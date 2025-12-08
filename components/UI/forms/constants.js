@@ -11,6 +11,7 @@ export const defaultBlogParameters = {
   tone: "",
   length: "",
   chaptersParameters: [defaultChapterParams],
+  promptComment: "",
 };
 
 export const testBlogParameters = {
@@ -30,10 +31,8 @@ export const testBlogParameters = {
       length: "medium",
     },
   ],
-  prompt: {
-    promptText: "",
-    promptComment: "",
-  },
+  promptComment:
+    "Focus additionaly on kitchen, update chapters and subchapters.",
 };
 
 export const toneOptions = [
@@ -74,5 +73,5 @@ export const testBlogParamsDesc = {
   audience: "djeca",
   description:
     "kako da djeca vole hajduka, a ne zive otpadnickim zivotom kao mnogi članovi torcide",
-  additionalInstructions: "Napiši na jednostavnom jeziku prilagođenom djeci.",
+  promptComment: "Napiši na jednostavnom jeziku prilagođenom djeci.",
 };

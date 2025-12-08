@@ -22,7 +22,6 @@ export default function BlogParametersForm({ _blogParameters }) {
   const [blogParameters, setBlogParams] = useState(
     _blogParameters || testBlogParameters
   );
-  const [editCustomPromptText, setEditCustomPromptText] = useState(false);
   const router = useRouter();
 
   const onSubmit = async (e) => {
@@ -167,18 +166,6 @@ export default function BlogParametersForm({ _blogParameters }) {
     });
   };
 
-  const onCommentChange = (e) => {
-    console.log("onCommentChange called", blogParameters);
-    const { name, value } = e.target;
-    setBlogParams((prev) => ({
-      ...prev,
-      prompt: {
-        ...prev.prompt,
-        [name]: value,
-      },
-    }));
-  };
-
   return (
     <div className="w-full">
       {/* Form for blog parameters */}
@@ -294,9 +281,8 @@ export default function BlogParametersForm({ _blogParameters }) {
         <div className="p-4  rounded-lg mt-4 ">
           <Prompt
             edit={true}
-            promptText={blogParameters.prompt.promptText}
-            promptComment={blogParameters.prompt.promptComment}
-            onChange={onCommentChange}
+            promptComment={blogParameters.promptComment}
+            onChange={onChange}
           />
         </div>
       </div>

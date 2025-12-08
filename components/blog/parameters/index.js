@@ -196,10 +196,9 @@ export function ViewAllParametersTile() {
   );
 }
 
-export function Prompt({ edit, onChange, promptComment, promptText }) {
+export function Prompt({ edit, onChange, promptText, promptComment }) {
   const [showPromptText, setShowPromptText] = useState(false);
   const [showPromptComment, setShowPromptComment] = useState(false);
-
   return (
     <div className=" ">
       <div>

@@ -7,7 +7,6 @@ import {
   updateChapter,
   getBlogParametersById,
   deleteChapter,
-  saveChapter,
   createChapterParameters,
   compare,
   createBlogParameters,
@@ -57,7 +56,9 @@ export async function POST(req) {
 
   const body = await req.json();
   console.log("Received blog parameters:", body);
+  body["prompt"] = { promtText: "", promptComment: body.promptComment };
 
+  console.log(body["prompt"]);
   const validation = validateBlogParams(body);
 
   if (validation.error) {
@@ -110,7 +111,7 @@ export async function POST(req) {
       blogParametersId: blogParameters._id,
       blogPostId: blogPost._id,
       remainingCredits,
-      blogParameters
+      blogParameters,
     },
     { status: 201 }
   );
