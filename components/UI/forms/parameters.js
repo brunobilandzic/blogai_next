@@ -4,8 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Input, TextArea, Select } from "./elements";
 import {
-  defaultBlogParameters,
-  defaultChapterParams,
   testBlogParameters,
   testChapterParameters,
   toneOptions,
@@ -45,7 +43,7 @@ export default function BlogParametersForm({ _blogParameters }) {
 
   const onPut = async (e) => {
     e.preventDefault();
- console.log("\tsending blog parameters 21212:", blogParameters);
+    console.log("\tsending blog parameters 21212:", blogParameters);
     if (!blogParameters?._id) {
       alert("No blog parameters ID found for update.");
       return;
@@ -373,9 +371,9 @@ export const AIGenerateParametersForm = ({ onGenerate } = {}) => {
               />
 
               <TextArea
-                label="Additional Instructions"
-                name="additionalInstructions"
-                value={paramsDesc.additionalInstructions}
+                label="Prompt Comment"
+                name="promptComment"
+                value={paramsDesc.promptComment}
                 onChange={(e) => onChange(index, e)}
               />
             </div>
