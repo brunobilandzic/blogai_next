@@ -110,6 +110,7 @@ export async function POST(req) {
       blogParametersId: blogParameters._id,
       blogPostId: blogPost._id,
       remainingCredits,
+      blogParameters
     },
     { status: 201 }
   );
