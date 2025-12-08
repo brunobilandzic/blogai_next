@@ -73,5 +73,5 @@ export const testBlogParamsDesc = {
   audience: "djeca",
   description:
     "kako da djeca vole hajduka, a ne zive otpadnickim zivotom kao mnogi članovi torcide",
-  promptComment: "Napiši na jednostavnom jeziku prilagođenom djeci.",
+  promptComment: "napiši još i listu od 10 stvari kako bit bolja osoba.",
 };

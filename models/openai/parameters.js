@@ -56,7 +56,6 @@ const chapterParametersSchema = new mongoose.Schema({
 blogParametersSchema.methods.chaptersString = function () {
   let chaptersString = "";
   for (let chapter of this.chaptersParameters) {
-    console.log("Chapter in chaptersString:", chapter);
     chaptersString += chapter.chapterString() + "; ";
   }
 
@@ -156,7 +155,7 @@ blogParametersSchema.methods.setPrompt = function () {
 
         Ni u kojem slučaju nemoj koristiti navodnike ', već samo smiješ koristiti ' umjesto njih gdje je potrebno.
         Ako je ciljna publika specificirana, ton i primjeri prilagodi njima; inače piši za širu publiku.
-        Ako teme iz ${this.chaptersString()} nisu dovoljno sveobuhvatne, smiješ ih izmijeniti ili dodati nove da članak bude potpun.
+        Ako teme iz potpoglavlja nisu dovoljno sveobuhvatne, smiješ ih izmijeniti ili dodati nove da članak bude potpun.
         Ne uključuj nikakve napomene o tome da si AI ili kako generiraš sadržaj.
         Ne uključuj ništa osim traženog: '<body>…</body>', zatim SEO linije meni za uporabu.
 
@@ -165,11 +164,11 @@ blogParametersSchema.methods.setPrompt = function () {
 
         Tema: ${this.theme}
         Opis bloga (dopuni i prilagodi publici): ${this.description}
-        Predložene sekcije i podpoglavlja: ${this.chaptersString()}
+        Predložene sekcije i potpoglavlja: ${this.chaptersString()}, možeš ih prilagoditi za bolju jasnoću i potpunost.
         Primjer formata slike: ${imageExample}
         ${
           this.prompt.promptComment
-            ? `Dodatna napomena: ${this.prompt.promptComment}`
+            ? `Korisnikkov nadodatak uz prompt: ${this.prompt.promptComment}`
             : ""
         }
         
@@ -177,15 +176,12 @@ blogParametersSchema.methods.setPrompt = function () {
 };
 
 chapterParametersSchema.methods.chapterString = function () {
-  return `Poglavlje ${this.theme} -> Opis poglavlja ${this.theme}: ${
-    this.description
-  }, Pod-teme poglavlja ${this.theme}: ${this.subChapters.join(
-    ", "
-  )}, Duljina poglavlja: ${this.length}`;
+  return `Poglavlje ${this.title}, Pod-teme poglavlja ${
+    this.title
+  }: ${this.subChapters.join(", ")}, Duljina poglavlja: ${this.length}`;
 };
 
 blogParametersSchema.pre("save", async function (next) {
-  await this.populate("chaptersParameters");
   this.setPrompt();
   next();
 });

@@ -43,7 +43,6 @@ export default function BlogParametersForm({ _blogParameters }) {
 
   const onPut = async (e) => {
     e.preventDefault();
-    console.log("\tsending blog parameters 21212:", blogParameters);
     if (!blogParameters?._id) {
       alert("No blog parameters ID found for update.");
       return;
@@ -77,7 +76,6 @@ export default function BlogParametersForm({ _blogParameters }) {
   };
 
   const onChange = (e) => {
-    console.log("blogParameters before change:", blogParameters);
     const { name, value } = e.target;
     setBlogParams((prev) => ({
       ...prev,
@@ -316,12 +314,12 @@ export const AIGenerateParametersForm = ({ onGenerate } = {}) => {
   const [paramsDescs, setParamsDescs] = useState([testBlogParamsDesc]);
 
   const onSubmit = async (e) => {
-    console.log("onSubmit called");
     if (arrayHasEmptyObjects(paramsDescs))
       return alert("Please fill in all fields before generating.");
 
-    const pds = await generateBlogParams(paramsDescs);
-    console.log("pds after generation  saas as:", pds);
+    const generatedParameters = await generateBlogParams(paramsDescs);
+    // this code is not executed
+    console.log("pds after generation  saas as:", generatedParameters);
   };
 
   const onChange = (index, e) => {
@@ -355,18 +353,18 @@ export const AIGenerateParametersForm = ({ onGenerate } = {}) => {
                 onChange={(e) => onChange(index, e)}
               />
 
+              <TextArea
+                label="Description"
+                name="description"
+                value={paramsDesc.description}
+                onChange={(e) => onChange(index, e)}
+              />
+
               <Input
                 label="Audience"
                 type="text"
                 name="audience"
                 value={paramsDesc.audience}
-                onChange={(e) => onChange(index, e)}
-              />
-
-              <TextArea
-                label="Description"
-                name="description"
-                value={paramsDesc.description}
                 onChange={(e) => onChange(index, e)}
               />
 
