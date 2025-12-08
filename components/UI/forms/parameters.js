@@ -45,7 +45,7 @@ export default function BlogParametersForm({ _blogParameters }) {
 
   const onPut = async (e) => {
     e.preventDefault();
-
+ console.log("\tsending blog parameters 21212:", blogParameters);
     if (!blogParameters?._id) {
       alert("No blog parameters ID found for update.");
       return;

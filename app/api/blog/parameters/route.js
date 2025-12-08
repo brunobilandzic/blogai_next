@@ -11,7 +11,6 @@ import {
   compare,
   createBlogParameters,
 } from "@/lib/actions/parameters";
-import mongoose from "mongoose";
 
 export async function GET(req) {
   const { appUser } = await sessionAppUserServer();
@@ -55,10 +54,8 @@ export async function POST(req) {
   }
 
   const body = await req.json();
-  console.log("Received blog parameters:", body);
-  body["prompt"] = { promtText: "", promptComment: body.promptComment };
+  body["prompt"] = { promptText: "", promptComment: body.promptComment };
 
-  console.log(body["prompt"]);
   const validation = validateBlogParams(body);
 
   if (validation.error) {
@@ -83,13 +80,7 @@ export async function POST(req) {
     );
   }
 
-  if (blogParameters.prompt.promptComment && body.promptComment) {
-    blogParameters.prompt.promptComment = body.promptComment;
-  }
-
   await blogParameters.save();
-
-  console.log("Generated blog parameters (POST):", blogParameters);
 
   const generatedResult = await generateBlogPost(blogParameters._id);
 
@@ -201,6 +192,10 @@ export async function PUT(req) {
       );
     }
 
+    body["prompt"] = {
+      ...blogParameters.prompt.toObject(),
+      promptComment: body.promptComment,
+    };
     const { chaptersParameters, ...bodyWithoutChapters } = body;
 
     await deleteBlogPost(bodyWithoutChapters.blogPost);
@@ -214,9 +209,7 @@ export async function PUT(req) {
       },
       { new: true }
     );
-
-    console.log("Fresh blog parameters after update:", freshBlogParams);
-
+    freshBlogParams.setP;
     const generatedResult = await generateBlogPost(freshBlogParams._id);
 
     if (!generatedResult) {
