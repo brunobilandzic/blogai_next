@@ -1,5 +1,7 @@
 "use client";
 
+// page component for new blog parameters page
+
 import BlogParametersForm from "@/components/UI/forms/parameters";
 import { MdArrowDownward, MdOpenInNew } from "react-icons/md";
 import { useRouter } from "next/navigation";
@@ -11,9 +13,7 @@ const NewParameters = () => (
   </div>
 );
 
-export default NewParameters;
-
-export function NewParametersHeader(params) {
+function NewParametersHeader() {
   const router = useRouter();
 
   return (
@@ -37,3 +37,6 @@ export function NewParametersHeader(params) {
     </div>
   );
 }
+
+
+export default NewParameters;
