@@ -198,7 +198,7 @@ export async function PUT(req) {
     };
     const { chaptersParameters, ...bodyWithoutChapters } = body;
 
-    await deleteBlogPost(bodyWithoutChapters.blogPost);
+    // await deleteBlogPost(bodyWithoutChapters.blogPost);
     let freshBlogParams = await BlogParameters.findByIdAndUpdate(
       blogParameters._id,
       {
@@ -209,7 +209,10 @@ export async function PUT(req) {
       },
       { new: true }
     );
-    freshBlogParams.setP;
+
+    await freshBlogParams.populate("chaptersParameters");
+    freshBlogParams.setPrompt();
+
     const generatedResult = await generateBlogPost(freshBlogParams._id);
 
     if (!generatedResult) {

@@ -56,6 +56,7 @@ const chapterParametersSchema = new mongoose.Schema({
 blogParametersSchema.methods.chaptersString = function () {
   let chaptersString = "";
   for (let chapter of this.chaptersParameters) {
+    console.log("Chapter in chaptersString:", chapter);
     chaptersString += chapter.chapterString() + "; ";
   }
 
