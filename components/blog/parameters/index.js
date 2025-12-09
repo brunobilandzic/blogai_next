@@ -33,11 +33,9 @@ export default function ParametersComponent({ blogParameters }) {
   const remainingCredits = useSelector((state) => getRemainingCredits(state));
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [blogPostId, setBlogPostId] = useState(blogPost?._id || null);
-  const [showPromptText, setShowPromptText] = useState(false);
 
   const onGenerateClick = async () => {
     const { remainingCredits, blogPost } = await generateBlogPost(
-      "hello world i am testing write some html, short",
       blogParameters._id
     );
 
