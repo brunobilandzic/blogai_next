@@ -14,6 +14,7 @@ import { PopupConfirmAction } from "@/components/UI/popups";
 import { ShowText } from "@/components/UI/page/text";
 import { ShowPromptButtons } from "@/components/UI/buttons";
 import { TextArea } from "@/components/UI/forms/elements";
+import { setLoading } from "@/lib/store/features/loadingSlice";
 
 export default function ParametersComponent({ blogParameters }) {
   const {
@@ -35,13 +36,16 @@ export default function ParametersComponent({ blogParameters }) {
   const [blogPostId, setBlogPostId] = useState(blogPost?._id || null);
 
   const onGenerateClick = async () => {
-    const { remainingCredits, blogPost } = await generateBlogPost(
-      blogParameters._id
-    );
-
+    dispatch(setLoading(true));
+    const { remainingCredits, blogPost, generationTime } =
+      await generateBlogPost(blogParameters._id);
+    dispatch(setLoading(false));
     dispatch(deductCredits({ remainingCredits }));
-
-    alert(`Generated response! Remaining credits: ${remainingCredits}`);
+    alert(
+      `Generated response! Remaining credits: ${remainingCredits}. Generation time: ${
+        generationTime / 1000
+      } seconds.`
+    );
     setBlogPostId(blogPost._id);
     router.push(`/blog/${blogPost._id}`);
   };
