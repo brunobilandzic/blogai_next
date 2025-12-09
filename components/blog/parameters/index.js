@@ -36,10 +36,10 @@ export default function ParametersComponent({ blogParameters }) {
   const [blogPostId, setBlogPostId] = useState(blogPost?._id || null);
 
   const onGenerateClick = async () => {
-    dispatch(setLoading(true));
+    dispatch(setLoading({ type: "GENERATE_BLOG", isLoading: true }));
     const { remainingCredits, blogPost, generationTime } =
       await generateBlogPost(blogParameters._id);
-    dispatch(setLoading(false));
+    dispatch(setLoading({ isLoading: false }));
     dispatch(deductCredits({ remainingCredits }));
     alert(
       `Generated response! Remaining credits: ${remainingCredits}. Generation time: ${
