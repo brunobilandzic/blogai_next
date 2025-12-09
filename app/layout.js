@@ -5,6 +5,7 @@ import "./globals.css";
 import { Suspense } from "react";
 import Providers from "../lib/providers";
 import { Navbar } from "../components/UI/navbar";
+import { LoadingMain } from "@/components/UI/loading";
 
 export default function RootLayout({ children }) {
   return (
@@ -13,7 +14,7 @@ export default function RootLayout({ children }) {
         <Suspense>
           <Providers>
             <Navbar />
-            <main className="main">{children}</main>
+            <LoadingMain>{children}</LoadingMain>
           </Providers>
         </Suspense>
       </body>
