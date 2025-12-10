@@ -10,7 +10,13 @@ export default function Popup({ isOpen, children, onCancel, title, footer }) {
           <div className={styles.container}>
             <div className={styles.header}>
               <div className={styles.title}>{title}</div>
-              <div onClick={onCancel} className={styles.close}>
+              <div
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onCancel();
+                }}
+                className={styles.close}
+              >
                 <MdClose />
               </div>
             </div>
@@ -26,7 +32,9 @@ export default function Popup({ isOpen, children, onCancel, title, footer }) {
 function Backdrop({ onCancel }) {
   return (
     <div
-      onClick={onCancel}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onCancel();
+      }}
       className="fixed top-0 left-0 z-20 w-full h-screen bg-black opacity-40 "
     ></div>
   );

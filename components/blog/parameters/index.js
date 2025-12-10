@@ -6,8 +6,8 @@ import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
 import { deductCredits } from "@/lib/store/features/appUserSlice";
 import { getRemainingCredits } from "@/lib/store/features/helpers";
-import { MdDeleteForever, MdEdit, MdOpenInNew } from "react-icons/md";
-import { useState } from "react";
+import { MdDeleteForever, MdOpenInNew } from "react-icons/md";
+import { useState, useRef, useContext } from "react";
 import { useRouter } from "next/navigation";
 import { deleteBlogParameters } from "@/lib/actions/parameters";
 import { PopupConfirmAction } from "@/components/UI/popups";
@@ -16,6 +16,8 @@ import { ShowPromptButtons } from "@/components/UI/buttons";
 import { TextArea } from "@/components/UI/forms/elements";
 import { offLoading, setLoading } from "@/lib/store/features/loadingSlice";
 import { GENERATE_BLOG_TIME } from "@/lib/constants";
+import { LoadingContext } from "@/lib/store/context/loadingContext";
+import axios from "axios";
 
 export default function ParametersComponent({ blogParameters }) {
   const {
@@ -35,23 +37,31 @@ export default function ParametersComponent({ blogParameters }) {
   const remainingCredits = useSelector((state) => getRemainingCredits(state));
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [blogPostId, setBlogPostId] = useState(blogPost?._id || null);
-  let controller = null;
+  const abortRef = useRef(null);
+  const { setOnStop } = useContext(LoadingContext);
 
   const onGenerateClick = async () => {
-    controller = new AbortController();
+    abortRef.current = new AbortController();
+
+    setOnStop(() => () => {
+      abortRef.current.abort();
+    });
     dispatch(
       setLoading({
         isLoading: true,
         message: "Generating blog post...",
         generationTime: GENERATE_BLOG_TIME,
-        controller,
       })
     );
     try {
-      const { remainingCredits, blogPost, generationTime } =
-        await generateBlogPost(blogParameters._id, {
-          signal: controller.signal,
-        });
+      const response = await axios.post(
+        "/api/blog",
+        { blogParametersId: id },
+        { signal: abortRef.current.signal }
+      );
+
+      const { blogPost, remainingCredits, generationTime } = response.data;
+
       dispatch(offLoading());
       dispatch(deductCredits({ remainingCredits }));
       alert(
@@ -62,9 +72,10 @@ export default function ParametersComponent({ blogParameters }) {
       setBlogPostId(blogPost._id);
       router.push(`/blog/${blogPost._id}`);
     } catch (error) {
-      if (error.name === "AbortError") {
+      if (error.name === "CanceledError" || error.message === "canceled") {
         alert("Blog generation was cancelled.");
         dispatch(offLoading());
+        setOnStop(() => () => {});
         return;
       } else {
         alert("An error occurred during blog generation.");
@@ -72,10 +83,6 @@ export default function ParametersComponent({ blogParameters }) {
         return;
       }
     }
-  };
-
-  const onStop = () => {
-    if (controller) controller.abort();
   };
 
   const onDeleteBlog = async () => {
