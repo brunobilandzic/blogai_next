@@ -1,3 +1,4 @@
+import { MdClose } from "react-icons/md";
 import styles from "./popup.module.css";
 
 export default function Popup({ isOpen, children, onCancel, title, footer }) {
@@ -10,7 +11,7 @@ export default function Popup({ isOpen, children, onCancel, title, footer }) {
             <div className={styles.header}>
               <div className={styles.title}>{title}</div>
               <div onClick={onCancel} className={styles.close}>
-                X
+                <MdClose />
               </div>
             </div>
             <div className={styles.body}>{children}</div>

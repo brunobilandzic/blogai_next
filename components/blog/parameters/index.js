@@ -14,7 +14,8 @@ import { PopupConfirmAction } from "@/components/UI/popups";
 import { ShowText } from "@/components/UI/page/text";
 import { ShowPromptButtons } from "@/components/UI/buttons";
 import { TextArea } from "@/components/UI/forms/elements";
-import { setLoading } from "@/lib/store/features/loadingSlice";
+import { offLoading, setLoading } from "@/lib/store/features/loadingSlice";
+import { GENERATE_BLOG_TIME } from "@/lib/constants";
 
 export default function ParametersComponent({ blogParameters }) {
   const {
@@ -36,10 +37,16 @@ export default function ParametersComponent({ blogParameters }) {
   const [blogPostId, setBlogPostId] = useState(blogPost?._id || null);
 
   const onGenerateClick = async () => {
-    dispatch(setLoading({ type: "GENERATE_BLOG", isLoading: true }));
+    dispatch(
+      setLoading({
+        isLoading: true,
+        message: "Generating blog post...",
+        generationTime: GENERATE_BLOG_TIME,
+      })
+    );
     const { remainingCredits, blogPost, generationTime } =
       await generateBlogPost(blogParameters._id);
-    dispatch(setLoading({ isLoading: false }));
+    dispatch(offLoading());
     dispatch(deductCredits({ remainingCredits }));
     alert(
       `Generated response! Remaining credits: ${remainingCredits}. Generation time: ${
@@ -56,6 +63,7 @@ export default function ParametersComponent({ blogParameters }) {
       alert("Blog post deleted successfully.");
     }
     setBlogPostId(null);
+    router.refresh();
   };
 
   const onDeleteBlogParameters = async () => {
