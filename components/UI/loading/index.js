@@ -1,57 +1,45 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useContext, useEffect, useRef, useState } from "react";
+import { useSelector } from "react-redux";
 import Popup from "../popups";
 import { ClipLoader } from "react-spinners";
 import { useRouter } from "next/navigation";
-import { offLoading } from "@/lib/store/features/loadingSlice";
-
-export function Loading() {
-  return <div>Loading Layout...</div>;
-}
+import { LoadingContext } from "@/lib/store/context/loadingContext";
 
 export function LoadingMain({ children }) {
-  const { isLoading, generationTime, controller, message } = useSelector(
+  const { isLoading, generationTime, message } = useSelector(
     (state) => state.loading
   );
+  const { onStop } = useContext(LoadingContext);
   const [percentage, setPercentage] = useState(0);
-  const [timer, setTimer] = useState(null);
-  const router = useRouter();
-  const dispatch = useDispatch();
-
+  const intervalRef = useRef(null);
+  
   useEffect(() => {
-    if (isLoading && generationTime > 0 && controller) {
+    if (isLoading && generationTime > 0) {
       const begin = Date.now();
-      setTimer(
-        setInterval(() => {
-          const now = Date.now();
-          const elapsed = now - begin;
-          const newPercentage = Math.min(
-            100,
-            Math.floor((elapsed / generationTime) * 100)
-          );
-          setPercentage(newPercentage);
-        }, 1000)
-      );
+      intervalRef.current = setInterval(() => {
+        const now = Date.now();
+        const elapsed = now - begin;
+        const newPercentage = Math.min(
+          100,
+          Math.floor((elapsed / generationTime) * 100)
+        );
+        setPercentage(newPercentage);
+      }, 1000);
     } else {
-      clearInterval(timer);
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+      setPercentage(0);
     }
   }, [isLoading]);
-
-  const onCancel = () => {
-    if (controller) controller.abort();
-    dispatch(offLoading());
-    router.refresh();
-  };
-
   return (
     <div className="main">
       {isLoading ? (
         <LoadingModal
           loading={{ isLoading, generationTime, message }}
           percentage={percentage}
-          onCancel={onCancel}
+          onCancel={onStop ?? (() => {})}
         />
       ) : (
         children
@@ -61,13 +49,13 @@ export function LoadingMain({ children }) {
 }
 
 export function LoadingModal({ loading, percentage, onCancel }) {
-  const { isLoading, generationTime, message } = loading;
+  const { isLoading, message } = loading;
   return (
     <Popup
       isOpen={isLoading}
       title={message}
       onCancel={onCancel}
-      footer={LoadingModalFooter(onCancel)}
+      footer={<LoadingModalFooter onCancel={onCancel} />}
     >
       <div className="flex flex-col justify-center items-center">
         <ClipLoader size={50} color={"#123abc"} loading={isLoading} />
@@ -77,7 +65,7 @@ export function LoadingModal({ loading, percentage, onCancel }) {
   );
 }
 
-const LoadingModalFooter = (onCancel) => {
+const LoadingModalFooter = ({ onCancel }) => {
   return (
     <div className="flex justify-center items-center gap-2">
       <div className="btn btn-danger" onClick={onCancel}>
