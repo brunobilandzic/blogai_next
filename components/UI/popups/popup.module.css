@@ -1,5 +1,5 @@
 .container {
-  @apply p-2 md:p-4 w-11/12 md:w-1/2 bg-white  rounded-lg shadow-md z-30 fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2;
+  @apply w-11/12 md:w-1/2 bg-white  rounded-lg shadow-md z-30 fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2;
 }
 
 .header {
@@ -7,9 +7,11 @@
 }
 
 .body {
+  @apply p-2 md:p-4;
 }
 
 .footer {
+  @apply p-2 md:p-4;
   @apply flex mt-4 justify-start gap-2 items-center;
 }
 
