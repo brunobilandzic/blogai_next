@@ -1,41 +1,32 @@
-import { sessionAppUserServer } from "@/lib/actions/userServer";
-import { BlogParameters } from "@/models/openai/parameters";
-import { BlogPost } from "@/models/openai/blog";
+import { generateBlogPost } from "@/lib/actions/blog";
 
 export async function POST(req) {
-  // generate new blog post from openai response and save to db
-  const { appUser } = await sessionAppUserServer();
-  if (!appUser) {
-    return Response.json(
-      { message: "Unauthorized: No app user found in session" },
-      { status: 401 }
-    );
+  try {
+    console.log("Received POST request to /api/blog");
+    const body = await req.json();
+    const blogParametersId =
+      body?.blogParametersId || body?.blogParameters || body?.id;
+
+    if (!blogParametersId) {
+      return Response.json(
+        { message: "Missing blogParametersId in request body" },
+        { status: 400 }
+      );
+    }
+
+
+
+    // Pass the request abort signal so generation can be cancelled by the client
+    const result = await generateBlogPost(blogParametersId, {
+      signal: req.signal,
+    });
+
+    return Response.json({ success: true, ...result }, { status: 200 });
+  } catch (err) {
+    console.error("Error in /api/blog POST:", err?.message || err);
+
+    const message = err?.message || "Unknown error";
+
+    return Response.json({ message }, { status: 500 });
   }
-
-  const { responseText, blogParametersId } = await req.json();
-
-  const blogParameters = await BlogParameters.findById(
-    blogParametersId
-  ).populate("chaptersParameters");
-  if (!blogParameters) {
-    return Response.json(
-      { message: "Blog parameters not found" },
-      { status: 404 }
-    );
-  }
-
-  const blogPost = new BlogPost({
-    blogParameters: blogParameters._id,
-    content: responseText,
-  });
-
-  blogParameters.blogPost = blogPost._id;
-  await blogParameters.save();
-
-  await blogPost.save();
-
-  return Response.json(
-    { message: "Blog post created successfully", blogPost },
-    { status: 201 }
-  );
 }
