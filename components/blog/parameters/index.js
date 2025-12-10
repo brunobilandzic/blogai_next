@@ -35,26 +35,47 @@ export default function ParametersComponent({ blogParameters }) {
   const remainingCredits = useSelector((state) => getRemainingCredits(state));
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [blogPostId, setBlogPostId] = useState(blogPost?._id || null);
+  let controller = null;
 
   const onGenerateClick = async () => {
+    controller = new AbortController();
     dispatch(
       setLoading({
         isLoading: true,
         message: "Generating blog post...",
         generationTime: GENERATE_BLOG_TIME,
+        controller,
       })
     );
-    const { remainingCredits, blogPost, generationTime } =
-      await generateBlogPost(blogParameters._id);
-    dispatch(offLoading());
-    dispatch(deductCredits({ remainingCredits }));
-    alert(
-      `Generated response! Remaining credits: ${remainingCredits}. Generation time: ${
-        generationTime / 1000
-      } seconds.`
-    );
-    setBlogPostId(blogPost._id);
-    router.push(`/blog/${blogPost._id}`);
+    try {
+      const { remainingCredits, blogPost, generationTime } =
+        await generateBlogPost(blogParameters._id, {
+          signal: controller.signal,
+        });
+      dispatch(offLoading());
+      dispatch(deductCredits({ remainingCredits }));
+      alert(
+        `Generated response! Remaining credits: ${remainingCredits}. Generation time: ${
+          generationTime / 1000
+        } seconds.`
+      );
+      setBlogPostId(blogPost._id);
+      router.push(`/blog/${blogPost._id}`);
+    } catch (error) {
+      if (error.name === "AbortError") {
+        alert("Blog generation was cancelled.");
+        dispatch(offLoading());
+        return;
+      } else {
+        alert("An error occurred during blog generation.");
+        dispatch(offLoading());
+        return;
+      }
+    }
+  };
+
+  const onStop = () => {
+    if (controller) controller.abort();
   };
 
   const onDeleteBlog = async () => {

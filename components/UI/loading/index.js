@@ -12,14 +12,16 @@ export function Loading() {
 }
 
 export function LoadingMain({ children }) {
-  const loading = useSelector((state) => state.loading);
+  const { isLoading, generationTime, controller, message } = useSelector(
+    (state) => state.loading
+  );
   const [percentage, setPercentage] = useState(0);
   const [timer, setTimer] = useState(null);
   const router = useRouter();
   const dispatch = useDispatch();
-  
+
   useEffect(() => {
-    if (loading.isLoading && loading.generationTime > 0) {
+    if (isLoading && generationTime > 0 && controller) {
       const begin = Date.now();
       setTimer(
         setInterval(() => {
@@ -27,27 +29,27 @@ export function LoadingMain({ children }) {
           const elapsed = now - begin;
           const newPercentage = Math.min(
             100,
-            Math.floor((elapsed / loading.generationTime) * 100)
+            Math.floor((elapsed / generationTime) * 100)
           );
-          console.log(begin, now, elapsed, newPercentage);
           setPercentage(newPercentage);
         }, 1000)
       );
     } else {
       clearInterval(timer);
     }
-  }, [loading.isLoading]);
+  }, [isLoading]);
 
   const onCancel = () => {
+    if (controller) controller.abort();
     dispatch(offLoading());
     router.refresh();
   };
 
   return (
     <div className="main">
-      {loading.isLoading ? (
+      {isLoading ? (
         <LoadingModal
-          loading={loading}
+          loading={{ isLoading, generationTime, message }}
           percentage={percentage}
           onCancel={onCancel}
         />
