@@ -47,10 +47,10 @@ export function PopupConfirmAction({ isOpen, onCancel, onConfirm, message }) {
 export const ConfirmActionFooter = (onConfirm, onCancel) => {
   return (
     <div className="frc gap-2">
-      <div className="btn btn-action" onClick={onConfirm}>
+      <div className="btn btn-danger" onClick={onConfirm}>
         Confirm
       </div>
-      <div className="btn btn-danger" onClick={onCancel}>
+      <div className="btn " onClick={onCancel}>
         Cancel
       </div>
     </div>

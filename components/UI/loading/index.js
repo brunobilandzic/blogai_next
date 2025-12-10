@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import Popup from "../popups";
 
 export function Loading() {
   return <div>Loading Layout...</div>;
@@ -33,11 +34,12 @@ export function LoadingMain({ children }) {
 
   return (
     <div className="main">
-      {loading.isLoading ? (
-        <div className=" text-center p-10">Loading...</div>
-      ) : (
-        children
-      )}
+      {loading.isLoading ? <LoadingModal /> : children}
     </div>
   );
+}
+
+export function LoadingModal({ loading }) {
+  const { isLoading, generationTime, message } = loading;
+  return <Popup isOpen={isLoading}></Popup>;
 }
