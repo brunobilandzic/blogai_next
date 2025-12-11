@@ -70,7 +70,7 @@ export async function POST(req) {
   }
 
   const blogParameters = await createBlogParameters(body);
-  
+
   if (!blogParameters) {
     return Response.json(
       {
@@ -80,7 +80,9 @@ export async function POST(req) {
     );
   }
 
-  const generatedResult = await generateBlogPost(blogParameters._id);
+  const generatedResult = await generateBlogPost(blogParameters._id, {
+    signal: req.signal,
+  });
 
   if (!generatedResult) {
     return Response.json(
@@ -89,15 +91,13 @@ export async function POST(req) {
     );
   }
 
-  const { blogPost, remainingCredits } = generatedResult;
-
   await userRole.save();
 
   return Response.json(
     {
       message: "Blog parameters saved successfully",
       blogParametersId: blogParameters._id,
-      remainingCredits,
+      ...generatedResult,
     },
     { status: 201 }
   );
