@@ -37,7 +37,7 @@ export async function GET(req) {
 }
 
 export async function POST(req) {
-  console.log("Starting server function for POST /api/blog/parameters");
+  let blogParameters;
   try {
     const { appUser } = await sessionAppUserServer();
     if (!appUser) {
@@ -71,7 +71,7 @@ export async function POST(req) {
       );
     }
 
-    let blogParameters = await createBlogParameters(body);
+    blogParameters = await createBlogParameters(body);
 
     if (!blogParameters) {
       return Response.json(
@@ -94,7 +94,6 @@ export async function POST(req) {
     }
 
     await userRole.save();
-    console.log("server function done!");
     return Response.json(
       {
         message: "Blog parameters saved successfully",
@@ -105,8 +104,11 @@ export async function POST(req) {
     );
   } catch (err) {
     console.error("Error in /api/blog POST:", err?.message || err);
+    if (blogParameters) {
+      await deleteBlogPost(blogParameters.blogPost);
+      await blogParameters.deleteOne();
+    }
     const message = err?.message || "Unknown error";
-
     return Response.json({ message }, { status: 500 });
   }
 }
