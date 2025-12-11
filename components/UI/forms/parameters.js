@@ -12,24 +12,33 @@ import {
   defaultBlogParamsDesc,
 } from "./constants";
 import { MdAddCircle, MdDelete } from "react-icons/md";
-import { arrayHasEmptyObjects, objectHasEmpty } from "@/lib/validators";
+import { arrayHasEmptyObjects } from "@/lib/validators";
 import { Prompt } from "@/components/blog/parameters";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { LoadingContext } from "@/lib/store/context/loadingContext";
-import { offLoading, setLoading } from "@/lib/store/features/loadingSlice";
-import { GENERATE_BLOG_TIME } from "@/lib/constants";
+import {
+  offLoading,
+  setLoading,
+  setEarlyRequest,
+  setPercentage,
+} from "@/lib/store/features/loadingSlice";
+import { GENERATE_PARAMS_MANUAL_BLOG_TIME } from "@/lib/constants";
 import axios from "axios";
+import { waitForLoading } from "../loading";
 
 export default function BlogParametersForm({ _blogParameters }) {
   const [blogParameters, setBlogParams] = useState(
     _blogParameters || testBlogParameters
   );
+  const [timeElapsed, setTimeElapsed] = useState(0);
   const router = useRouter();
   const dispatch = useDispatch();
   const abortRef = useRef(null);
   const { setOnStop } = useContext(LoadingContext);
+  const loading = useSelector((state) => state.loading);
 
   const onSubmit = async (e) => {
+    let startTime = Date.now();
     e.preventDefault();
     abortRef.current = new AbortController();
 
@@ -39,8 +48,10 @@ export default function BlogParametersForm({ _blogParameters }) {
     dispatch(
       setLoading({
         isLoading: true,
-        message: "Generating blog post...",
-        generationTime: GENERATE_BLOG_TIME,
+        message: "Creating blog parameters...",
+        generationTime: GENERATE_PARAMS_MANUAL_BLOG_TIME,
+        earlyRequest: false,
+        percentage: 0,
       })
     );
     try {
@@ -60,6 +71,11 @@ export default function BlogParametersForm({ _blogParameters }) {
         generationTime,
       } = response.data;
 
+      console.log("request done");
+      setTimeElapsed(Date.now() - startTime);
+      if (loading.isLoading) dispatch(setEarlyRequest(true));
+      await waitForLoading(timeElapsed, generationTime, setPercentage);
+      dispatch(setEarlyRequest(false));
       alert(
         `${message}
     Remaining credits: ${
@@ -368,8 +384,8 @@ export const AIGenerateParametersForm = ({ onGenerate } = {}) => {
     dispatch(
       setLoading({
         isLoading: true,
-        message: "Generating blog post...",
-        generationTime: GENERATE_BLOG_TIME,
+        message: "Generating blog parameters...",
+        generationTime: GENERATE_PARAMS_AI_NOBLOG_TIME,
       })
     );
     if (arrayHasEmptyObjects(paramsDescs))
