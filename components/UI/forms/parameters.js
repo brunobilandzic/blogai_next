@@ -13,7 +13,6 @@ import {
 } from "./constants";
 import { MdAddCircle, MdDelete } from "react-icons/md";
 import { arrayHasEmptyObjects, objectHasEmpty } from "@/lib/validators";
-import { generateBlogParams } from "@/lib/actions/parameters";
 import { Prompt } from "@/components/blog/parameters";
 import { useDispatch } from "react-redux";
 import { LoadingContext } from "@/lib/store/context/loadingContext";
@@ -355,13 +354,39 @@ const ChaptersParametersForm = ({ chapterParams, onChange }) => {
 export const AIGenerateParametersForm = ({ onGenerate } = {}) => {
   const [paramsDescs, setParamsDescs] = useState([testBlogParamsDesc]);
   const abortRef = useRef(null);
+  const { setOnStop } = useContext(LoadingContext);
+  const dispatch = useDispatch();
   const onSubmit = async (e) => {
+    e.preventDefault();
+    abortRef.current = new AbortController();
+
+    setOnStop(() => () => {
+      abortRef.current.abort();
+    });
+    dispatch(
+      setLoading({
+        isLoading: true,
+        message: "Generating blog post...",
+        generationTime: GENERATE_BLOG_TIME,
+      })
+    );
     if (arrayHasEmptyObjects(paramsDescs))
       return alert("Please fill in all fields before generating.");
 
-    const generatedParameters = await generateBlogParams(paramsDescs);
-    // this code is not executed
-    console.log("pds after generation  saas as:", generatedParameters);
+    try {
+      const response = await axios.post(
+        `/api/blog/parameters/generate`,
+        {
+          paramsDescs: paramsDescs,
+        },
+        { signal: abortRef.current.signal }
+      );
+    } catch (error) {
+      if (error.name === "CanceledError" || error.message === "canceled") {
+        alert("Blog parameters generation was cancelled.");
+        dispatch(offLoading());
+      }
+    }
   };
 
   const onChange = (index, e) => {

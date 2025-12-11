@@ -1,3 +1,4 @@
+import { generateBlogParams } from "@/lib/actions/parameters";
 import { sessionUserRoleServer } from "@/lib/actions/userServer";
 import { validateParamsPrompt } from "@/lib/validators/blog";
 import { ParamsPrompt } from "@/models/openai/prompt";
@@ -12,9 +13,7 @@ export async function POST(req) {
   }
 
   const body = await req.json();
-
-  console.log("Received blog parameters for generation:", body);
-
+  /* 
   const validation = validateParamsPrompt(body);
 
   if (validation.error) {
@@ -26,20 +25,15 @@ export async function POST(req) {
       },
       { status: 400 }
     );
-  }
-
-  const paramsPrompt = new ParamsPrompt({
-    theme: body.theme,
-    description: body.description,
-    audience: body.audience,
+  } */
+ 
+  const blogParameters = await generateBlogParams(body.paramsDescs, {
+    signal: req.signal,
   });
-
-  await paramsPrompt.save();
 
   return Response.json(
     {
-      message: "Parameters prompt saved successfully",
-      promptText: paramsPrompt.promptText,
+      message: `Generated ${blogParameters.length} blog parameters successfully`,
     },
     { status: 200 }
   );
