@@ -68,6 +68,8 @@ export default function BlogParametersForm({ _blogParameters }) {
           generationTime ? generationTime / 1000 : "N/A"
         } s`
       );
+      dispatch(offLoading());
+      setOnStop(() => () => {});
 
       router.push(`/blog/parameters/${blogParametersId}`);
     } catch (error) {
@@ -381,6 +383,15 @@ export const AIGenerateParametersForm = ({ onGenerate } = {}) => {
         },
         { signal: abortRef.current.signal }
       );
+      const { message, blogParametersThemes, generationTime } = response.data;
+      console.log(response.data);
+      alert(
+        `${message}
+    Generated Blog Parameters themes: ${blogParametersThemes.join(
+      ", "
+    )}, Generation time: ${generationTime ? generationTime : "N/A"} s`
+      );
+      dispatch(offLoading());
     } catch (error) {
       if (error.name === "CanceledError" || error.message === "canceled") {
         alert("Blog parameters generation was cancelled.");
