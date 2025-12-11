@@ -14,8 +14,6 @@ export async function POST(req) {
       );
     }
 
-
-
     // Pass the request abort signal so generation can be cancelled by the client
     const result = await generateBlogPost(blogParametersId, {
       signal: req.signal,
