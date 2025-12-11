@@ -21,6 +21,7 @@ import {
   setLoading,
   setEarlyRequest,
   setPercentage,
+  testLoadingState,
 } from "@/lib/store/features/loadingSlice";
 import { GENERATE_PARAMS_MANUAL_BLOG_TIME } from "@/lib/constants";
 import axios from "axios";
@@ -35,8 +36,16 @@ export default function BlogParametersForm({ _blogParameters }) {
   const dispatch = useDispatch();
   const abortRef = useRef(null);
   const { setOnStop } = useContext(LoadingContext);
-  const loading = useSelector((state) => state.loading);
+  const { percentage } = useSelector((state) => state.loading);
+  const testLoading = () => {
+    abortRef.current = new AbortController();
 
+    setOnStop(() => () => {
+      abortRef.current.abort();
+    });
+    
+    dispatch(setLoading(testLoadingState));
+  };
   const onSubmit = async (e) => {
     let startTime = Date.now();
     e.preventDefault();
@@ -55,6 +64,7 @@ export default function BlogParametersForm({ _blogParameters }) {
       })
     );
     try {
+      console.log(startTime);
       const response = await axios.post(
         `/api/blog/parameters`,
         {
@@ -72,10 +82,12 @@ export default function BlogParametersForm({ _blogParameters }) {
       } = response.data;
 
       console.log("request done");
-      setTimeElapsed(Date.now() - startTime);
-      if (loading.isLoading) dispatch(setEarlyRequest(true));
-      await waitForLoading(timeElapsed, generationTime, setPercentage);
-      dispatch(setEarlyRequest(false));
+      const timeElapsed = Date.now() - startTime;
+
+      console.log("timeElapsed", timeElapsed);
+      console.log("percentage", percentage);
+
+      await waitForLoading();
       alert(
         `${message}
     Remaining credits: ${
@@ -223,6 +235,9 @@ export default function BlogParametersForm({ _blogParameters }) {
 
   return (
     <div className="w-full">
+      <div className="btn" onClick={testLoading}>
+        Test Loading State
+      </div>
       {/* Form for blog parameters */}
       <div className="flex flex-col gap-4">
         <Input

@@ -10,33 +10,52 @@ import {
 import Popup from "../popups";
 import { ClipLoader } from "react-spinners";
 import { LoadingContext } from "@/lib/store/context/loadingContext";
+import store from "@/lib/store/store";
 
 export function LoadingMain({ children }) {
   const { isLoading, generationTime, message, earlyRequest, percentage } =
     useSelector((state) => state.loading);
-  const { onStop, setOnStop } = useContext(LoadingContext);
+  const { onStop } = useContext(LoadingContext);
   const intervalRef = useRef(null);
-  const [elapsed, setElapsed] = useState(0);
   const dispatch = useDispatch();
 
   useEffect(() => {
     if (isLoading) {
-      console.log("generationTime", generationTime);
+      console.log("LoadingMain: isLoading true");
       const begin = Date.now();
-      intervalRef.current = setInterval(() => {
-        const now = Date.now();
-        /*         setElapsed(now - begin); */
-        const elapsed = now - begin;
-        console.log("now begin diff", now - begin);
-        console.log("elapsed", elapsed);
-        const newPercentage = Math.min(
-          99,
-          Math.floor((elapsed / generationTime) * 100)
-        );
-        console.log("newPercentage", newPercentage);
-        dispatch(setPercentage(newPercentage));
-      }, 1000);
-    } else if (earlyRequest) {
+      if (earlyRequest) {
+        console.log("LoadingMain: earlyRequest true, starting interval");
+
+        const step = 15;
+        intervalRef.current = setInterval(() => {
+          console.log("LoadingMain: early request interval tick", percentage);
+
+          if (percentage < 90) {
+            console.log(
+              "LoadingMain: increasing percentage by step",
+              percentage,
+              step
+            );
+            dispatch(setPercentage(percentage + step));
+          } else {
+            clearInterval(intervalRef.current);
+            intervalRef.current = null;
+            dispatch(setEarlyRequest(false));
+            dispatch(offLoading());
+          }
+        }, 1000);
+      } else {
+        intervalRef.current = setInterval(() => {
+          const now = Date.now();
+          /*         setElapsed(now - begin); */
+          const elapsed = now - begin;
+          const newPercentage = Math.min(
+            99,
+            Math.floor((elapsed / generationTime) * 100)
+          );
+          dispatch(setPercentage(newPercentage));
+        }, 1000);
+      }
     } else {
       clearInterval(intervalRef.current);
       intervalRef.current = null;
@@ -44,6 +63,7 @@ export function LoadingMain({ children }) {
       dispatch(offLoading());
     }
   }, [isLoading, earlyRequest]);
+
   return (
     <div className="main">
       {isLoading ? (
@@ -60,9 +80,7 @@ export function LoadingMain({ children }) {
 
 export function LoadingModal({ loading, onCancel }) {
   const { isLoading, message, percentage } = loading;
-  useEffect(() => {
-    console.log(percentage);
-  }, [percentage]);
+
   return (
     <Popup
       isOpen={isLoading}
@@ -88,29 +106,15 @@ const LoadingModalFooter = ({ onCancel }) => {
   );
 };
 
-export const waitForLoading = (timeElapsed, generationTime, setPercentage) => {
+export const waitForLoading = (state) => {
   return new Promise((resolve) => {
-    if (timeElapsed >= generationTime) {
-      resolve();
-      return;
-    }
-    const step = (100 - (timeElapsed / generationTime) * 100) / 10;
-    
-    if (step <= 0) {
-      resolve();
-      return;
-    }
     const interval = setInterval(() => {
-      setPercentage((prev) => {
-        console.log("step", step);
-        const next = prev + step;
-        if (next >= 100) {
-          clearInterval(interval);
-          resolve();
-          return 100;
-        }
-        return next;
-      });
-    }, 100);
+      const state = store.getState();
+      const earlyRequest = state.loading.earlyRequest;
+      if (!earlyRequest) {
+        clearInterval(interval);
+        resolve();
+      }
+    }, 50);
   });
 };
