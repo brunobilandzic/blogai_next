@@ -37,70 +37,78 @@ export async function GET(req) {
 }
 
 export async function POST(req) {
-  const { appUser } = await sessionAppUserServer();
-  if (!appUser) {
-    return Response.json(
-      { message: "Unauthorized: No app user found in session" },
-      { status: 401 }
-    );
-  }
+  console.log("Starting server function for POST /api/blog/parameters");
+  try {
+    const { appUser } = await sessionAppUserServer();
+    if (!appUser) {
+      return Response.json(
+        { message: "Unauthorized: No app user found in session" },
+        { status: 401 }
+      );
+    }
 
-  const userRole = getRoleObject(appUser, "UserRole");
-  if (!userRole) {
-    return Response.json(
-      { message: "Unauthorized: No user role found for app user" },
-      { status: 401 }
-    );
-  }
+    const userRole = getRoleObject(appUser, "UserRole");
+    if (!userRole) {
+      return Response.json(
+        { message: "Unauthorized: No user role found for app user" },
+        { status: 401 }
+      );
+    }
 
-  const body = await req.json();
-  body["prompt"] = { promptText: "", promptComment: body.promptComment };
+    const body = await req.json();
+    body["prompt"] = { promptText: "", promptComment: body.promptComment };
 
-  const validation = validateBlogParams(body);
+    const validation = validateBlogParams(body);
 
-  if (validation.error) {
-    console.error("Validation error:", validation.error);
+    if (validation.error) {
+      console.error("Validation error:", validation.error);
+      return Response.json(
+        {
+          message: "Invalid blog parameters",
+          errors: validation.error?.details,
+        },
+        { status: 400 }
+      );
+    }
+
+    let blogParameters = await createBlogParameters(body);
+
+    if (!blogParameters) {
+      return Response.json(
+        {
+          message: "Error saving blog parameters",
+        },
+        { status: 500 }
+      );
+    }
+
+    const generatedResult = await generateBlogPost(blogParameters._id, {
+      signal: req.signal,
+    });
+
+    if (!generatedResult) {
+      return Response.json(
+        { message: "Error generating blog post" },
+        { status: 500 }
+      );
+    }
+
+    await userRole.save();
+    console.log("server function done!");
     return Response.json(
       {
-        message: "Invalid blog parameters",
-        errors: validation.error?.details,
+        message: "Blog parameters saved successfully",
+        blogParametersId: blogParameters._id,
+        ...generatedResult,
       },
-      { status: 400 }
+      { status: 201 }
     );
+  } catch (err) {
+    console.error("Error in /api/blog POST:", err?.message || err);
+    const message = err?.message || "Unknown error";
+
+    return Response.json({ message }, { status: 500 });
   }
-
-  const blogParameters = await createBlogParameters(body);
-
-  if (!blogParameters) {
-    return Response.json(
-      {
-        message: "Error saving blog parameters",
-      },
-      { status: 500 }
-    );
-  }
-
-  const generatedResult = await generateBlogPost(blogParameters._id, {
-    signal: req.signal,
-  });
-
-  if (!generatedResult) {
-    return Response.json(
-      { message: "Error generating blog post" },
-      { status: 500 }
-    );
-  }
-
-  await userRole.save();
-
-  return Response.json(
-    {
-      message: "Blog parameters saved successfully",
-      blogParametersId: blogParameters._id,
-      ...generatedResult,
-    },
-    { status: 201 }
-  );
 }
 
 export async function PUT(req) {

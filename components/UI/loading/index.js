@@ -22,7 +22,7 @@ export function LoadingMain({ children }) {
         const now = Date.now();
         const elapsed = now - begin;
         const newPercentage = Math.min(
-          100,
+          99,
           Math.floor((elapsed / generationTime) * 100)
         );
         setPercentage(newPercentage);

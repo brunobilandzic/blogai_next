@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useContext } from "react";
 import { useRouter } from "next/navigation";
 import { Input, TextArea, Select } from "./elements";
 import {
@@ -15,30 +15,72 @@ import { MdAddCircle, MdDelete } from "react-icons/md";
 import { arrayHasEmptyObjects, objectHasEmpty } from "@/lib/validators";
 import { generateBlogParams } from "@/lib/actions/parameters";
 import { Prompt } from "@/components/blog/parameters";
+import { useDispatch } from "react-redux";
+import { LoadingContext } from "@/lib/store/context/loadingContext";
+import { offLoading, setLoading } from "@/lib/store/features/loadingSlice";
+import { GENERATE_BLOG_TIME } from "@/lib/constants";
+import axios from "axios";
 
 export default function BlogParametersForm({ _blogParameters }) {
   const [blogParameters, setBlogParams] = useState(
     _blogParameters || testBlogParameters
   );
   const router = useRouter();
+  const dispatch = useDispatch();
+  const abortRef = useRef(null);
+  const { setOnStop } = useContext(LoadingContext);
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    const res = await fetch("/api/blog/parameters", {
-      method: "POST",
-      body: JSON.stringify(blogParameters),
-    });
-    const { message, blogParametersId, blogPostId, remainingCredits } =
-      await res.json();
+    abortRef.current = new AbortController();
 
-    alert(
-      `${message}
+    setOnStop(() => () => {
+      abortRef.current.abort();
+    });
+    dispatch(
+      setLoading({
+        isLoading: true,
+        message: "Generating blog post...",
+        generationTime: GENERATE_BLOG_TIME,
+      })
+    );
+    try {
+      const response = await axios.post(
+        `/api/blog/parameters`,
+        {
+          ...blogParameters,
+        },
+        { signal: abortRef.current.signal }
+      );
+
+      const {
+        message,
+        blogParametersId,
+        blogPostId,
+        remainingCredits,
+        generationTime,
+      } = response.data;
+
+      alert(
+        `${message}
     Remaining credits: ${
       typeof remainingCredits !== "undefined" ? remainingCredits : "N/A"
-    }${blogPostId ? "\nA blog post was generated." : ""}`
-    );
+    }${blogPostId ? "\nA blog post was generated." : ""}\nGeneration time: ${
+          generationTime ? generationTime / 1000 : "N/A"
+        } s`
+      );
 
-    router.push(`/blog/parameters/${blogParametersId}`);
+      router.push(`/blog/parameters/${blogParametersId}`);
+    } catch (error) {
+      if (error.name === "CanceledError" || error.message === "canceled") {
+        alert("Blog generation was cancelled.");
+        dispatch(offLoading());
+        setOnStop(() => () => {});
+        return;
+      } else {
+        alert("An error occurred during blog generation.");
+      }
+    }
   };
 
   const onPut = async (e) => {
@@ -312,7 +354,7 @@ const ChaptersParametersForm = ({ chapterParams, onChange }) => {
 
 export const AIGenerateParametersForm = ({ onGenerate } = {}) => {
   const [paramsDescs, setParamsDescs] = useState([testBlogParamsDesc]);
-
+  const abortRef = useRef(null);
   const onSubmit = async (e) => {
     if (arrayHasEmptyObjects(paramsDescs))
       return alert("Please fill in all fields before generating.");
