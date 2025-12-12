@@ -55,10 +55,11 @@ export async function POST(req) {
       );
     }
 
+    // Prepare blog parameters data
     const body = await req.json();
     body["prompt"] = { promptText: "", promptComment: body.promptComment };
-
-    const validation = validateBlogParams(body);
+    const { generateBlog, ...blogParametersData } = body;
+    const validation = validateBlogParams(blogParametersData);
 
     if (validation.error) {
       console.error("Validation error:", validation.error);
@@ -71,7 +72,7 @@ export async function POST(req) {
       );
     }
 
-    blogParameters = await createBlogParameters(body);
+    blogParameters = await createBlogParameters(blogParametersData);
 
     if (!blogParameters) {
       return Response.json(
@@ -82,15 +83,20 @@ export async function POST(req) {
       );
     }
 
-    const generatedResult = await generateBlogPost(blogParameters._id, {
-      signal: req.signal,
-    });
+    if (generateBlog) {
+      const generatedResult = await generateBlogPost(blogParameters._id, {
+        signal: req.signal,
+      });
 
-    if (!generatedResult) {
-      return Response.json(
-        { message: "Error generating blog post" },
-        { status: 500 }
-      );
+      if (!generatedResult) {
+        return Response.json(
+          {
+            message: "Error generating blog post",
+            blogParametersId: blogParameters._id,
+          },
+          { status: 500 }
+        );
+      }
     }
 
     await userRole.save();
@@ -98,7 +104,7 @@ export async function POST(req) {
       {
         message: "Blog parameters saved successfully",
         blogParametersId: blogParameters._id,
-        ...generatedResult,
+        /* ...generatedResult, */
       },
       { status: 201 }
     );

@@ -31,11 +31,14 @@ export function LoadingMain({ children }) {
       // if early request true, start interval to increase percentage by step until 90%
       if (earlyRequest) {
         intervalRef.current && clearInterval(intervalRef.current);
-
         const step = 15;
         intervalRef.current = setInterval(() => {
           const freshPercentage = percentageRef.current;
-
+          if (!isLoading) {
+            clearInterval(intervalRef.current);
+            intervalRef.current = null;
+            dispatch(offLoading());
+          }
           if (freshPercentage < 99) {
             dispatch(setPercentage(freshPercentage + step));
           } else {
@@ -113,7 +116,7 @@ export const waitForLoading = () => {
       const state = store.getState();
       const earlyRequest = state.loading.earlyRequest;
       const percentage = state.loading.percentage;
-
+      
       if (percentage >= 99) {
         clearInterval(interval);
         store.dispatch(offLoading());

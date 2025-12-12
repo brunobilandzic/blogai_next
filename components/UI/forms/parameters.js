@@ -25,6 +25,7 @@ import {
 import {
   GENERATE_PARAMS_AI_NOBLOG_TIME,
   GENERATE_PARAMS_MANUAL_BLOG_TIME,
+  GENERATE_PARAMS_NOBLOG_TIME,
 } from "@/lib/constants";
 import axios from "axios";
 import { waitForLoading } from "../loading";
@@ -39,6 +40,7 @@ export default function BlogParametersForm({ _blogParameters }) {
   const { setOnStop } = useContext(LoadingContext);
   const { percentage } = useSelector((state) => state.loading);
   const percentageRef = useRef(percentage);
+  const [generateBlog, setGenerateBlog] = useState(false);
 
   const testLoading = () => {
     abortRef.current = new AbortController();
@@ -59,27 +61,30 @@ export default function BlogParametersForm({ _blogParameters }) {
     e.preventDefault();
     abortRef.current = new AbortController();
 
-    setOnStop(() => () => {
-      abortRef.current.abort();
-    });
-    dispatch(
-      setLoading({
-        isLoading: true,
-        message: "Creating blog parameters...",
-        generationTime: GENERATE_PARAMS_MANUAL_BLOG_TIME,
-        earlyRequest: false,
-        percentage: 0,
-      })
-    );
+    if (generateBlog) {
+      setOnStop(() => () => {
+        abortRef.current.abort();
+      });
+      dispatch(
+        setLoading({
+          isLoading: true,
+          message: "Creating blog parameters...",
+          generationTime: GENERATE_PARAMS_MANUAL_BLOG_TIME,
+          earlyRequest: false,
+          percentage: 0,
+        })
+      );
+    }
     try {
       const response = await axios.post(
         `/api/blog/parameters`,
         {
           ...blogParameters,
+          generateBlog,
         },
         { signal: abortRef.current.signal }
       );
-
+      
       const {
         message,
         blogParametersId,
@@ -88,21 +93,24 @@ export default function BlogParametersForm({ _blogParameters }) {
         generationTime,
       } = response.data;
 
-      dispatch(setEarlyRequest(true));
-      await waitForLoading();
-
-      alert(
-        `${message}
+      if (generateBlog) {
+        dispatch(setEarlyRequest(true));
+        await waitForLoading();
+        alert(
+          `${message}
     Remaining credits: ${
       typeof remainingCredits !== "undefined" ? remainingCredits : "N/A"
     }${blogPostId ? "\nA blog post was generated." : ""}\nGeneration time: ${
-          generationTime ? generationTime / 1000 : "N/A"
-        } s`
-      );
+            generationTime ? generationTime / 1000 : "N/A"
+          } s`
+        );
+      } else {
+        alert(`${message}`);
+      }
       dispatch(offLoading());
       setOnStop(() => () => {});
 
-      router.push(`/blog/parameters/${blogParametersId}`);
+      //router.push(`/blog/parameters/${blogParametersId}`);
     } catch (error) {
       if (error.name === "CanceledError" || error.message === "canceled") {
         alert("Blog generation was cancelled.");
@@ -238,9 +246,6 @@ export default function BlogParametersForm({ _blogParameters }) {
 
   return (
     <div className="w-full">
-      <div className="btn" onClick={testLoading}>
-        Test Loading State
-      </div>
       {/* Form for blog parameters */}
       <div className="flex flex-col gap-4">
         <Input
@@ -349,6 +354,18 @@ export default function BlogParametersForm({ _blogParameters }) {
             {_blogParameters?._id
               ? "Update Blog Parameters"
               : "Create Blog Parameters"}
+          </div>
+          <div>
+            <input
+              type="checkbox"
+              id="generateBlog"
+              name="generateBlog"
+              checked={generateBlog}
+              onChange={() => setGenerateBlog(!generateBlog)}
+            />
+            <label htmlFor="generateBlog" className="ml-2">
+              Generate blog after saving parameters
+            </label>
           </div>
         </div>
         <div className="p-4  rounded-lg mt-4 ">
