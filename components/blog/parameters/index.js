@@ -22,7 +22,7 @@ import {
 import { GENERATE_BLOG_TIME } from "@/lib/constants";
 import { LoadingContext } from "@/lib/store/context/loadingContext";
 import axios from "axios";
-import { waitForLoading } from "@/components/UI/loading";
+import { waitForLoading } from "@/components/UI/loading/loadingRequest";
 
 export default function ParametersComponent({ blogParameters }) {
   const {

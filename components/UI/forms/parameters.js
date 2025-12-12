@@ -28,7 +28,7 @@ import {
   GENERATE_PARAMS_NOBLOG_TIME,
 } from "@/lib/constants";
 import axios from "axios";
-import { waitForLoading } from "../loading";
+import { waitForLoading } from "../loading/loadingRequest";
 
 export default function BlogParametersForm({ _blogParameters }) {
   const [blogParameters, setBlogParams] = useState(
@@ -84,7 +84,7 @@ export default function BlogParametersForm({ _blogParameters }) {
         },
         { signal: abortRef.current.signal }
       );
-      
+
       const {
         message,
         blogParametersId,

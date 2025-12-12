@@ -12,7 +12,7 @@ import { ClipLoader } from "react-spinners";
 import { LoadingContext } from "@/lib/store/context/loadingContext";
 import store from "@/lib/store/store";
 
-export function LoadingMain({ children }) {
+export default function LoadingRequest({ children }) {
   const { isLoading, generationTime, message, earlyRequest, percentage } =
     useSelector((state) => state.loading);
   const { onStop } = useContext(LoadingContext);
