@@ -22,7 +22,10 @@ import {
   setEarlyRequest,
   testLoadingState,
 } from "@/lib/store/features/loadingSlice";
-import { GENERATE_PARAMS_MANUAL_BLOG_TIME } from "@/lib/constants";
+import {
+  GENERATE_PARAMS_AI_NOBLOG_TIME,
+  GENERATE_PARAMS_MANUAL_BLOG_TIME,
+} from "@/lib/constants";
 import axios from "axios";
 import { waitForLoading } from "../loading";
 
@@ -415,7 +418,8 @@ export const AIGenerateParametersForm = ({ onGenerate } = {}) => {
         { signal: abortRef.current.signal }
       );
       const { message, blogParametersThemes, generationTime } = response.data;
-
+      dispatch(setEarlyRequest(true));
+      await waitForLoading();
       alert(
         `${message}
     Generated Blog Parameters themes: ${blogParametersThemes.join(

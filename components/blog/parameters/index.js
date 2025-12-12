@@ -14,10 +14,15 @@ import { PopupConfirmAction } from "@/components/UI/popups";
 import { ShowText } from "@/components/UI/page/text";
 import { ShowPromptButtons } from "@/components/UI/buttons";
 import { TextArea } from "@/components/UI/forms/elements";
-import { offLoading, setLoading } from "@/lib/store/features/loadingSlice";
+import {
+  offLoading,
+  setEarlyRequest,
+  setLoading,
+} from "@/lib/store/features/loadingSlice";
 import { GENERATE_BLOG_TIME } from "@/lib/constants";
 import { LoadingContext } from "@/lib/store/context/loadingContext";
 import axios from "axios";
+import { waitForLoading } from "@/components/UI/loading";
 
 export default function ParametersComponent({ blogParameters }) {
   const {
@@ -61,7 +66,8 @@ export default function ParametersComponent({ blogParameters }) {
       );
 
       const { blogPost, remainingCredits, generationTime } = response.data;
-
+      dispatch(setEarlyRequest(true));
+      await waitForLoading();
       dispatch(offLoading());
       dispatch(deductCredits({ remainingCredits }));
       alert(

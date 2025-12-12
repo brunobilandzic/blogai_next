@@ -2,7 +2,6 @@ import { generateBlogPost } from "@/lib/actions/blog";
 
 export async function POST(req) {
   try {
-    console.log("Received POST request to /api/blog");
     const body = await req.json();
     const blogParametersId =
       body?.blogParametersId || body?.blogParameters || body?.id;

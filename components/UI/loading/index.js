@@ -3,7 +3,6 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
-  incrementPercentage,
   offLoading,
   setEarlyRequest,
   setPercentage,
@@ -54,11 +53,11 @@ export function LoadingMain({ children }) {
             Math.floor((elapsed / generationTime) * 100)
           );
 
-          dispatch(setPercentage(newPercentage));       
+          dispatch(setPercentage(newPercentage));
         }, 1000);
       }
     } else {
-      // when is loading 
+      // when is loading false
       clearInterval(intervalRef.current);
       intervalRef.current = null;
       dispatch(setEarlyRequest(false));
