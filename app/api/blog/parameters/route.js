@@ -82,9 +82,9 @@ export async function POST(req) {
         { status: 500 }
       );
     }
-
+    let generatedResult;
     if (generateBlog) {
-      const generatedResult = await generateBlogPost(blogParameters._id, {
+      generatedResult = await generateBlogPost(blogParameters._id, {
         signal: req.signal,
       });
 
@@ -97,14 +97,15 @@ export async function POST(req) {
           { status: 500 }
         );
       }
+    } else {
+      generatedResult = {};
     }
-
-    await userRole.save();
+    
     return Response.json(
       {
         message: "Blog parameters saved successfully",
         blogParametersId: blogParameters._id,
-        /* ...generatedResult, */
+        ...generatedResult,
       },
       { status: 201 }
     );
