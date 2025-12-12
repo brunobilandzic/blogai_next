@@ -20,7 +20,6 @@ import {
   offLoading,
   setLoading,
   setEarlyRequest,
-  setPercentage,
   testLoadingState,
 } from "@/lib/store/features/loadingSlice";
 import { GENERATE_PARAMS_MANUAL_BLOG_TIME } from "@/lib/constants";
@@ -31,13 +30,13 @@ export default function BlogParametersForm({ _blogParameters }) {
   const [blogParameters, setBlogParams] = useState(
     _blogParameters || testBlogParameters
   );
-  const [timeElapsed, setTimeElapsed] = useState(0);
   const router = useRouter();
   const dispatch = useDispatch();
   const abortRef = useRef(null);
   const { setOnStop } = useContext(LoadingContext);
   const { percentage } = useSelector((state) => state.loading);
   const percentageRef = useRef(percentage);
+
   const testLoading = () => {
     abortRef.current = new AbortController();
 
@@ -52,8 +51,8 @@ export default function BlogParametersForm({ _blogParameters }) {
       dispatch(offLoading());
     }, 3000);
   };
+
   const onSubmit = async (e) => {
-    let startTime = Date.now();
     e.preventDefault();
     abortRef.current = new AbortController();
 
@@ -86,14 +85,9 @@ export default function BlogParametersForm({ _blogParameters }) {
         generationTime,
       } = response.data;
 
-      console.log("request done");
-
-      const timeElapsed = Date.now() - startTime;
-      const percentage = percentageRef.current;
-      console.log("timeElapsed", timeElapsed);
-      console.log("percentage", percentage);
       dispatch(setEarlyRequest(true));
       await waitForLoading();
+
       alert(
         `${message}
     Remaining credits: ${
@@ -421,7 +415,7 @@ export const AIGenerateParametersForm = ({ onGenerate } = {}) => {
         { signal: abortRef.current.signal }
       );
       const { message, blogParametersThemes, generationTime } = response.data;
-      console.log(response.data);
+
       alert(
         `${message}
     Generated Blog Parameters themes: ${blogParametersThemes.join(

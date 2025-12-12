@@ -28,12 +28,10 @@ export function LoadingMain({ children }) {
   useEffect(() => {
     if (isLoading) {
       // if isloading true
-      console.log("LoadingMain: isLoading true");
       const begin = Date.now();
       // if early request true, start interval to increase percentage by step until 90%
       if (earlyRequest) {
         intervalRef.current && clearInterval(intervalRef.current);
-        console.log("LoadingMain: earlyRequest true, starting interval");
 
         const step = 15;
         intervalRef.current = setInterval(() => {
@@ -48,26 +46,19 @@ export function LoadingMain({ children }) {
           }
         }, 1000);
       } else {
-        console.log(
-          "LoadingMain: earlyRequest false, starting generationTime interval"
-        );
         intervalRef.current = setInterval(() => {
           const now = Date.now();
-          /*         setElapsed(now - begin); */
           const elapsed = now - begin;
-
           const newPercentage = Math.min(
             99,
             Math.floor((elapsed / generationTime) * 100)
           );
-          dispatch(setPercentage(newPercentage));
+
+          dispatch(setPercentage(newPercentage));       
         }, 1000);
-        if (percentage > 60 && earlyRequest) {
-          clearInterval(intervalRef.current);
-          intervalRef.current = null;
-        }
       }
     } else {
+      // when is loading 
       clearInterval(intervalRef.current);
       intervalRef.current = null;
       dispatch(setEarlyRequest(false));
@@ -123,20 +114,12 @@ export const waitForLoading = () => {
       const state = store.getState();
       const earlyRequest = state.loading.earlyRequest;
       const percentage = state.loading.percentage;
-      console.log(
-        `waitForLoading: percentage=${percentage}, earlyRequest=${earlyRequest}`
-      );
-      if (percentage >= 100) {
-        console.log(
-          `waitForLoading: percentage ${percentage} reached 100, turning off earlyRequest`
-        );
+
+      if (percentage >= 99) {
         clearInterval(interval);
         store.dispatch(offLoading());
         resolve();
       } else if (!earlyRequest) {
-        console.log(
-          `waitForLoading: earlyRequest is false, turning off loading`
-        );
         clearInterval(interval);
         store.dispatch(offLoading());
         resolve();
