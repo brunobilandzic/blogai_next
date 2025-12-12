@@ -100,7 +100,7 @@ export async function POST(req) {
     } else {
       generatedResult = {};
     }
-    
+
     return Response.json(
       {
         message: "Blog parameters saved successfully",
@@ -208,13 +208,13 @@ export async function PUT(req) {
       ...blogParameters.prompt.toObject(),
       promptComment: body.promptComment,
     };
-    const { chaptersParameters, ...bodyWithoutChapters } = body;
+    const { chaptersParameters, generateBlog, ...blogParamsData } = body;
 
-    // await deleteBlogPost(bodyWithoutChapters.blogPost);
+    blogParamsData.blogPost && (await deleteBlogPost(blogParamsData.blogPost));
     let freshBlogParams = await BlogParameters.findByIdAndUpdate(
       blogParameters._id,
       {
-        ...bodyWithoutChapters,
+        ...blogParamsData,
         $set: {
           chaptersParameters: updatedChapters.map((chapter) => chapter._id),
         },
@@ -225,25 +225,26 @@ export async function PUT(req) {
     await freshBlogParams.populate("chaptersParameters");
     await freshBlogParams.save();
 
-    const generatedResult = await generateBlogPost(freshBlogParams._id);
-
-    if (!generatedResult) {
+    let generatedResult;
+    if (generateBlog) {
+      generatedResult = await generateBlogPost(freshBlogParams._id, {
+        signal: req.signal,
+      });
+      if (!generatedResult) {
       return Response.json(
         { message: "Error generating blog post" },
         { status: 500 }
       );
     }
-    const { blogPost, remainingCredits } = generatedResult;
-
-    freshBlogParams.blogPost = blogPost._id;
-    await freshBlogParams.save();
+    } else {
+      generatedResult = {};
+    }
 
     return Response.json(
       {
         message: "Blog parameters updated successfully",
         blogParametersId: freshBlogParams._id,
-        remainingCredits,
-        blogPostId: blogPost._id,
+        ...generatedResult,
       },
       { status: 200 }
     );

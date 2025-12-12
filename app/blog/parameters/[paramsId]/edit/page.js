@@ -15,8 +15,6 @@ export default async function Page({ params }) {
   blogParameters["promptComment"] = blogParameters.prompt.promptComment;
   delete blogParameters.prompt;
 
-  console.log("Editing blog parameters:", blogParameters);
-
   return (
     <div>
       <BlogParametersForm _blogParameters={clean(blogParameters)} />

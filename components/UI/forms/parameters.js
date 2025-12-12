@@ -71,12 +71,8 @@ export default function BlogParametersForm({ _blogParameters }) {
         { signal: abortRef.current.signal }
       );
 
-      const {
-        message,
-        blogPostId,
-        remainingCredits,
-        generationTime,
-      } = response.data;
+      const { message, blogPostId, remainingCredits, generationTime } =
+        response.data;
 
       if (generateBlog) {
         dispatch(setEarlyRequest(true));
@@ -115,32 +111,75 @@ export default function BlogParametersForm({ _blogParameters }) {
       alert("No blog parameters ID found for update.");
       return;
     }
-    const res = await fetch(
-      `/api/blog/parameters`,
-      {
-        method: "PUT",
-        body: JSON.stringify(blogParameters),
-      },
-      { cache: "no-store" }
-    );
-    if (res.status !== 200) {
-      const { errors } = await res.json();
-      return alert(
-        `Failed to update blog parameters: ${errors
-          ?.map((e) => e.message)
-          .join(", ")}`
+    abortRef.current = new AbortController();
+
+    if (generateBlog) {
+      setOnStop(() => () => {
+        abortRef.current.abort();
+      });
+      dispatch(
+        setLoading({
+          isLoading: true,
+          message: "Creating blog parameters...",
+          generationTime: GENERATE_PARAMS_MANUAL_BLOG_TIME,
+          earlyRequest: false,
+          percentage: 0,
+        })
       );
+    } else {
+      dispatch(setClientLoading(true));
     }
 
-    const { message, blogParametersId, remainingCredits, blogPostId } =
-      await res.json();
+    try {
+      const response = await axios.put(
+        `/api/blog/parameters`,
+        {
+          ...blogParameters,
+          generateBlog,
+        },
+        { signal: abortRef.current?.signal }
+      );
+      /* if (response.status !== 200) {
+        const { errors } = await response.json();
+        return alert(
+          `Failed to update blog parameters: ${errors
+            ?.map((e) => e.message)
+            .join(", ")}`
+        );
+      } */
 
-    alert(`${message}
+      const { message, blogParametersId, remainingCredits, blogPostId, generationTime } =
+        await response.data
+
+      if (generateBlog) {
+        dispatch(setEarlyRequest(true));
+        await waitForLoading();
+        alert(
+          `${message}
     Remaining credits: ${
       typeof remainingCredits !== "undefined" ? remainingCredits : "N/A"
-    }\nBlog Post ID: ${blogPostId ? blogPostId : "No blog post generated."}`);
-    router.push(`/blog/parameters/${blogParametersId}`);
-    router.refresh();
+    }${blogPostId ? "\nA blog post was generated." : ""}\nGeneration time: ${
+            generationTime ? generationTime / 1000 : "N/A"
+          } s`
+        );
+      } else {
+        dispatch(setClientLoading(false));
+        alert(`${message}`);
+      }
+      setOnStop(() => () => {});
+
+      //router.push(`/blog/parameters/${blogParametersId}`);
+    } catch (error) {
+      if (error.name === "CanceledError" || error.message === "canceled") {
+        alert("Blog generation was cancelled.");
+        dispatch(offLoading());
+        setOnStop(() => () => {});
+        return;
+      } else {
+        console.log(error);
+        alert("An error occurred during blog generation.");
+      }
+    }
   };
 
   const onChange = (e) => {
