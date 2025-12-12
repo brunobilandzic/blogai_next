@@ -41,10 +41,13 @@ export default function BlogParametersForm({ _blogParameters }) {
     abortRef.current = new AbortController();
 
     setOnStop(() => () => {
-      abortRef.current.abort();
+      dispatch(offLoading());
     });
-    
+
     dispatch(setLoading(testLoadingState));
+    setTimeout(async () => {
+      dispatch(setEarlyRequest(true));
+    }, 3000);
   };
   const onSubmit = async (e) => {
     let startTime = Date.now();
@@ -82,6 +85,7 @@ export default function BlogParametersForm({ _blogParameters }) {
       } = response.data;
 
       console.log("request done");
+
       const timeElapsed = Date.now() - startTime;
 
       console.log("timeElapsed", timeElapsed);

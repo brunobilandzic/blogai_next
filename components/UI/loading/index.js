@@ -3,6 +3,7 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
+  incrementPercentage,
   offLoading,
   setEarlyRequest,
   setPercentage,
@@ -18,43 +19,57 @@ export function LoadingMain({ children }) {
   const { onStop } = useContext(LoadingContext);
   const intervalRef = useRef(null);
   const dispatch = useDispatch();
+  const percentageRef = useRef(percentage);
+
+  useEffect(() => {
+    percentageRef.current = percentage;
+  }, [percentage]);
 
   useEffect(() => {
     if (isLoading) {
+      // if isloading true
       console.log("LoadingMain: isLoading true");
       const begin = Date.now();
+      // if early request true, start interval to increase percentage by step until 90%
       if (earlyRequest) {
+        intervalRef.current && clearInterval(intervalRef.current);
         console.log("LoadingMain: earlyRequest true, starting interval");
 
         const step = 15;
         intervalRef.current = setInterval(() => {
-          console.log("LoadingMain: early request interval tick", percentage);
+          const freshPercentage = percentageRef.current;
 
-          if (percentage < 90) {
-            console.log(
-              "LoadingMain: increasing percentage by step",
-              percentage,
-              step
-            );
-            dispatch(setPercentage(percentage + step));
+          if (freshPercentage < 99) {
+            dispatch(setPercentage(freshPercentage + step));
           } else {
             clearInterval(intervalRef.current);
             intervalRef.current = null;
-            dispatch(setEarlyRequest(false));
             dispatch(offLoading());
           }
         }, 1000);
       } else {
+        console.log(
+          "LoadingMain: earlyRequest false, starting generationTime interval"
+        );
         intervalRef.current = setInterval(() => {
           const now = Date.now();
           /*         setElapsed(now - begin); */
           const elapsed = now - begin;
+          console.log(
+            `Generation time: ${generationTime}, elapsed: ${elapsed}, ratio: ${
+              elapsed / generationTime
+            }`
+          );
           const newPercentage = Math.min(
             99,
             Math.floor((elapsed / generationTime) * 100)
           );
           dispatch(setPercentage(newPercentage));
         }, 1000);
+        if (percentage > 60 && earlyRequest) {
+          clearInterval(intervalRef.current);
+          intervalRef.current = null;
+        }
       }
     } else {
       clearInterval(intervalRef.current);
