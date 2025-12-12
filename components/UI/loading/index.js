@@ -55,11 +55,7 @@ export function LoadingMain({ children }) {
           const now = Date.now();
           /*         setElapsed(now - begin); */
           const elapsed = now - begin;
-          console.log(
-            `Generation time: ${generationTime}, elapsed: ${elapsed}, ratio: ${
-              elapsed / generationTime
-            }`
-          );
+
           const newPercentage = Math.min(
             99,
             Math.floor((elapsed / generationTime) * 100)
@@ -121,15 +117,30 @@ const LoadingModalFooter = ({ onCancel }) => {
   );
 };
 
-export const waitForLoading = (state) => {
+export const waitForLoading = () => {
   return new Promise((resolve) => {
     const interval = setInterval(() => {
       const state = store.getState();
       const earlyRequest = state.loading.earlyRequest;
-      if (!earlyRequest) {
+      const percentage = state.loading.percentage;
+      console.log(
+        `waitForLoading: percentage=${percentage}, earlyRequest=${earlyRequest}`
+      );
+      if (percentage >= 100) {
+        console.log(
+          `waitForLoading: percentage ${percentage} reached 100, turning off earlyRequest`
+        );
         clearInterval(interval);
+        store.dispatch(offLoading());
+        resolve();
+      } else if (!earlyRequest) {
+        console.log(
+          `waitForLoading: earlyRequest is false, turning off loading`
+        );
+        clearInterval(interval);
+        store.dispatch(offLoading());
         resolve();
       }
-    }, 50);
+    }, 500);
   });
 };

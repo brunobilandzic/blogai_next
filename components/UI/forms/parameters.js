@@ -37,6 +37,7 @@ export default function BlogParametersForm({ _blogParameters }) {
   const abortRef = useRef(null);
   const { setOnStop } = useContext(LoadingContext);
   const { percentage } = useSelector((state) => state.loading);
+  const percentageRef = useRef(percentage);
   const testLoading = () => {
     abortRef.current = new AbortController();
 
@@ -47,6 +48,8 @@ export default function BlogParametersForm({ _blogParameters }) {
     dispatch(setLoading(testLoadingState));
     setTimeout(async () => {
       dispatch(setEarlyRequest(true));
+      await waitForLoading();
+      dispatch(offLoading());
     }, 3000);
   };
   const onSubmit = async (e) => {
@@ -67,7 +70,6 @@ export default function BlogParametersForm({ _blogParameters }) {
       })
     );
     try {
-      console.log(startTime);
       const response = await axios.post(
         `/api/blog/parameters`,
         {
@@ -87,10 +89,10 @@ export default function BlogParametersForm({ _blogParameters }) {
       console.log("request done");
 
       const timeElapsed = Date.now() - startTime;
-
+      const percentage = percentageRef.current;
       console.log("timeElapsed", timeElapsed);
       console.log("percentage", percentage);
-
+      dispatch(setEarlyRequest(true));
       await waitForLoading();
       alert(
         `${message}
