@@ -21,6 +21,7 @@ import {
   setLoading,
   setEarlyRequest,
   testLoadingState,
+  setClientLoading,
 } from "@/lib/store/features/loadingSlice";
 import {
   GENERATE_PARAMS_AI_NOBLOG_TIME,
@@ -38,24 +39,7 @@ export default function BlogParametersForm({ _blogParameters }) {
   const dispatch = useDispatch();
   const abortRef = useRef(null);
   const { setOnStop } = useContext(LoadingContext);
-  const { percentage } = useSelector((state) => state.loading);
-  const percentageRef = useRef(percentage);
   const [generateBlog, setGenerateBlog] = useState(false);
-
-  const testLoading = () => {
-    abortRef.current = new AbortController();
-
-    setOnStop(() => () => {
-      dispatch(offLoading());
-    });
-
-    dispatch(setLoading(testLoadingState));
-    setTimeout(async () => {
-      dispatch(setEarlyRequest(true));
-      await waitForLoading();
-      dispatch(offLoading());
-    }, 3000);
-  };
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -74,6 +58,8 @@ export default function BlogParametersForm({ _blogParameters }) {
           percentage: 0,
         })
       );
+    } else {
+      dispatch(setClientLoading(true));
     }
     try {
       const response = await axios.post(
@@ -87,7 +73,6 @@ export default function BlogParametersForm({ _blogParameters }) {
 
       const {
         message,
-        blogParametersId,
         blogPostId,
         remainingCredits,
         generationTime,
@@ -105,6 +90,7 @@ export default function BlogParametersForm({ _blogParameters }) {
           } s`
         );
       } else {
+        dispatch(setClientLoading(false));
         alert(`${message}`);
       }
       dispatch(offLoading());
